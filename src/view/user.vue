@@ -8,7 +8,7 @@
             <div>johnny</div>
             <div>普通会员</div>
           </div>
-          <div class="personal-text">个人中心</div>
+<!--          <div class="personal-text">个人中心</div>-->
         </div>
         <!--        <div class="personalInfo-MoneyClass">-->
         <!--          <ul>-->
@@ -38,7 +38,7 @@
           <!--                           style="color: #ff976a;" text="预约订单"/>-->
           <!--            <van-grid-item icon="phone-circle-o" @click="callFunc" style="color: #1989fa;" text="常见问题"/>-->
           <!--          </van-grid>-->
-          <van-grid :border="false" icon-size="40px">
+          <van-grid :border="false" icon-size="30px">
             <van-grid-item icon="gold-coin-o" to="payment" text="待付款" />
             <van-grid-item icon="bag-o" to="receiving" text="待收货" />
             <van-grid-item icon="comment-circle-o" to="evaluated" text="待评价" />
@@ -76,6 +76,9 @@
 </script>
 
 <style scoped type="text/css">
+  .my{
+    background: #f7f8fa;
+  }
   .myBox {
     width: 100%;
     height: auto;
@@ -125,7 +128,7 @@
 
   .personal-msg-des div:nth-child(1) {
     color: #ffffff;
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .personal-msg-des div:nth-child(2) {
@@ -177,7 +180,7 @@
 
   .mySnacks {
     /*height: 300px;*/
-    margin-top: 20px;
+    margin-top: 10px;
     background: #ffffff;
     padding: 10px 5px;
     box-sizing: border-box;

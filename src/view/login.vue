@@ -19,9 +19,7 @@
         />
       </div>
       <div style="margin: 16px;">
-        <van-button round block type="info" native-type="submit">
-          提交
-        </van-button>
+        <van-button round block type="info" style="background:rgb(255, 0, 0);border: none" native-type="submit">提交</van-button>
         <div class="login-tips">没有帐号?
           <router-link to="reg"><span>立即去注册</span></router-link>
         </div>
@@ -56,6 +54,6 @@
     font-size: 14px;
   }
   .login-tips span{
-    color: #F9347B;
+    color:rgb(255, 0, 0);
   }
 </style>

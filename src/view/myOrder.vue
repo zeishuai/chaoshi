@@ -151,7 +151,7 @@
     min-height: 700px;
     padding-bottom: 58px;
     box-sizing: border-box;
-    background: #EFEFEF;
+    background: #f7f8fa;
     overflow: hidden;
   }
 

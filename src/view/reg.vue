@@ -33,7 +33,7 @@
         />
       </div>
       <div style="margin: 16px;">
-        <van-button round block type="info" native-type="submit">
+        <van-button style="background:rgb(255, 0, 0);border: none" round block type="info" native-type="submit">
           提交
         </van-button>
         <div class="login-tips">已有帐号?
@@ -63,6 +63,7 @@
 
 <style scoped>
   .login{
+    background: #f7f8fa;
     margin: 40px 10px;
   }
   .login-tips{
@@ -70,6 +71,6 @@
     font-size: 14px;
   }
   .login-tips span{
-    color: #F9347B;
+    color: rgb(255, 0, 0);
   }
 </style>

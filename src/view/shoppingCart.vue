@@ -167,7 +167,7 @@
 <style scoped lang="less">
   .carBox{
     min-height: 750px;
-    background: #EFEFEF;
+    background: #f7f8fa;
   }
 
   button{
@@ -243,7 +243,7 @@
     position: fixed;
     width: 100%;
     height: 60px;
-    border: 1px #a7a5a5 solid;
+    /*border: 1px #a7a5a5 solid;*/
     bottom: 49px;
     left: 0;
     background: #fff;
@@ -263,7 +263,7 @@
     height: 35px;
     border: none;
     color: #fff;
-    background-color: #e26411;
+    background-color: rgb(255,0,0);
     border-radius: 25px;
     padding: 0 10px;
     box-sizing: border-box;
@@ -275,8 +275,8 @@
     width:60px;
     height: 35px;
     border: none;
-    color: #fff;
-    background-color: #cecac7;
+    color: #444444;
+    background-color: #f2f3f5;
     border-radius: 25px;
     padding: 0 10px;
     box-sizing: border-box;

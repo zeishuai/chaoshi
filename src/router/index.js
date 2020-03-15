@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import index from '@/view/index'
+import index from '@/view/index1'
 import login from '@/view/login'
 
 const reg = () => import('@/view/reg')
