@@ -2,7 +2,7 @@
   <div class="index" style="background: #FAFAFA;overflow: hidden">
     <div style="float: left;position: fixed;left: 0;z-index: 9999999;">
       <van-sidebar v-model="activeKey" @change="onChange">
-        <van-sidebar-item v-for="item in arrs" :title="item"/>
+        <van-sidebar-item v-for="item in arrs" :title="item" :key="item"/>
       </van-sidebar>
     </div>
     <div class="" style="float: left;margin-left: 100px;padding-top: 10px;background: #fff">

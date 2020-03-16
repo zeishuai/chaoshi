@@ -15,6 +15,7 @@ const getGoodsPrice = () => import ('@/view/getGoodsPrice')
 const kdPayment = () => import ('@/view/kdPayment')
 const kdDdFh = () => import ('@/view/kdDdFh')
 const kdRecording = () => import ('@/view/kdRecording')
+const psyOrderList = () => import('@/view/psyOrderList')
 
 Vue.use(Router)
 
@@ -89,6 +90,11 @@ export default new Router({
       path: '/kdRecording',
       name: 'kdRecording',
       component: kdRecording
+    },
+    {
+      path:'/psyOrderList',
+      name:'psyOrderList',
+      component:psyOrderList
     }
   ]
 })
