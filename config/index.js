@@ -6,11 +6,18 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: { 
+      '/api': {
+        target: 'http://yt.qdytcy.com', //源地址 
+        changeOrigin: true, //改变源 
+        pathRewrite: { 
+          '^/api': '' //路径重写 
+          } 
+      } 
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
@@ -44,6 +51,15 @@ module.exports = {
   },
 
   build: {
+    proxyTable: { 
+      '/api': {
+        target: 'thttp://yt.qdycy.com', //源地址 
+        changeOrigin: true, //改变源 
+        pathRewrite: { 
+          '^/api': '' //路径重写 
+          } 
+      } 
+    },
     // Template for index.html
     index: path.resolve(__dirname, '../dist/index.html'),
 

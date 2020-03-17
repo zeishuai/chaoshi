@@ -1,16 +1,16 @@
 <template>
   <div class="carBox">
     <div class="shoppingMain">
-      <div class="shoppingItem" v-for="(item,index) in shoppingList">
+      <div class="shoppingItem" v-for="(item,index) in shoppingList" :key="item.id">
         <div class="selectCircle" :class="{checked:item.isSelect}" @click="selectGoods(item)"></div>
         <div class="shoppingImg">
-          <img :src="item.imgurl" alt="">
+          <img :src="item.pic" alt="">
         </div>
         <div class="itemRight">
-          <div class="title">{{item.title}}</div>
-          <div>{{item.color}}</div>
+          <div class="title">{{item.name}}</div>
+          <div>{{item.specification}}</div>
           <div class="numAndMoney">
-            <div>￥{{item.money}}</div>
+            <div>￥{{item.price}}</div>
             <div class="numberControl">
               <van-stepper disable-input v-model="value" @minus="numDel(item,index)"  @plus="numAdd(item,index)"/>
 <!--              <a class="btn" @click="numDel(item,index)">-</a>-->
@@ -42,43 +42,43 @@
         active: 0,
         shoppingList: [
           {
-            imgurl: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
-            title: "苹果",
-            color: "粉色",
-            money: 149,
-            num: "1",
+            pic: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
+            name: "苹果",
+            specification: "粉色",
+            price: 149,
+            count: "13",
             isSelect: false,
           },
           {
-            imgurl: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
-            title: "李子",
-            color: "粉色",
-            money: 149,
-            num: "10",
+            pic: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
+            name: "苹果",
+            specification: "粉色",
+            price: 149,
+            count: "112",
             isSelect: false,
           },
           {
-            imgurl: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
-            title: "香蕉",
-            color: "粉色",
-            money: 149,
-            num: "1",
+            pic: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
+            name: "苹果",
+            specification: "粉色",
+            price: 149,
+            count: "122",
             isSelect: false,
           },
           {
-            imgurl: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
-            title: "葡萄",
-            color: "粉色",
-            money: 149,
-            num: "1",
+            pic: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
+            name: "苹果",
+            specification: "粉色",
+            price: 149,
+            count: "11",
             isSelect: false,
           },
           {
-            imgurl: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
-            title: "西瓜瓜",
-            color: "粉色",
-            money: 149,
-            num: "1",
+            pic: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
+            name: "苹果",
+            specification: "粉色",
+            price: 149,
+            count: "3",
             isSelect: false,
           },
         ],
@@ -88,22 +88,24 @@
         pic:{url:'../../static/img/sele.png'}
       }
     },
+    created() {
+      this.shoppingCarList()
+    },
     methods: {
-      // 路由
-      goUrl(val) {
-        if (val === 0) {
-          this.$router.push({path:'/'})
-        } else if (val === 1) {
-          this.$router.push({path:'express'})
-        } else if (val === 2) {
-          this.$router.push({path:'shoppingCart'})
-        } else {
-          this.$router.push({path:'my'})
-        }
-      },
-      // 返回
-      backClick(v) {
-        this.$router.push({path:'/'})
+      // 购物车列表
+      shoppingCarList() {
+        let apiurl = `/api/user/shopcar/list?sessionid=${localStorage.getItem("token")}`
+        this.$axios({
+          method: "get",
+          url: apiurl
+        })
+          .then(res => {
+            console.log(res)
+            this.shoppingList = res.data.data;
+          })
+          .catch(err => {
+            console.log(err);
+          });
       },
       selectGoods(item) {
         item.isSelect = !item.isSelect

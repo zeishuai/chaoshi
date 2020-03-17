@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <van-form @submit="onSubmit">
+    <!--  <van-form @submit="onSubmit">
       <div>
         <van-field
           v-model="username"
@@ -40,37 +40,69 @@
           <router-link to="/index"><span>去登陆</span></router-link>
         </div>
       </div>
-    </van-form>
+    </van-form>-->
+    <div>认证中...请放行</div>
   </div>
 </template>
-
 <script>
-  export default {
-    name:'reg',
-    data() {
-      return {
-        username: '',
-        password: '',
-      };
+export default {
+  name: 'reg',
+  data() {
+    return {
+      username: '',
+      password: '',
+    };
+  },
+  created() {
+    // let code = window.location.search.split('=')[1].split('&')[0];
+    localStorage.setItem("token", "6a587113-0fe1-4063-ae62-f40c76b19034");
+    this.goosList()
+    // this.onSubmit(code)
+  },
+  methods: {
+   // 登陆获取token
+    // onSubmit(values) {
+    //   let apiurl = '/api/wxfdb0d4b10b8496bf/loginByCode?code=' + values
+    //   this.$axios({
+    //     method:'get',
+    //     url:apiurl,
+    //   }).then(res => {
+    //     localStorage.setItem('token',res.data)
+    //     console.log(res.data)
+    //     this.goosList(res.data)
+    //   }).catch(err => {
+    //     console.log(err)
+    //   })
+    // },
+     // 商品分类列表
+    goosList(token) {
+      this.$router.push('index')
+      // let listurl = `/api/user/shop/classify/list?sessionid=${localStorage.getItem("token")}`
+      // this.$axios({
+      //   method:'get',
+      //   url:listurl,
+      // }).then(res => {
+      //   console.log(res)
+      // }).catch(err => {
+      //   console.log(err)
+      // })
     },
-    methods: {
-      onSubmit(values) {
-        console.log('submit', values);
-      },
-    },
-  };
-</script>
+  },
+};
 
+</script>
 <style scoped>
-  .login{
-    background: #f7f8fa;
-    margin: 40px 10px;
-  }
-  .login-tips{
-    margin-top: 20px;
-    font-size: 14px;
-  }
-  .login-tips span{
-    color: rgb(255, 0, 0);
-  }
+.login {
+  background: #f7f8fa;
+  margin: 40px 10px;
+}
+
+.login-tips {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.login-tips span {
+  color: rgb(255, 0, 0);
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <van-form @submit="onSubmit">
+    <!-- <van-form @submit="onSubmit">
       <div>
         <van-field
           v-model="username"
@@ -24,8 +24,8 @@
           <router-link to="reg"><span>立即去注册</span></router-link>
         </div>
       </div>
-    </van-form>
-    <van-button @click="onSubmit" round block type="info" style="background:rgb(255, 0, 0);border: none" native-type="submit">登陆</van-button>
+    </van-form> -->
+    <!-- <van-button @click="onSubmit" round block type="info" style="background:rgb(255, 0, 0);border: none" native-type="submit">登陆</van-button> -->
   </div>
 </template>
 
@@ -40,18 +40,19 @@ import urlencode from 'urlencode'
       };
     },
     created () {
-       
+       this.onSubmit()
     },
     methods: {
-      onSubmit(values) {
+      onSubmit() {
         //开始登录
-        let AppId = 'wxfdb0d4b10b8496bf';
-        // let redirectUri = urlencode('http://yt.qdytcy.com/');
-        let redirectUri = urlencode('http://ui.qdytcy.com/reg');
-        let scope = 'snsapi_userinfo';
-        let wxUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize?';
-        let url = wxUrl + 'appid='+AppId+'&redirect_uri='+redirectUri+'&response_type=code&scope='+scope+'&state=STATE&#wechat_redirect';
-        window.location.href =url 
+        this.$router.push('reg')
+        // let AppId = 'wxfdb0d4b10b8496bf';
+        // // let redirectUri = urlencode('http://yt.qdytcy.com/');
+        // let redirectUri = urlencode('http://ui.qdytcy.com/reg');
+        // let scope = 'snsapi_userinfo';
+        // let wxUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize?';
+        // let url = wxUrl + 'appid='+AppId+'&redirect_uri='+redirectUri+'&response_type=code&scope='+scope+'&state=STATE&#wechat_redirect';
+        // window.location.href =url 
       },
     },
   };
