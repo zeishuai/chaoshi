@@ -25,10 +25,12 @@
         </div>
       </div>
     </van-form>
+    <van-button @click="onSubmit" round block type="info" style="background:rgb(255, 0, 0);border: none" native-type="submit">登陆</van-button>
   </div>
 </template>
 
 <script>
+import urlencode from 'urlencode'
   export default {
     name:'login',
     data() {
@@ -37,9 +39,19 @@
         password: '',
       };
     },
+    created () {
+       
+    },
     methods: {
       onSubmit(values) {
-        console.log('submit', values);
+        //开始登录
+        let AppId = 'wxfdb0d4b10b8496bf';
+        // let redirectUri = urlencode('http://yt.qdytcy.com/');
+        let redirectUri = urlencode('http://ui.qdytcy.com/reg');
+        let scope = 'snsapi_userinfo';
+        let wxUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize?';
+        let url = wxUrl + 'appid='+AppId+'&redirect_uri='+redirectUri+'&response_type=code&scope='+scope+'&state=STATE&#wechat_redirect';
+        window.location.href =url 
       },
     },
   };

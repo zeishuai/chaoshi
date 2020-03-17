@@ -25,8 +25,7 @@
     name: "psyOrderList",
     data() {
       return {
-        // 要展示我要送的商品数量，送到的地点就行了
-        title: '待付款',
+        // 要展示我要送的商品数量，送到的地点就行了',
         show: false,
         goodsList: [
           {

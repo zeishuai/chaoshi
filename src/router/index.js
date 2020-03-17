@@ -19,7 +19,8 @@ const psyOrderList = () => import('@/view/psyOrderList')
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -98,3 +99,85 @@ export default new Router({
     }
   ]
 })
+export default router
+
+// export default new Router({
+//   mode: 'history',
+//   routes: [
+//     {
+//       path: '/',
+//       name: 'login',
+//       component: login
+//     },
+//     {
+//       path: '/reg',
+//       name: 'reg',
+//       component: reg
+//     },
+//     {
+//       path: '/index',
+//       name: 'index',
+//       component: index
+//     },
+//     {
+//       path: '/shoppingCart',
+//       name: 'shoppingCart',
+//       component: shoppingCart
+//     },
+//     {
+//       path: '/express',
+//       name: 'express',
+//       component: express
+//     },
+//     {
+//       path: '/user',
+//       name: 'user',
+//       component: user
+//     },
+//     {
+//       path: '/payment',
+//       name: 'payment',
+//       component: payment
+//     },
+//     {
+//       path: '/receiving',
+//       name: 'receiving',
+//       component: receiving
+//     },
+//     {
+//       path: '/evaluated',
+//       name: 'evaluated',
+//       component: evaluated
+//     },
+//     {
+//       path: '/myOrder',
+//       name: 'myOrder',
+//       component: myOrder
+//     },
+//     {
+//       path: '/getGoodsPrice',
+//       name: 'getGoodsPrice',
+//       component: getGoodsPrice
+//     },
+//     {
+//       path: '/kdPayment',
+//       name: 'kdPayment',
+//       component: kdPayment
+//     },
+//     {
+//       path: '/kdDdFh',
+//       name: 'kdDdFh',
+//       component: kdDdFh
+//     },
+//     {
+//       path: '/kdRecording',
+//       name: 'kdRecording',
+//       component: kdRecording
+//     },
+//     {
+//       path:'/psyOrderList',
+//       name:'psyOrderList',
+//       component:psyOrderList
+//     }
+//   ]
+// })

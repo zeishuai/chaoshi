@@ -6,6 +6,8 @@ import router from './router'
 import Vant from 'vant'
 import 'vant/lib/index.css'
 // import 'amfe-flexible'
+import Urlencode from 'urlencode'
+Vue.use(Urlencode)
 Vue.use(Vant)
 
 Vue.config.productionTip = false
