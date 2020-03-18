@@ -11,7 +11,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: { 
       '/api': {
-        target: 'http://yt.qdytcy.com', //源地址 
+        target: 'http://yt.qdytcy.com:8080/api', //源地址 
         changeOrigin: true, //改变源 
         pathRewrite: { 
           '^/api': '' //路径重写 
@@ -53,7 +53,7 @@ module.exports = {
   build: {
     proxyTable: { 
       '/api': {
-        target: 'thttp://yt.qdycy.com', //源地址 
+        target: 'http://yt.qdytcy.com:8080/api', //源地址 
         changeOrigin: true, //改变源 
         pathRewrite: { 
           '^/api': '' //路径重写 

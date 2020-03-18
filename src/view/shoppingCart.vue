@@ -12,7 +12,7 @@
           <div class="numAndMoney">
             <div>￥{{item.price}}</div>
             <div class="numberControl">
-              <van-stepper disable-input v-model="value" @minus="numDel(item,index)"  @plus="numAdd(item,index)"/>
+              <van-stepper disable-input v-model="item.count" default-value="item.count" @minus="numDel(item,index)"  @plus="numAdd(item,index)"/>
 <!--              <a class="btn" @click="numDel(item,index)">-</a>-->
 <!--              <input class="numberControl-input" type="text" v-model="item.num" readonly="readonly">-->
 <!--              <a class="btn" @click="numAdd(item,index)">+</a>-->
@@ -32,59 +32,15 @@
 </template>
 
 <script>
-  // import topTitle from '../components/topTitle'
-  // import footerTab from "../components/footerTab";
+import { shopcarList,delGoods } from '@/request/api';
   export default {
     name: "shoppingCart",
-    // components:{topTitle,footerTab},
     data() {
       return {
         active: 0,
-        shoppingList: [
-          {
-            pic: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
-            name: "苹果",
-            specification: "粉色",
-            price: 149,
-            count: "13",
-            isSelect: false,
-          },
-          {
-            pic: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
-            name: "苹果",
-            specification: "粉色",
-            price: 149,
-            count: "112",
-            isSelect: false,
-          },
-          {
-            pic: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
-            name: "苹果",
-            specification: "粉色",
-            price: 149,
-            count: "122",
-            isSelect: false,
-          },
-          {
-            pic: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
-            name: "苹果",
-            specification: "粉色",
-            price: 149,
-            count: "11",
-            isSelect: false,
-          },
-          {
-            pic: "https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=206733228,1637722865&fm=26&gp=0.jpg",
-            name: "苹果",
-            specification: "粉色",
-            price: 149,
-            count: "3",
-            isSelect: false,
-          },
-        ],
+        shoppingList: [],
         allSelect: false,
         sum: 0,
-        title: '购物车',
         pic:{url:'../../static/img/sele.png'}
       }
     },
@@ -94,26 +50,38 @@
     methods: {
       // 购物车列表
       shoppingCarList() {
-        let apiurl = `/api/user/shopcar/list?sessionid=${localStorage.getItem("token")}`
-        this.$axios({
-          method: "get",
-          url: apiurl
-        })
-          .then(res => {
-            console.log(res)
-            this.shoppingList = res.data.data;
-          })
-          .catch(err => {
-            console.log(err);
-          });
+        shopcarList({}).then(res => {
+              this.shoppingList = res.data;
+              this.shoppingList.map(item => {
+                item.isSelect = false
+              })
+            }).catch(err => {
+            //  console.log(err)
+         })
+        // let apiurl = `/api/user/shopcar/list?sessionid=${localStorage.getItem("token")}`
+        // this.$axios({
+        //   method: "get",
+        //   url: apiurl
+        // })
+        //   .then(res => {
+        //     console.log(res)
+        //     this.shoppingList = res.data.data;
+        //     this.shoppingList.map(item => {
+        //       item.isSelect = false
+        //     })
+        //     console.log(this.shoppingList)
+        //   })
+        //   .catch(err => {
+        //     console.log(err);
+        //   });
       },
       selectGoods(item) {
         item.isSelect = !item.isSelect
         this.allSelect = false
         if (item.isSelect == true) {
-          this.sum = this.sum + (item.money * item.num)
+          this.sum = this.sum + (item.price * item.count)
         } else {
-          this.sum = this.sum - (item.money * item.num)
+          this.sum = this.sum - (item.price * item.count)
         }
       },
       allGoodsSelect() {
@@ -122,11 +90,11 @@
           this.sum = 0
           for (var i = 0; i < this.shoppingList.length; i++) {
             this.shoppingList[i].isSelect = true;
-            this.sum = this.sum + (this.shoppingList[i].money * this.shoppingList[i].num)
+            this.sum = this.sum + (this.shoppingList[i].price * this.shoppingList[i].count)
           }
         } else {
           for (var i = 0; i < this.shoppingList.length; i++) {
-            this.sum = this.sum - (this.shoppingList[i].money * this.shoppingList[i].num)
+            this.sum = this.sum - (this.shoppingList[i].price * this.shoppingList[i].count)
             this.shoppingList[i].isSelect = false;
           }
         }
@@ -134,13 +102,13 @@
       numAdd(item, index) {
         item.num++
         if (item.isSelect == true) {
-          this.sum = this.sum + item.money
+          this.sum = this.sum + item.price
         }
       },
       numDel(item, index) {
         item.num--
         if (item.isSelect == true) {
-          this.sum = this.sum - item.money
+          this.sum = this.sum - item.price
         }
         if (item.num == 0) {
           this.shoppingList.splice(index, 1)
@@ -161,6 +129,27 @@
           this.shoppingList.splice(0, this.shoppingList.length);
           this.allSelect = false
         }
+        delGoods({}).then(res => {
+          if (res.code == 0) {
+            this.$toast({message: res.msg});
+          }
+          setTimeout(() => {
+            this.shoppingCarList()
+          },500)
+        }).catch(err => {
+          console.log(err)
+        })
+        // let apiurl = `/api/user/shopcar/clear?sessionid=${localStorage.getItem("token")}`
+        // this.$axios({
+        //   method: "get",
+        //   url: apiurl
+        // }).then(res => {
+        //   if(res.data.code == 0) {
+        //     this.$toast({message: res.data.msg});
+        //   }
+        // }).catch(err => {
+        //   console.log(err)
+        // })
       }
     }
   }

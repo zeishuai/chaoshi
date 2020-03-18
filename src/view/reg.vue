@@ -55,25 +55,25 @@ export default {
   },
   created() {
     // let code = window.location.search.split('=')[1].split('&')[0];
-    localStorage.setItem("token", "6a587113-0fe1-4063-ae62-f40c76b19034");
+    localStorage.setItem("token", "e8e87eba-7671-43e9-9e92-f8acbc91b01e");
     this.goosList()
     // this.onSubmit(code)
   },
   methods: {
    // 登陆获取token
-    // onSubmit(values) {
-    //   let apiurl = '/api/wxfdb0d4b10b8496bf/loginByCode?code=' + values
-    //   this.$axios({
-    //     method:'get',
-    //     url:apiurl,
-    //   }).then(res => {
-    //     localStorage.setItem('token',res.data)
-    //     console.log(res.data)
-    //     this.goosList(res.data)
-    //   }).catch(err => {
-    //     console.log(err)
-    //   })
-    // },
+    onSubmit(values) {
+      let apiurl = '/api/system/wxfdb0d4b10b8496bf/loginByCode?code=' + values
+      this.$axios({
+        method:'get',
+        url:apiurl,
+      }).then(res => {
+        localStorage.setItem('token',res.data)
+        console.log(res.data)
+        this.goosList(res.data)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
      // 商品分类列表
     goosList(token) {
       this.$router.push('index')

@@ -6,36 +6,28 @@
       </van-sidebar>
     </div>
     <div class style="float: left;margin-left: 100px;padding-top: 10px;background: #fff">
-      <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-        <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-          <div
-            v-for="item in goodsList"
-            :key="item.id"
-            style="margin-bottom: 20px;overflow: hidden"
-          >
-            <div style="overflow: hidden">
-              <div class="goodsImg">
-                <van-image width="70" height="70" border="6" :src="item.pic" />
-              </div>
-              <div class="goodsTxtBox">
-                <div class="goodsTxt">{{item.name}}</div>
-                <div class="goodsTxt" style="color: #0000007a;font-size: 12px">
-                  <span>{{item.specification}}</span>
-                </div>
-                <div class="goodsTxt" style="display: flex;justify-content: space-between">
-                  <span
-                    style="line-height: 30px;width: 61px;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgb(255, 0, 0);;font-size: 16px;font-weight: 600"
-                  >¥{{item.price}}</span>
-                  <van-stepper v-model="item.inputValue" />
-                </div>
-              </div>
-            </div>
-            <!--            <div style="margin-bottom: 10px;float: right">-->
-            <!--              <van-stepper v-model="item.inputValue"/>-->
-            <!--            </div>-->
+      <div v-for="item in goodsList" :key="item.id" style="margin-bottom: 20px;overflow: hidden">
+        <div style="overflow: hidden">
+          <div class="goodsImg">
+            <van-image width="70" height="70" border="6" :src="item.pic" />
           </div>
-        </van-list>
-      </van-pull-refresh>
+          <div class="goodsTxtBox">
+            <div class="goodsTxt">{{item.name}}</div>
+            <div class="goodsTxt" style="color: #0000007a;font-size: 12px">
+              <span>{{item.specification}}</span>
+            </div>
+            <div class="goodsTxt" style="display: flex;justify-content: space-between">
+              <span
+                style="line-height: 30px;width: 61px;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgb(255, 0, 0);;font-size: 16px;font-weight: 600"
+              >¥{{item.price}}</span>
+              <van-stepper @minus="minus(item)" @plus="plus(item)" disable-input />
+            </div>
+          </div>
+        </div>
+        <!--            <div style="margin-bottom: 10px;float: right">-->
+        <!--              <van-stepper v-model="item.inputValue"/>-->
+        <!--            </div>-->
+      </div>
     </div>
   </div>
 </template>
@@ -49,54 +41,38 @@ export default {
       loading: false,
       finished: false,
       refreshing: false,
-      arrs: [
-        {
-          id: "1",
-          name: "速食类"
-        },
-        {
-          id: "2",
-          name: "速食类"
-        },
-        {
-          id: "3",
-          name: "速食类"
-        },
-        {
-          id: "4",
-          name: "速食类"
-        }
-      ],
+      arrs: [],
       judge: "1",
       goodsList: [],
-      cid:'1', // 商品分类ID
+      cid: "1" // 商品分类ID
     };
   },
   created() {
     this.classifyList();
-    this.commodityList(this.cid)
+    this.commodityList(this.cid);
   },
   methods: {
     onChange(val) {
-      console.log(val)
-      this.arrs.map((item,index) => {
+      console.log(val);
+      this.arrs.map((item, index) => {
         if (index == val) {
-          this.commodityList(item.id)
+          this.commodityList(item.id);
         }
-      })
+      });
       // this.cid = index
     },
     // 商品分类
     classifyList() {
       console.log(localStorage.getItem("token"));
       let apiurl =
-        "/api/user/shop/classify/list?sessionid=" + localStorage.getItem("token");
+        "/api/user/shop/classify/list?sessionid=" +
+        localStorage.getItem("token");
       this.$axios({
         method: "get",
         url: apiurl
       })
         .then(res => {
-          console.log(res)
+          console.log(res);
           this.arrs = res.data.data;
         })
         .catch(err => {
@@ -105,45 +81,50 @@ export default {
     },
     // 商品列表
     commodityList(cid) {
-      let token = localStorage.getItem("token")
-      let apiurl = `/api/user/shop/commodity/list?sessionid=${localStorage.getItem("token")}&cid=${cid}`
+      let token = localStorage.getItem("token");
+      let apiurl = `/api/user/shop/commodity/list?sessionid=${localStorage.getItem(
+        "token"
+      )}&cid=${cid}`;
       this.$axios({
         method: "get",
         url: apiurl
       })
         .then(res => {
           this.goodsList = res.data.data;
-          console.log(this.goodsList)
         })
         .catch(err => {
           console.log(err);
         });
     },
-    onLoad() {
-      // setTimeout(() => {
-      //   if (this.refreshing) {
-      //     this.refreshing = false
-      //   }
-      //   let object ={}
-      //   for (let i = 0; i < 15; i++) {
-      //     object.text = '商品那就看那本书'
-      //     object.url = 'https://img.yzcdn.cn/vant/cat.jpeg'
-      //   }
-      //   this.goodsList.push(object)
-      //   this.loading = false
-      //   if (this.goodsList.length >= 10) {
-      //     this.finished = true
-      //   }
-      // }, 1000)
+    // 添加一个到购物车
+    plus(data) {
+      let apiurl = `/api/user/shopcar/addOne?sessionid=${localStorage.getItem("token")}&cid=${data.id}`;
+      this.$axios({
+        method: "get",
+        url: apiurl
+      })
+        .then(res => {
+          this.$toast({
+            message: res.data.msg
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
-    onRefresh() {
-      // 清空列表数据
-      this.finished = false;
-
-      // 重新加载数据
-      // 将 loading 设置为 true，表示处于加载状态
-      this.loading = true;
-      this.onLoad();
+    // 减少一个到购物车
+    minus(data) {
+      let apiurl = `/api/user/shopcar/subOne?sessionid=${localStorage.getItem("token")}&cid=${data.id}`;
+      this.$axios({
+        method: "get",
+        url: apiurl
+      })
+        .then(res => {
+          this.$toast({message: res.data.msg});
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   },
 

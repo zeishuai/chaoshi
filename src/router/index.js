@@ -6,7 +6,7 @@ import login from '@/view/login'
 const reg = () => import('@/view/reg')
 const shoppingCart = () => import('@/view/shoppingCart')
 const express = () => import('@/view/express')
-const user = () => import('@/view/user')
+const my = () => import('@/view/user')
 const payment = () => import('@/view/payment')
 const receiving = () => import('@/view/receiving')
 const evaluated = () => import('@/view/evaluated')
@@ -48,9 +48,9 @@ const router = new Router({
       component: express
     },
     {
-      path: '/user',
-      name: 'user',
-      component: user
+      path: '/my',
+      name: 'my',
+      component: my
     },
     {
       path: '/payment',
