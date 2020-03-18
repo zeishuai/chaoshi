@@ -47,7 +47,6 @@ import urlencode from 'urlencode'
         //开始登录
         this.$router.push('reg')
         // let AppId = 'wxfdb0d4b10b8496bf';
-        // // let redirectUri = urlencode('http://yt.qdytcy.com/');
         // let redirectUri = urlencode('http://ui.qdytcy.com/reg');
         // let scope = 'snsapi_userinfo';
         // let wxUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize?';

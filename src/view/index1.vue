@@ -63,10 +63,10 @@ export default {
     },
     // 商品分类
     classifyList() {
-      console.log(localStorage.getItem("token"));
+      console.log(JSON.stringify(localStorage.getItem("token")));
       let apiurl =
         "/api/user/shop/classify/list?sessionid=" +
-        localStorage.getItem("token");
+        JSON.stringify(localStorage.getItem("token"));
       this.$axios({
         method: "get",
         url: apiurl
@@ -82,9 +82,7 @@ export default {
     // 商品列表
     commodityList(cid) {
       let token = localStorage.getItem("token");
-      let apiurl = `/api/user/shop/commodity/list?sessionid=${localStorage.getItem(
-        "token"
-      )}&cid=${cid}`;
+      let apiurl = `/api/user/shop/commodity/list?sessionid=${JSON.stringify(localStorage.getItem("token"))}&cid=${cid}`;
       this.$axios({
         method: "get",
         url: apiurl

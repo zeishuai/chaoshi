@@ -49,6 +49,7 @@ axios.interceptors.response.use(
   },
   // 服务器状态码不是200的情况
   error => {
+    console.log(error)
     if (error.response.status) {
       switch (error.data.code) {
         // 401: 未登录
@@ -171,6 +172,7 @@ export function post(url, params) {
         resolve(res.data);
       })
       .catch(err => {
+        console.log(err)
         switch (err.data.code) {
             case 401:
               router.replace({

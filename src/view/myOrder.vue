@@ -16,30 +16,30 @@
               <van-image width="70" height="70" radius="10" :src="val.pic" />
             </div>
             <div class="payment-des-txt">
-              <p>{{val.name}}</p>
-              <p>¥{{val.price}} x {{val.count}}</p>
+              <div>{{val.name}}</div>
+              <div>¥{{val.price}} x {{val.count}}</div>
             </div>
           </div>
           <div class="totalTxt">
-            <p>共{{item.number}}件商品</p>
-            <p>
+            <!--<div>共{{item.commbak}}件商品</div>-->
+            <div>
               合计：
-              <span>¥{{item.money}}</span>（运费¥10.00）
-            </p>
+              <span>¥{{item.totalPrice}}</span>
+            </div>
           </div>
-          <div class="payment-btu" v-if="item.type == '1'">
-            <span>取消</span>
+          <div class="payment-btu" v-if="item.status == 0">
+            <span @click="closeOrder(item)">取消</span>
             <span @click="showToast">付款</span>
           </div>
-          <div class="payment-btu" v-if="item.type == '2'">
-            <span @click="showToast">收货</span>
+          <div class="payment-btu" v-if="item.status == 3">
+            <span @click="finishOrder(item)">完成订单</span>
           </div>
-          <div class="payment-btu" v-if="item.type == '3'">
+          <!--<div class="payment-btu" v-if="item.type == '3'">
             <span @click="showToast">评价</span>
           </div>
           <div class="payment-btu" v-if="item.type == '4'">
             <span @click="showToast">退货</span>
-          </div>
+          </div>-->
         </li>
       </ul>
     </div>
@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { orderList } from "@/request/api";
+import { orderList, closeOrder,finishOrder } from "@/request/api";
 export default {
   name: "receiving",
   data() {
@@ -97,30 +97,46 @@ export default {
       orderList({})
         .then(res => {
           if (res.code == 0) {
-            //json转为数组array
-            // var t2="[{name:'zhangsan',age:'24'},{name:'lisi',age:'30'},{name:'wangwu',age:'16'},{name:'tianqi',age:'7'}] ";
-            // var myobj=eval(t2);
-            // for(var i=0;i<myobj.length;i++){
-            //   console.log(myobj[i].name);
-            //   console.log(myobj[i].age);
-            // }
             for (let i = 0; i < res.data.length; i++) {
-               let nesarry = eval(res.data[i].commbak)
-               res.data[i].commbak = nesarry
-               this.orderLists = res.data
+              let nesarry = eval(res.data[i].commbak);
+              res.data[i].commbak = nesarry;
+              this.orderLists = res.data;
             }
-            console.log(this.orderLists)
           }
         })
         .catch(err => {
           console.log(err);
         });
     },
-    showToast() {
-      this.show = true;
-      // this.$toast({
-      //   message: "取消成功",
-      // })
+    // 取消订单
+    closeOrder(data) {
+      closeOrder({ orderid: data.id })
+        .then(res => {
+          console.log(res);
+          if (res.code == 0) {
+            this.$toast({ message: res.msg });
+          } else {
+            this.$toast({ message: res.msg });
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // 订单完成
+    finishOrder() {
+      finishOrder({ orderid: data.id })
+        .then(res => {
+          console.log(res);
+          if (res.code == 0) {
+            this.$toast({ message: res.msg });
+          } else {
+            this.$toast({ message: res.msg });
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   }
 };
@@ -164,8 +180,8 @@ export default {
 .payment-li-des {
   margin-top: 20px;
   display: flex;
-  border-bottom: 2px solid #efefef;
-  padding-bottom: 20px;
+  border-bottom: 1px solid #efefef;
+  padding-bottom: 10px;
   box-sizing: border-box;
 }
 
@@ -213,10 +229,12 @@ export default {
 }
 
 .payment-btu {
-  margin-top: 10px;
+  margin-top: 5px;
   display: flex;
   justify-content: flex-end;
   font-size: 14px;
+  padding-bottom: 10px;
+  box-sizing: border-box;
 }
 
 .payment-btu span {

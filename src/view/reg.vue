@@ -55,7 +55,7 @@ export default {
   },
   created() {
     // let code = window.location.search.split('=')[1].split('&')[0];
-    localStorage.setItem("token", "e8e87eba-7671-43e9-9e92-f8acbc91b01e");
+    localStorage.setItem("token", "c20526e9-d8e8-4841-8f47-4652b67ee1ef");
     this.goosList()
     // this.onSubmit(code)
   },
@@ -67,8 +67,8 @@ export default {
         method:'get',
         url:apiurl,
       }).then(res => {
-        localStorage.setItem('token',res.data)
-        console.log(res.data)
+        // localStorage.setItem('token',res.data)
+        console.log(localStorage.getItem('token'))
         this.goosList(res.data)
       }).catch(err => {
         console.log(err)

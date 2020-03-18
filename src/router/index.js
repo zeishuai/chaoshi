@@ -16,6 +16,7 @@ const kdPayment = () => import ('@/view/kdPayment')
 const kdDdFh = () => import ('@/view/kdDdFh')
 const kdRecording = () => import ('@/view/kdRecording')
 const psyOrderList = () => import('@/view/psyOrderList')
+const address_list = () => import('@/view/address_list')
 
 Vue.use(Router)
 
@@ -96,6 +97,11 @@ const router = new Router({
       path:'/psyOrderList',
       name:'psyOrderList',
       component:psyOrderList
+    },
+    {
+      path:'/address_list',
+      name:'address_list',
+      component:address_list
     }
   ]
 })
