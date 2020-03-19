@@ -9,14 +9,14 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: { 
+    proxyTable: {
       '/api': {
-        target: 'http://yt.qdytcy.com:8080/api', //源地址 
-        changeOrigin: true, //改变源 
-        pathRewrite: { 
-          '^/api': '' //路径重写 
-          } 
-      } 
+        target: 'http://yt.qdytcy.com:8080/api', //源地址
+        changeOrigin: true, //改变源
+        pathRewrite: {
+          '^/api': '' //路径重写
+          }
+      }
     },
 
     // Various Dev Server settings
@@ -51,14 +51,14 @@ module.exports = {
   },
 
   build: {
-    proxyTable: { 
+    proxyTable: {
       '/api': {
-        target: 'http://yt.qdytcy.com:8080/api', //源地址 
-        changeOrigin: true, //改变源 
-        pathRewrite: { 
-          '^/api': '' //路径重写 
-          } 
-      } 
+        target: 'http://yt.qdytcy.com:8080/api', //源地址
+        changeOrigin: true, //改变源
+        pathRewrite: {
+          '^/api': '' //路径重写
+          }
+      }
     },
     // Template for index.html
     index: path.resolve(__dirname, '../dist/index.html'),

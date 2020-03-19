@@ -1,8 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import index from '@/view/index1'
-import login from '@/view/login'
-
+const login = () => import('@/view/login')
+const index = () => import('@/view/index1')
 const reg = () => import('@/view/reg')
 const shoppingCart = () => import('@/view/shoppingCart')
 const express = () => import('@/view/express')
