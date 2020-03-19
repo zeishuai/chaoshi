@@ -2,7 +2,7 @@
   <div id="app">
     <router-view />
     <van-tabbar v-model="active" active-color="#f00" inactive-color="#000" route>
-      <van-tabbar-item replace to="/" icon="home-o">零食选购</van-tabbar-item>
+      <van-tabbar-item replace to="/index" icon="home-o">零食选购</van-tabbar-item>
       <van-tabbar-item replace to="/express" icon="logistics">快递代取</van-tabbar-item>
       <van-tabbar-item replace to="/shoppingCart" icon="shopping-cart-o">购物车</van-tabbar-item>
       <van-tabbar-item replace to="/my" icon="user-circle-o">我的</van-tabbar-item>
@@ -15,7 +15,7 @@ export default {
   name: "App",
   data() {
     return {
-      active: "/"
+      active: "/index"
     };
   },
   mounted() {

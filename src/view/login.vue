@@ -40,18 +40,23 @@ import urlencode from 'urlencode'
       };
     },
     created () {
+      localStorage.setItem('token','8b1c5c80-d5fd-47c1-bd19-74a836309e1a')
        this.onSubmit()
     },
     methods: {
       onSubmit() {
         //开始登录
-        this.$router.push('reg')
-        // let AppId = 'wxfdb0d4b10b8496bf';
-        // let redirectUri = urlencode('http://ui.qdytcy.com/reg');
-        // let scope = 'snsapi_userinfo';
-        // let wxUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize?';
-        // let url = wxUrl + 'appid='+AppId+'&redirect_uri='+redirectUri+'&response_type=code&scope='+scope+'&state=STATE&#wechat_redirect';
-        // window.location.href =url 
+        // this.$router.push('reg')
+        if (localStorage.getItem('token')) {
+          this.$router.push('index')
+        }else{
+          let AppId = 'wxfdb0d4b10b8496bf';
+          let redirectUri = urlencode('http://ui.qdytcy.com/index');
+          let scope = 'snsapi_userinfo';
+          let wxUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize?';
+          let url = wxUrl + 'appid='+AppId+'&redirect_uri='+redirectUri+'&response_type=code&scope='+scope+'&state=STATE&#wechat_redirect';
+          window.location.href =url 
+        }
       },
     },
   };

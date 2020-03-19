@@ -20,7 +20,7 @@
               <span
                 style="line-height: 30px;width: 61px;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgb(255, 0, 0);;font-size: 16px;font-weight: 600"
               >¥{{item.price}}</span>
-              <van-stepper @minus="minus(item)" @plus="plus(item)" disable-input />
+              <van-stepper v-model="item.vald" default-value="0" @minus="minus(item)" @plus="plus(item)" disable-input />
             </div>
           </div>
         </div>
@@ -32,6 +32,7 @@
   </div>
 </template>
 <script>
+import { loginByCode,classify,commodityList,shopcarAddOne,shopcarSubOne } from "@/request/api";
 export default {
   name: "index",
   data() {
@@ -48,10 +49,32 @@ export default {
     };
   },
   created() {
-    this.classifyList();
-    this.commodityList(this.cid);
+    if (window.location.search.indexOf("=") >= 0) {
+      let code = window.location.search.split("=")[1].split("&")[0];
+      this.onSubmit(code);
+      setTimeout(() => {
+        this.classifyList();
+        this.commodityList(this.cid);
+      }, 500);
+    } else {
+      setTimeout(() => {
+        this.classifyList();
+        this.commodityList(this.cid);
+      }, 500);
+    }
   },
   methods: {
+    // 登陆获取token
+    onSubmit(code) {
+      loginByCode({ code: code })
+        .then(res => {
+          if (res.code == 0) {
+            localStorage.setItem("token", res.data.token);
+          }
+        })
+        .catch(err => {});
+    },
+    // 点击获取分类
     onChange(val) {
       console.log(val);
       this.arrs.map((item, index) => {
@@ -63,66 +86,89 @@ export default {
     },
     // 商品分类
     classifyList() {
-      console.log(JSON.stringify(localStorage.getItem("token")));
-      let apiurl =
-        "/api/user/shop/classify/list?sessionid=" +
-        JSON.stringify(localStorage.getItem("token"));
-      this.$axios({
-        method: "get",
-        url: apiurl
-      })
+      classify({})
         .then(res => {
-          console.log(res);
-          this.arrs = res.data.data;
+          if (res.code == 0) {
+            console.log(res)
+            this.arrs = res.data;
+          }
         })
-        .catch(err => {
-          console.log(err);
-        });
+        .catch(err => {});
     },
     // 商品列表
     commodityList(cid) {
-      let token = localStorage.getItem("token");
-      let apiurl = `/api/user/shop/commodity/list?sessionid=${JSON.stringify(localStorage.getItem("token"))}&cid=${cid}`;
-      this.$axios({
-        method: "get",
-        url: apiurl
-      })
+      commodityList({ cid: cid })
         .then(res => {
-          this.goodsList = res.data.data;
+          if (res.code == 0) {
+            for(let i =0;i<this.goodsList.length;i++){
+              this.goodsList[i].vald = 0
+            }
+            this.goodsList = res.data;
+          }
         })
         .catch(err => {
           console.log(err);
         });
+      // let token = localStorage.getItem("token");
+      // let apiurl = `/api/user/shop/commodity/list?sessionid=${localStorage.getItem(
+      //   "token"
+      // )}&cid=${cid}`;
+      // this.$axios({
+      //   method: "get",
+      //   url: apiurl
+      // })
+      //   .then(res => {
+      //     this.goodsList = res.data.data;
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //   });
     },
     // 添加一个到购物车
     plus(data) {
-      let apiurl = `/api/user/shopcar/addOne?sessionid=${localStorage.getItem("token")}&cid=${data.id}`;
-      this.$axios({
-        method: "get",
-        url: apiurl
-      })
+      shopcarAddOne({ cid: data.id })
         .then(res => {
-          this.$toast({
-            message: res.data.msg
-          });
+          this.$toast({ message: res.msg });
         })
         .catch(err => {
           console.log(err);
         });
+      // let apiurl = `/api/user/shopcar/addOne?sessionid=${localStorage.getItem(
+      //   "token"
+      // )}&cid=${data.id}`;
+      // this.$axios({
+      //   method: "get",
+      //   url: apiurl
+      // })
+      //   .then(res => {
+      //     this.$toast({
+      //       message: res.data.msg
+      //     });
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //   });
     },
     // 减少一个到购物车
     minus(data) {
-      let apiurl = `/api/user/shopcar/subOne?sessionid=${localStorage.getItem("token")}&cid=${data.id}`;
-      this.$axios({
-        method: "get",
-        url: apiurl
-      })
+      shopcarSubOne({ cid: data.id })
         .then(res => {
-          this.$toast({message: res.data.msg});
+          this.$toast({ message: res.data.msg });
         })
         .catch(err => {
           console.log(err);
         });
+      // let apiurl = `&cid=${data.id}`;
+      // this.$axios({
+      //   method: "get",
+      //   url: apiurl
+      // })
+      //   .then(res => {
+      //     this.$toast({ message: res.data.msg });
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //   });
     }
   },
 

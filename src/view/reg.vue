@@ -55,7 +55,7 @@ export default {
   },
   created() {
     // let code = window.location.search.split('=')[1].split('&')[0];
-    localStorage.setItem("token", "c20526e9-d8e8-4841-8f47-4652b67ee1ef");
+    localStorage.setItem("token", "ebeddcfd-e089-4524-86b9-58b0fd54bef5");
     this.goosList()
     // this.onSubmit(code)
   },

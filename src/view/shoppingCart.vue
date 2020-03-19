@@ -38,7 +38,22 @@
     </div>
 
     <van-popup v-model="isShow" position="top" class="overlay80vh" :overlay="true">
-      <van-address-list v-model="chosenAddressId" :list="addressList" @add="onAdd" @edit="onEdit" />
+      <ul class="addressul">
+        <li :class="addressliact == index ? 'addressliact': 'addressli'" v-for="(item,index) in addressList" :key="item.id" @click="addressclick(index)" >
+          <div class="addressli1">
+            <div>
+              <span>{{item.name}}</span>
+              <span>{{item.phone}}</span>
+            </div>
+            <div>{{item.sid}}{{item.bid}}{{item.detailAddress}}</div>
+          </div>
+          <div class="addressli2">
+            <van-icon name="edit" />
+          </div>
+        </li>
+      </ul>
+      <div class="addresssub" @click="onAdd">新增地址</div>
+      <!-- <van-address-list v-model="chosenAddressId" :list="addressList1" @add="onAdd" @edit="onEdit" /> -->
     </van-popup>
     <!--新增地址-->
     <van-popup
@@ -49,18 +64,8 @@
       :overlay="true"
     >
       <van-form>
-        <van-field
-          v-model="address.name"
-          name="姓名"
-          label="姓名"
-          placeholder="姓名"
-        />
-        <van-field
-          v-model="address.phone"
-          name="电话"
-          label="电话"
-          placeholder="电话"
-        />
+        <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名" />
+        <van-field v-model="address.phone" name="电话" label="电话" placeholder="电话" />
         <van-field
           readonly
           clickable
@@ -95,12 +100,7 @@
             @cancel="LHshowPicker = false"
           />
         </van-popup>
-        <van-field
-          v-model="address.detailAddress"
-          name="详细地址"
-          label="详细地址"
-          placeholder="详细地址"
-        />
+        <van-field v-model="address.detailAddress" name="详细地址" label="详细地址" placeholder="详细地址" />
         <div style="margin: 16px;">
           <van-button round block type="info" native-type="submit" @click="addressSubmit">提交</van-button>
         </div>
@@ -122,6 +122,7 @@ export default {
   name: "shoppingCart",
   data() {
     return {
+      addressliact:0,
       isShow: false, // 选中地址
       addShow: false, // 新增地址
       XXcolumns: [], // 学校地址
@@ -151,9 +152,13 @@ export default {
   },
   created() {
     this.shoppingCarList();
-    this.getUserAddress()
+    this.getUserAddress();
   },
   methods: {
+    // 选择地址
+    addressclick (index) {
+      this.addressliact = index
+    },
     // 获取学校
     getSchools() {
       getSchools({})
@@ -195,6 +200,7 @@ export default {
     },
     onAdd() {
       this.addShow = true;
+      this.isShow = false
       this.getSchools();
     },
     onEdit(item, index) {
@@ -225,27 +231,27 @@ export default {
     },
     // 提交地址
     addressSubmit() {
-      if (this.address.name == ''){
-        this.$toast({message:'请填写名字'})
-        return false
+      if (this.address.name == "") {
+        this.$toast({ message: "请填写名字" });
+        return false;
       }
-      if (this.address.phone == ''){
-        this.$toast({message:'请填写电话'})
-        return false
+      if (this.address.phone == "") {
+        this.$toast({ message: "请填写电话" });
+        return false;
       }
-      if (this.address.sid == ''){
-        this.$toast({message:'请选择学校'})
-        return false
+      if (this.address.sid == "") {
+        this.$toast({ message: "请选择学校" });
+        return false;
       }
-      if (this.address.bid == ''){
-        this.$toast({message:'请选择楼号'})
-        return false
+      if (this.address.bid == "") {
+        this.$toast({ message: "请选择楼号" });
+        return false;
       }
-      if (this.address.detailAddress == ''){
-        this.$toast({message:'请填写想写地址'})
-        return false
+      if (this.address.detailAddress == "") {
+        this.$toast({ message: "请填写想写地址" });
+        return false;
       }
-      
+
       addNewAddress({
         name: this.address.name,
         phone: this.address.phone,
@@ -256,9 +262,9 @@ export default {
         .then(res => {
           console.log(res);
           if (res.code == 0) {
-            this.$toast({message:res.msg})
-            this.getUserAddress()
-            this.addShow = false
+            this.$toast({ message: res.msg });
+            this.getUserAddress();
+            this.addShow = false;
           }
         })
         .catch(err => {
@@ -272,7 +278,7 @@ export default {
           if (res.code == 0) {
             this.addressList = res.data;
           }
-          console.log(this.addressList)
+          console.log(this.addressList);
         })
         .catch(err => {});
     },
@@ -524,11 +530,60 @@ input {
 .overlay80vh {
   // height:50vh;
 }
-.van-address-list {
-  position: relative;
+.addressul {
+  overflow: auto;
+  background: #f3f3f3;
+}
+.addressli {
+  width: 95%;
+  margin: auto;
+  background: #ffffff;
+  padding: 10px;
+  box-sizing: border-box;
+  margin-top: 10px;
+  border-radius: 5px;
   overflow: hidden;
+  border: 1px solid #cccccc;
 }
-.van-address-list__bottom {
-  position: absolute;
+.addressliact{
+  width: 95%;
+  margin: auto;
+  background: #ffffff;
+  padding: 10px;
+  box-sizing: border-box;
+  margin-top: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #cccccc;
+  border-color: rgb(255, 0, 0);
 }
+.addressli1 {
+  width: 80%;
+  float: left;
+}
+.addressli2 {
+  float: right;
+  margin-top: 18px;
+}
+.addresssub{
+  width: 60%;
+  height: 40px;
+  margin: auto;
+  text-align: center;
+  line-height: 40px;
+  margin-top: 10px;
+  color: #ffffff;
+  background: rgb(255, 0, 0);
+  border-radius: 50px;
+}
+.van-popup{
+  padding-bottom: 10px;
+}
+// .van-address-list {
+//   position: relative;
+//   overflow: hidden;
+// }
+// .van-address-list__bottom {
+//   position: absolute;
+// }
 </style>
