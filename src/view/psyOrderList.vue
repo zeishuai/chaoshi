@@ -21,6 +21,7 @@
 </template>
 
 <script>
+  import {getOrderInBuilding} from "@/request/api"
   export default {
     name: "psyOrderList",
     data() {
@@ -76,16 +77,16 @@
         ]
       }
     },
+    created() {
+      this.getOrderInBuilding()
+    },
     methods: {
-      // 返回
-      backClick(v) {
-        this.$router.push({path: 'my'})
-      },
-      showToast() {
-        this.$toast({
-          message: "取消成功",
+      // 列表
+      getOrderInBuilding(){
+        getOrderInBuilding({}).then(res => {
+          console.log(res)
         })
-      },
+      }
     }
   };
 </script>

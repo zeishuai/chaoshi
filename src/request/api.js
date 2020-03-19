@@ -9,7 +9,7 @@ import {
 export const shopcarList = p => get(`/api/user/shopcar/list?sessionid=${localStorage.getItem("token")}`, p);
 // 删除购物车
 export const delGoods = p => get(`/api/user/shopcar/clear?sessionid=${localStorage.getItem("token")}`, p)
-// 订单列表
+// 用户订单列表
 export const orderList = p => get(`/api/user/order/getOrderList?sessionid=${localStorage.getItem("token")}`, p)
 // 取消订单
 export const closeOrder = p => get(`/api/user/order/closeOrder?sessionid=${localStorage.getItem("token")}`, p)
@@ -23,6 +23,8 @@ export const getSchools = p => get(`/api/user/info/getSchools?sessionid=${localS
 export const getBuildingsBySchool = p => get(`/api/user/info/getBuildingsBySchool?sessionid=${localStorage.getItem("token")}`, p)
 // 新增地址
 export const addNewAddress = p => post(`/api/user/info/addNewAddress?sessionid=${localStorage.getItem("token")}`, p)
+//修改地址
+export const updateAddress = p =>post(`/api/user/info/updateAddress?sessionid=${localStorage.getItem("token")}`,p)
 // 登录
 export const loginByCode = p => get(`/api/system/wxfdb0d4b10b8496bf/loginByCode`, p)
 // 商品分类
@@ -33,3 +35,9 @@ export const commodityList = p => get(`/api/user/shop/commodity/list?sessionid=$
 export const shopcarAddOne = p => get(`/api/user/shopcar/addOne?sessionid=${localStorage.getItem("token")}`,p)
 // 减少购物车
 export const shopcarSubOne = p => get(`/api/user/shopcar/subOne?sessionid=${localStorage.getItem("token")}`,p)
+// 支付
+export const shopcarpay = p => post(`/api/user/shopcar/pay?sessionid=${localStorage.getItem("token")}`,p)
+// 获取用户信息
+export const getUserInfo = p => get(`/api/user/info/getInfo?sessionid=${localStorage.getItem("token")}`,p)
+// 楼长订单列表
+export const getOrderInBuilding = p => get(`/api/user/building/getOrderInBuilding?sessionid=${localStorage.getItem("token")}`,p)

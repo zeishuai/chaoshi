@@ -36,72 +36,114 @@ const router = new Router({
     {
       path: '/index',
       name: 'index',
-      component: index
+      component: index,
+      meta:{
+        requireLogin:true
+      }
     },
     {
       path: '/shoppingCart',
       name: 'shoppingCart',
-      component: shoppingCart
+      component: shoppingCart,
+      meta:{
+        requireLogin:true
+      }
     },
     {
       path: '/express',
       name: 'express',
-      component: express
+      component: express,
+      meta:{
+        requireLogin:true
+      }
     },
     {
       path: '/my',
       name: 'my',
-      component: my
+      component: my,
+      meta:{
+        requireLogin:true
+      }
     },
     {
       path: '/payment',
       name: 'payment',
-      component: payment
+      component: payment,
+      meta:{
+        requireLogin:true
+      }
     },
     {
       path: '/receiving',
       name: 'receiving',
-      component: receiving
+      component: receiving,
+      meta:{
+        requireLogin:true
+      }
     },
     {
       path: '/evaluated',
       name: 'evaluated',
-      component: evaluated
+      component: evaluated,
+      meta:{
+        requireLogin:true
+      }
     },
     {
       path: '/myOrder',
       name: 'myOrder',
-      component: myOrder
+      component: myOrder,
+      meta:{
+        requireLogin:true
+      }
     },
     {
       path: '/getGoodsPrice',
       name: 'getGoodsPrice',
-      component: getGoodsPrice
+      component: getGoodsPrice,
+      meta:{
+        requireLogin:true
+      }
     },
     {
       path: '/kdPayment',
       name: 'kdPayment',
-      component: kdPayment
+      component: kdPayment,
+      meta:{
+        requireLogin:true
+      }
     },
     {
       path: '/kdDdFh',
       name: 'kdDdFh',
-      component: kdDdFh
+      component: kdDdFh,
+      meta:{
+        requireLogin:true
+      }
     },
     {
       path: '/kdRecording',
       name: 'kdRecording',
-      component: kdRecording
+      component: kdRecording,
+      meta:{
+        requireLogin:true
+      }
     },
     {
       path:'/psyOrderList',
       name:'psyOrderList',
-      component:psyOrderList
+      component:psyOrderList,
+      meta:{
+        requireLogin:true
+      }
     },
     {
       path:'/address_list',
       name:'address_list',
-      component:address_list
+      component:address_list,
+      meta:{
+        requireLogin:true
+      }
     }
   ]
 })

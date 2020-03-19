@@ -4,29 +4,32 @@
       <ul>
         <li v-for="(item,index) in goodsList" :key="item.id">
           <div class="payment-li-number">
-            <span>订单号:sm1231323423423</span>
-            <span>已取消</span>
+            <span>订单号:{{item.id}}</span>
+            <span>待付款</span>
           </div>
-          <div class="payment-li-des">
+          <div class="payment-li-des" v-for="val in item.commbak" :key="val.id">
             <div class="payment-li-desimg">
               <van-image
                 width="70"
                 height="70"
                 radius="10"
-                :src="item.url"
+                :src="val.pic"
               />
             </div>
             <div class="payment-des-txt">
-              <div>{{item.des}}</div>
-              <div>¥{{item.money}} x {{item.number}}</div>
+              <div>{{val.name}}</div>
+              <div>¥{{val.price}} x {{val.count}}</div>
             </div>
           </div>
           <div class="totalTxt">
-            <p>共{{item.number}}件商品</p>
-            <p>合计：<span>¥{{item.money}}</span>（运费¥10.00）</p>
+<!--            <p>共{{item.number}}件商品</p>-->
+            <div>
+              合计：
+              <span>¥{{item.totalPrice}}</span>
+            </div>
           </div>
           <div class="payment-btu">
-            <span @click="showToast">取消订单</span>
+            <span @click="closeOrder(item)">取消订单</span>
             <span>付款</span>
           </div>
         </li>
@@ -36,6 +39,7 @@
 </template>
 
 <script>
+  import { orderList,closeOrder } from "@/request/api";
   export default {
     name: "payment",
     data() {
@@ -86,15 +90,40 @@
         ]
       }
     },
+    created() {
+      this.orderList()
+    },
     methods: {
-      // 返回
-      backClick(v) {
-        this.$router.push({path: 'my'})
-      },
-      showToast() {
-        this.$toast({
-          message: "取消成功",
+      orderList(){
+        orderList({status:0}).then({}).then(res => {
+          if (res.code == 0) {
+            for (let i = 0; i < res.data.length; i++) {
+              let nesarry = eval(res.data[i].commbak);
+              res.data[i].commbak = nesarry;
+              this.goodsList = res.data;
+            }
+          }
+        }).catch(err => {
+          console.log(err)
         })
+      },
+      // 取消订单
+      closeOrder(data) {
+        closeOrder({ orderid: data.id })
+          .then(res => {
+            console.log(res);
+            if (res.code == 0) {
+              this.$toast({ message: res.msg });
+              setTimeout(() => {
+                this.orderList()
+              },500)
+            } else {
+              this.$toast({ message: res.msg });
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
       },
     }
   };
@@ -138,8 +167,8 @@
   .payment-li-des {
     margin-top: 20px;
     display: flex;
-    border-bottom: 2px solid #EFEFEF;
-    padding-bottom: 20px;
+    /*border-bottom: 2px solid #EFEFEF;*/
+    padding-bottom: 10px;
     box-sizing: border-box;
   }
 
@@ -167,6 +196,9 @@
   }
 
   .totalTxt {
+    padding-top: 5px;
+    box-sizing: border-box;
+    border-top: 1px solid #EFEFEF;
     margin-top: 8px;
     display: flex;
     justify-content: space-between;
@@ -187,7 +219,7 @@
   }
 
   .payment-btu {
-    margin-top: 10px;
+    /*margin-top: 10px;*/
     display: flex;
     justify-content: flex-end;
     font-size: 14px

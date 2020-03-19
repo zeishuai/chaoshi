@@ -3,12 +3,12 @@
     <div class="myBox">
       <div class="personalInfo">
         <div class="personal-msg">
-          <img src="https://dss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=353880733,1906579484&fm=26&gp=0.jpg" alt="">
+          <img :src="userInfo.avatar" alt="">
           <div class="personal-msg-des">
-            <div>johnny</div>
+            <div>{{userInfo.userName}}</div>
             <div>普通会员</div>
           </div>
-<!--          <div class="personal-text">个人中心</div>-->
+          <!--          <div class="personal-text">个人中心</div>-->
         </div>
         <!--        <div class="personalInfo-MoneyClass">-->
         <!--          <ul>-->
@@ -30,22 +30,14 @@
       <div class="mySnacks">
         <p class="mySnacks-title">我的零食</p>
         <div>
-          <!--          <van-grid :border="false" icon-size="40px">-->
-          <!--            <van-grid-item icon="point-gift-o" to="welfare" style="color: red;" dot text="我的赠品"/>-->
-          <!--            <van-grid-item icon="shop-collect-o" @click="openNear()" style="color: rgb(114, 50, 221);"-->
-          <!--                           text="附近门店"/>-->
-          <!--            <van-grid-item icon="todo-list-o" :to="{name:'StoresOrder',params: {types: 1}}"-->
-          <!--                           style="color: #ff976a;" text="预约订单"/>-->
-          <!--            <van-grid-item icon="phone-circle-o" @click="callFunc" style="color: #1989fa;" text="常见问题"/>-->
-          <!--          </van-grid>-->
           <van-grid :border="false" icon-size="30px">
-            <van-grid-item icon="gold-coin-o" to="payment" text="待付款" />
-            <van-grid-item icon="bag-o" to="receiving" text="待收货" />
-            <van-grid-item icon="comment-circle-o" to="evaluated" text="待评价" />
-            <van-grid-item icon="refund-o" to="getGoodsPrice" text="退货/退款" />
-            <van-grid-item icon="notes-o" to="myOrder" text="我的订单" />
-            <van-grid-item icon="bill-o" text="储值活动" />
-            <van-grid-item icon="bill-o" to="psyOrderList" text="订单配送" />
+            <van-grid-item icon="gold-coin-o" to="payment" text="待付款"/>
+            <van-grid-item icon="bag-o" to="receiving" text="待收货"/>
+            <!--  <van-grid-item icon="comment-circle-o" to="evaluated" text="待评价" />-->
+            <!--  <van-grid-item icon="refund-o" to="getGoodsPrice" text="退货/退款" />-->
+            <van-grid-item icon="notes-o" to="myOrder" text="我的订单"/>
+            <van-grid-item icon="bill-o" text="储值活动"/>
+            <van-grid-item icon="bill-o" to="psyOrderList" text="订单配送"/>
           </van-grid>
         </div>
       </div>
@@ -53,9 +45,9 @@
         <p class="mySnacks-title">我的快递</p>
         <div>
           <van-grid :border="false" icon-size="40px">
-            <van-grid-item icon="paid" to="kdPayment" text="待付款" />
-            <van-grid-item icon="exchange" to="kdDdFh" text="等待发达" />
-            <van-grid-item icon="records" to="kdRecording" text="订单记录" />
+            <van-grid-item icon="paid" to="kdPayment" text="待付款"/>
+            <van-grid-item icon="exchange" to="kdDdFh" text="等待发达"/>
+            <van-grid-item icon="records" to="kdRecording" text="订单记录"/>
           </van-grid>
         </div>
       </div>
@@ -64,22 +56,38 @@
 </template>
 
 <script>
+  import {getUserInfo} from '@/request/api'
 
   export default {
     name: "user",
     data() {
       return {
+        userInfo: {}
       }
     },
+    created() {
+      this.getUserInfo()
+    },
     methods: {
+      getUserInfo() {
+        getUserInfo({}).then(res => {
+          console.log(res)
+          if (res.code == 0) {
+            this.userInfo = res.data
+          }
+        }).catch(err => {
+          console.log(err)
+        })
+      }
     }
   };
 </script>
 
 <style scoped type="text/css">
-  .my{
+  .my {
     background: #f7f8fa;
   }
+
   .myBox {
     width: 100%;
     height: auto;
@@ -191,7 +199,8 @@
     font-size: 16px;
     font-weight: bold;
   }
-  .mySnacks-title::before{
+
+  .mySnacks-title::before {
     width: 4px;
     height: 15px;
     content: '';
@@ -199,11 +208,13 @@
     display: inline-block;
     margin-right: 10px;
   }
-  .mySnacks-title-list{
+
+  .mySnacks-title-list {
     display: flex;
-    flex-wrap:wrap;
+    flex-wrap: wrap;
   }
-  .my >>> .van-grid-item__text{
+
+  .my >>> .van-grid-item__text {
     color: #000000;
   }
 </style>

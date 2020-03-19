@@ -1,76 +1,65 @@
 <template>
   <div class="login">
-    <!-- <van-form @submit="onSubmit">
-      <div>
-        <van-field
-          v-model="username"
-          name="用户名"
-          label="用户名"
-          placeholder="用户名"
-          :rules="[{ required: true, message: '请填写用户名' }]"
-        />
-        <van-field
-          v-model="password"
-          type="password"
-          name="密码"
-          label="密码"
-          placeholder="密码"
-          :rules="[{ required: true, message: '请填写密码' }]"
-        />
-      </div>
-      <div style="margin: 16px;">
-        <van-button round block type="info" style="background:rgb(255, 0, 0);border: none" native-type="submit">提交</van-button>
-        <div class="login-tips">没有帐号?
-          <router-link to="reg"><span>立即去注册</span></router-link>
-        </div>
-      </div>
-    </van-form> -->
-    <!-- <van-button @click="onSubmit" round block type="info" style="background:rgb(255, 0, 0);border: none" native-type="submit">登陆</van-button> -->
+    <van-row type="flex" justify="center" align="center">
+      <van-col span="10" style="margin-top: 30%">
+        <van-loading size="3rem" type="spinner" vertical color="#f00">
+          <span style="font-size: 1rem;color: #f00">登录中，请授权...</span>
+        </van-loading>
+      </van-col>
+    </van-row>
   </div>
 </template>
 
 <script>
-import urlencode from 'urlencode'
+  import urlencode from 'urlencode'
+
   export default {
-    name:'login',
+    name: 'reg',
     data() {
-      return {
-        username: '',
-        password: '',
-      };
+      return {};
     },
-    created () {
-      localStorage.setItem('token','8b1c5c80-d5fd-47c1-bd19-74a836309e1a')
-       this.onSubmit()
+    created() {
+      if (localStorage.getItem('token')){
+        return this.$router.push({path:'/index'})
+      }
+      this.onSubmit()
     },
     methods: {
       onSubmit() {
         //开始登录
-        // this.$router.push('reg')
-        if (localStorage.getItem('token')) {
-          this.$router.push('index')
-        }else{
-          let AppId = 'wxfdb0d4b10b8496bf';
-          let redirectUri = urlencode('http://ui.qdytcy.com/index');
-          let scope = 'snsapi_userinfo';
-          let wxUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize?';
-          let url = wxUrl + 'appid='+AppId+'&redirect_uri='+redirectUri+'&response_type=code&scope='+scope+'&state=STATE&#wechat_redirect';
-          window.location.href =url 
-        }
+        let AppId = 'wxfdb0d4b10b8496bf';
+        let redirectUri = urlencode('http://ui.qdytcy.com/reg');
+        let scope = 'snsapi_userinfo';
+        let wxUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize?';
+        let url = wxUrl + 'appid=' + AppId + '&redirect_uri=' + redirectUri + '&response_type=code&scope=' + scope + '&state=STATE&#wechat_redirect';
+        window.location.href = url
+        // // this.$router.push('reg')
+        // if (localStorage.getItem('token')) {
+        //   this.$router.push('index')
+        // }else{
+        //   let AppId = 'wxfdb0d4b10b8496bf';
+        //   let redirectUri = urlencode('http://ui.qdytcy.com/index');
+        //   let scope = 'snsapi_userinfo';
+        //   let wxUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize?';
+        //   let url = wxUrl + 'appid='+AppId+'&redirect_uri='+redirectUri+'&response_type=code&scope='+scope+'&state=STATE&#wechat_redirect';
+        //   window.location.href =url
+        // }
       },
     },
   };
 </script>
 
 <style scoped>
-  .login{
+  .login {
     margin: 40px 10px;
   }
-  .login-tips{
+
+  .login-tips {
     margin-top: 20px;
     font-size: 14px;
   }
-  .login-tips span{
-    color:rgb(255, 0, 0);
+
+  .login-tips span {
+    color: rgb(255, 0, 0);
   }
 </style>
