@@ -3,7 +3,8 @@
         <van-row class="shoppingItem" v-for="(item,index) in shoppingList" :key="item.id">
             <van-col span="2" @change="listenCheck">
                 <div style="margin: 33px auto auto 5px">
-                    <van-checkbox checked-color="#f00" v-model="shoppingList[index].isChecked" @change="listenCheck"></van-checkbox>
+                    <van-checkbox checked-color="#f00" v-model="shoppingList[index].isChecked"
+                                  @change="listenCheck"></van-checkbox>
                 </div>
             </van-col>
 
@@ -132,6 +133,7 @@
         shopcarpay
     } from "@/request/api";
     import WxPay from "@/request/WxPay";
+    import {weiXinConfig, weiXinPayConfig} from "../request/api";
 
     export default {
         name: "shoppingCart",
@@ -269,51 +271,91 @@
             },
             // 支付
             shopcarpay() {
-                shopcarpay({
-                    shops: this.shops,
-                    addressid: this.addressid
-                }).then(res => {
-                    if (res.code == 0) {
-                        this.$toast({message: '支付功能暂无开通~'})
-                        wx.config({
-                            debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-                            appId: res.data.appId, // 必填，公众号的唯一标识
-                            timestamp: '', // 必填，生成签名的时间戳
-                            nonceStr: '', // 必填，生成签名的随机串
-                            signature: '',// 必填，签名
-                            jsApiList: [] // 必填，需要使用的JS接口列表
-                        });
-                        wx.ready(function () {
-                            wx.chooseWXPay({
-                                timestamp: res.data.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-                                nonceStr: res.data.nonceStr, // 支付签名随机串，不长于 32 位
-                                package: res.data.packageValue, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
-                                signType: res.data.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-                                paySign: res.data.paySign, // 支付签名
-                                success: function (res) {
-                                    // 支付成功后的回调函数
-                                    console.log(res)
-                                },
-                                error: function (err) {
-                                    console.log(err)
-                                }
-                            });
-                        });
-                    }
-                }).catch(err => {
-
-                })
+                const payLoading = this.$toast.loading();
+                let configData = {};
+                let payConfig = {};
+                weiXinConfig({url: window.location.href})
+                    .then(res => {
+                        payLoading.clear();
+                        configData = res.data;
+                    })
+                    .then(step => {
+                        //获取支付参数
+                        weiXinPayConfig({shops: this.shops, addressid: this.addressid}).then(pay => {
+                            console.log('pay', pay)
+                        })
+                    })
+                    .then(startPay => {
+                        // wx.config({
+                        //     debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                        //     appId: configData.appId, // 必填，公众号的唯一标识
+                        //     timestamp: configData.timestamp, // 必填，生成签名的时间戳
+                        //     nonceStr: configData.nonceStr, // 必填，生成签名的随机串
+                        //     signature: configData.signature,// 必填，签名
+                        //     jsApiList: ['chooseWXPay'] // 必填，需要使用的JS接口列表
+                        // });
+                        // wx.ready(function () {
+                        //     wx.chooseWXPay({
+                        //         timestamp: res.data.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+                        //         nonceStr: res.data.nonceStr, // 支付签名随机串，不长于 32 位
+                        //         package: res.data.packageValue, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+                        //         signType: res.data.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+                        //         paySign: res.data.paySign, // 支付签名
+                        //         success: function (res) {
+                        //             // 支付成功后的回调函数
+                        //             console.log(res)
+                        //         },
+                        //         error: function (err) {
+                        //             console.log(err)
+                        //         }
+                        //     });
+                        // });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        payLoading.clear();
+                    });
+                // shopcarpay({
+                //     shops: this.shops,
+                //     addressid: this.addressid
+                // }).then(res => {
+                //     if (res.code == 0) {
+                //         this.$toast({message: '支付功能暂无开通~'})
+                //         wx.config({
+                //             debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                //             appId: res.data.appId, // 必填，公众号的唯一标识
+                //             timestamp: '', // 必填，生成签名的时间戳
+                //             nonceStr: '', // 必填，生成签名的随机串
+                //             signature: '',// 必填，签名
+                //             jsApiList: [] // 必填，需要使用的JS接口列表
+                //         });
+                //         wx.ready(function () {
+                //             wx.chooseWXPay({
+                //                 timestamp: res.data.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+                //                 nonceStr: res.data.nonceStr, // 支付签名随机串，不长于 32 位
+                //                 package: res.data.packageValue, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+                //                 signType: res.data.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+                //                 paySign: res.data.paySign, // 支付签名
+                //                 success: function (res) {
+                //                     // 支付成功后的回调函数
+                //                     console.log(res)
+                //                 },
+                //                 error: function (err) {
+                //                     console.log(err)
+                //                 }
+                //             });
+                //         });
+                //     }
+                // }).catch(err => {
+                //
+                // })
             },
             // 选择地址
             addressclick(index) {
-                this.addressliact = index // addressid
-                for (let i = 0; i < this.addressList.length; i++) {
-                    this.addressid = this.addressList[index].id
-                }
-                this.isShow = false
-                setTimeout(() => {
-                    this.shopcarpay()
-                }, 1000)
+                this.addressliact = index;
+                this.addressid = this.addressList[index].id;
+                this.isShow = false;
+                this.shopcarpay();
             },
             // 获取学校
             getSchools() {
@@ -446,22 +488,6 @@
                     .catch(err => {
                         //  console.log(err)
                     });
-                // let apiurl = `/api/user/shopcar/list?sessionid=${localStorage.getItem("token")}`
-                // this.$axios({
-                //   method: "get",
-                //   url: apiurl
-                // })
-                //   .then(res => {
-                //     console.log(res)
-                //     this.shoppingList = res.data.data;
-                //     this.shoppingList.map(item => {
-                //       item.isSelect = false
-                //     })
-                //     console.log(this.shoppingList)
-                //   })
-                //   .catch(err => {
-                //     console.log(err);
-                //   });
             },
             // 选择商品
             selectGoods(item) {
@@ -518,11 +544,11 @@
                 }
                 let picid = []
                 for (let i = 0; i < this.shoppingList.length; i++) {
-                    if (this.shoppingList[i].isSelect) {
+                    if (this.shoppingList[i].isChecked) {
                         picid.push(this.shoppingList[i].id)
                     }
                 }
-                this.shops = picid.toString()
+                this.shops = picid.join(',');
                 for (let i = 0; i < this.addressList.length; i++) {
                     this.addressid = this.addressList[this.addressliact].id
                 }

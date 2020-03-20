@@ -10,8 +10,9 @@
             </van-col>
             <van-col span="18">
                 <div class style="padding-top: 10px;background: #fff;width: 100%">
-                    <van-skeleton v-if="goodsList.length < 1" title :row="3" />
-                    <div v-if="goodsList.length > 0" v-for="item in goodsList" :key="item.id" style="margin-bottom: 20px;overflow: hidden">
+                    <van-skeleton v-if="goodsList.length < 1" title :row="3"/>
+                    <div v-if="goodsList.length > 0" v-for="item in goodsList" :key="item.id"
+                         style="margin-bottom: 20px;overflow: hidden">
                         <van-row>
                             <van-col span="7">
                                 <van-image width="100%" height="70" style="overflow: hidden" :src="item.pic"/>
@@ -23,12 +24,17 @@
                                         <span>{{item.specification}}</span>
                                     </div>
                                     <div class="goodsTxt" style="display: flex;">
-              <span
-                  style="line-height: 30px;width: 40%;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgb(255, 0, 0);;font-size: 16px;font-weight: 600"
-              >¥{{item.price}}</span>
-                                        <van-stepper v-model="item.vald" min="0" default-value="0" @minus="minus(item)"
-                                                     @plus="plus(item)"
-                                                     disable-input/>
+<!--                                        <span style="line-height: 30px;width: 40%;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgb(255, 0, 0);;font-size: 16px;font-weight: 600" >¥{{item.price}}</span>-->
+<!--                                        <van-stepper v-model="item.vald" min="0" default-value="0"-->
+<!--                                                     @minus.native="minus(item)"-->
+<!--                                                     @plus.native="plus(item)"-->
+<!--                                                     disable-input/>-->
+                                        <van-stepper
+                                            v-model="item.vald" min="0" default-value="0"
+                                            :value="item.vald"
+                                            async-change
+                                            @change.native="onChangeSteps"
+                                        />
                                     </div>
                                 </div>
                             </van-col>
@@ -49,6 +55,7 @@
         components: {Loding},
         data() {
             return {
+                value:'',
                 isloding: true,
                 activeKey: 0,
                 inputValue: 1,
@@ -104,7 +111,11 @@
                     });
             },
             // 添加一个到购物车
+            onChangeSteps(res){
+                console.log(res);
+            },
             plus(data) {
+                console.log('plus', data);
                 shopcarAddOne({cid: data.id})
                     .then(res => {
                         this.$toast({message: res.msg});

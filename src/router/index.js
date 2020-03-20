@@ -16,6 +16,7 @@ const kdDdFh = () => import ('@/view/kdDdFh')
 const kdRecording = () => import ('@/view/kdRecording')
 const psyOrderList = () => import('@/view/psyOrderList')
 const address_list = () => import('@/view/address_list')
+const reLogin = () => import('@/view/relogin')
 
 Vue.use(Router)
 
@@ -31,6 +32,11 @@ const router = new Router({
       path: '/reg',
       name: 'reg',
       component: reg
+    },
+    {
+      path: '/relogin',
+      name: 'reLogin',
+      component: reLogin
     },
     {
       path: '/index',

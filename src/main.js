@@ -7,20 +7,28 @@ import Vant from 'vant'
 import 'vant/lib/index.css'
 // import 'amfe-flexible'
 import Urlencode from 'urlencode'
-Vue.use(Urlencode)
-Vue.use(Vant)
-
 import FastClick from 'fastclick'
+import * as fundebug from "fundebug-javascript";
+import fundebugVue from "fundebug-vue";
+
+Vue.use(Urlencode);
+Vue.use(Vant);
+
+
+fundebug.apikey = "a91d1c7383aa70c26e4f21b1011c566e83475add3e652f562706915fab82c612";
+fundebugVue(fundebug, Vue);
 
 FastClick.attach(document.body);
 
 Vue.config.productionTip = false;
 
 import api from './api/api'
+
 Vue.prototype.ApiUrl = api;
 
 import axios from 'axios'
 import qs from 'qs'
+
 Vue.prototype.$axios = axios    //全局注册，使用方法为:this.$axios
 Vue.prototype.qs = qs           //全局注册，使用方法为:this.qs
 
@@ -31,7 +39,7 @@ router.beforeEach((to, from, next) => {
     // 如果判断出to.matched中某个路由里有meta.requiredAuth
     if (to.matched.some(route => route.meta.requireLogin)) {
         // 判断是否已经登录
-      let token = localStorage.getItem('token');
+        let token = localStorage.getItem('token');
         if (token) {
             next()
         } else {
@@ -55,7 +63,7 @@ router.afterEach((to, from) => {
         if (window.entryUrl == '' || window.entryUrl == undefined) {
             var url = `${FRONT_BASE}${to.fullPath}`;
             window.entryUrl = url;    // 将后面的参数去除
-            window.history.pushState({},null,url);
+            window.history.pushState({}, null, url);
         }
     }
 })
@@ -63,8 +71,8 @@ router.afterEach((to, from) => {
 
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
-  router,
-  components: { App },
-  template: '<App/>'
+    el: '#app',
+    router,
+    components: {App},
+    template: '<App/>'
 })
