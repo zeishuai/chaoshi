@@ -1,49 +1,37 @@
 <template>
     <div class="index" style="background: #FAFAFA;overflow: hidden">
         <van-row>
-            <van-col span="5">
-                <div style="position: fixed;left: 0;z-index: 9999999;width: 100%">
-                    <van-sidebar v-model="activeKey" @change="onChange">
-                        <van-sidebar-item v-for="item in arrs" :title="item.name" :key="item.id"/>
-                    </van-sidebar>
-                </div>
+            <van-col span="6">
+                <van-sidebar v-model="activeKey" @change="onChange">
+                    <van-sidebar-item v-for="item in arrs" :title="item.name" :key="item.id"/>
+                </van-sidebar>
             </van-col>
-            <van-col span="18">
-                <div class style="padding-top: 10px;background: #fff;width: 100%">
-                    <van-skeleton v-if="goodsList.length < 1" title :row="3"/>
-                    <div v-if="goodsList.length > 0" v-for="item in goodsList" :key="item.id"
-                         style="margin-bottom: 20px;overflow: hidden">
-                        <van-row>
-                            <van-col span="7">
-                                <van-image width="100%" height="70" style="overflow: hidden" :src="item.pic"/>
-                            </van-col>
-                            <van-col span="17">
-                                <div class="goodsTxtBox">
-                                    <div class="goodsTxt">{{item.name}}</div>
-                                    <div class="goodsTxt" style="color: #0000007a;font-size: 12px">
-                                        <span>{{item.specification}}</span>
-                                    </div>
-                                    <div class="goodsTxt" style="display: flex;">
-<!--                                        <span style="line-height: 30px;width: 40%;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgb(255, 0, 0);;font-size: 16px;font-weight: 600" >¥{{item.price}}</span>-->
-<!--                                        <van-stepper v-model="item.vald" min="0" default-value="0"-->
-<!--                                                     @minus.native="minus(item)"-->
-<!--                                                     @plus.native="plus(item)"-->
-<!--                                                     disable-input/>-->
-                                        <van-stepper
-                                            v-model="item.vald" min="0" default-value="0"
-                                            :value="item.vald"
-                                            async-change
-                                            @change.native="onChangeSteps"
-                                        />
-                                    </div>
-                                </div>
-                            </van-col>
-                        </van-row>
-                    </div>
-                </div>
+            <van-col span="18" style="background: #fafafa;height: 100%">
+                <van-skeleton v-if="goodsList.length < 1" title :row="10"/>
+                <van-row v-if="goodsList.length > 0" v-for="item in goodsList" :key="item.id" style="margin-bottom: 10px;background: #fff">
+                    <van-col span="7" style="padding-left:10px;padding-right:10px">
+                        <van-image width="100%" height="70" style="overflow: hidden" :src="item.pic"/>
+                    </van-col>
+                    <van-col span="17">
+                        <div class="goodsTxtBox">
+                            <div class="goodsTxt">{{item.name}}</div>
+                            <div class="goodsTxt" style="color: #0000007a;font-size: 12px">
+                                <span>{{item.specification}}</span>
+                            </div>
+                            <div class="goodsTxt" style="display: flex;">
+                                <span style="line-height: 30px;width: 40%;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgb(255, 0, 0);;font-size: 16px;font-weight: 600">¥{{item.price}}</span>
+                                <van-stepper
+                                    v-model="item.vald"
+                                    min="0" default-value="0"
+                                    async-change
+                                    @change="(value)=> onChangeSteps(item.id,value)"
+                                />
+                            </div>
+                        </div>
+                    </van-col>
+                </van-row>
             </van-col>
         </van-row>
-
     </div>
 </template>
 <script>
@@ -55,7 +43,7 @@
         components: {Loding},
         data() {
             return {
-                value:'',
+                value: '',
                 isloding: true,
                 activeKey: 0,
                 inputValue: 1,
@@ -73,6 +61,18 @@
             this.commodityList(this.cid);
         },
         methods: {
+            onChangeSteps(id,value) {
+                let addLoading = this.$toast.loading();
+                shopcarAddOne({cid: id}).then(res=>{
+                    addLoading.clear();
+                    if (res.code !== 0){
+                        this.$toast.fail(res.msg)
+                    }
+                }).catch(err=>{
+                    addLoading.clear();
+                    console.log(err);
+                })
+            },
             onChange(val) {
                 this.arrs.map((item, index) => {
                     if (index == val) {
@@ -111,9 +111,6 @@
                     });
             },
             // 添加一个到购物车
-            onChangeSteps(res){
-                console.log(res);
-            },
             plus(data) {
                 console.log('plus', data);
                 shopcarAddOne({cid: data.id})

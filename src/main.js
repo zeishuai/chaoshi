@@ -14,7 +14,6 @@ import fundebugVue from "fundebug-vue";
 Vue.use(Urlencode);
 Vue.use(Vant);
 
-
 fundebug.apikey = "a91d1c7383aa70c26e4f21b1011c566e83475add3e652f562706915fab82c612";
 fundebugVue(fundebug, Vue);
 
