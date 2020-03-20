@@ -16,9 +16,6 @@ FastClick.attach(document.body);
 
 Vue.config.productionTip = false;
 
-import api from './api/api'
-Vue.prototype.ApiUrl = api;
-
 import axios from 'axios'
 import qs from 'qs'
 Vue.prototype.$axios = axios    //全局注册，使用方法为:this.$axios
