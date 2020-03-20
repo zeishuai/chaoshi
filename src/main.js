@@ -22,13 +22,6 @@ FastClick.attach(document.body);
 
 Vue.config.productionTip = false;
 
-<<<<<<< HEAD
-import api from './api/api'
-
-Vue.prototype.ApiUrl = api;
-
-=======
->>>>>>> 5f5b427ef4efd6e2ce9bc3af6a0af3c99e30de57
 import axios from 'axios'
 import qs from 'qs'
 
