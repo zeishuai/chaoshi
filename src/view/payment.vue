@@ -4,10 +4,10 @@
             <ul>
                 <li v-for="(item,index) in goodsList" :key="item.id">
                     <van-row>
-                        <van-col span="20">
+                        <van-col span="22">
                             <span class="order-no">订单号:{{item.id}}</span>
                         </van-col>
-                        <van-col span="4">
+                        <van-col span="2">
                             <van-tag plain v-if="item.status === -1">取消支付</van-tag>
                             <van-tag plain type="danger" v-if="item.status === 0">待付款</van-tag>
                             <van-tag plain type="warning" v-if="item.status === 1">等待派送</van-tag>
