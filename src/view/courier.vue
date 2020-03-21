@@ -79,17 +79,14 @@
             // 配送订单
             delivery(data) {
                 let loadingStatus = this.$toast.loading('数据加载中...');
-                let that = this;
                 editOrderStatus({orderid: data.id})
                     .then(res => {
                         loadingStatus.clear();
                         this.$toast({
                             message: res.msg,
-                            type: res.code === 0 ? 'success': 'fail',
-                            onClose(){
-                                that.orderList();
-                            }
+                            type: res.code === 0 ? 'success': 'fail'
                         });
+                        this.orderList();
                     })
                     .catch(err => {
                         loadingStatus.clear();
