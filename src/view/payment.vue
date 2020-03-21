@@ -3,18 +3,14 @@
         <div class="paymentBox">
             <ul>
                 <li v-for="(item,index) in goodsList" :key="item.id">
-                    <van-row>
-                        <van-col span="22">
-                            <span class="order-no">订单号:{{item.id}}</span>
-                        </van-col>
-                        <van-col span="2">
-                            <van-tag plain v-if="item.status === -1">取消支付</van-tag>
-                            <van-tag plain type="danger" v-if="item.status === 0">待付款</van-tag>
-                            <van-tag plain type="warning" v-if="item.status === 1">等待派送</van-tag>
-                            <van-tag plain type="primary" v-if="item.status === 2">派送中</van-tag>
-                            <van-tag plain type="success" v-if="item.status === 3">已完成</van-tag>
-                        </van-col>
-                    </van-row>
+                    <div class="payment-li-number">
+                        <span class="order-no">订单号:{{item.id}}</span>
+                        <van-tag plain v-if="item.status === -1">取消支付</van-tag>
+                        <van-tag plain type="danger" v-if="item.status === 0">待付款</van-tag>
+                        <van-tag plain type="warning" v-if="item.status === 1">等待派送</van-tag>
+                        <van-tag plain type="primary" v-if="item.status === 2">派送中</van-tag>
+                        <van-tag plain type="success" v-if="item.status === 3">已完成</van-tag>
+                    </div>
                     <div class="payment-li-des">
                         <div class="payment-li-desimg">
                             <van-image
@@ -110,10 +106,9 @@
 
     .paymentBox li {
         background: #ffffff;
-        padding: 10px 6px 5px 10px;
+        padding: 5px 10px;
         box-sizing: border-box;
         margin-top: 10px;
-        font-size: 14px;
     }
 
     .payment-li-number {
@@ -122,8 +117,13 @@
     }
 
     .order-no{
-        display: inline-block;
+        width: 198px;
+        overflow: hidden;
         font-size: 14px;
+        color: #cccccc;
+        overflow: hidden;
+        display: block;
+        height: 24px;
         color: #cccccc;
     }
     .payment-li-des {

@@ -89,18 +89,15 @@
         </div>
 
         <van-popup v-model="isShow" position="bottom"
-                   :style="{ height: '50%' }" round closeable >
-            <ul class="addressul">
-
-                <van-address-list
-                    v-model="chosenAddressId"
-                    :list="addressList"
-                    default-tag-text="默认"
-                    @add="onAdd"
-                    @edit="updateAddressShow"
-                    @select="addressclick"
-                />
-            </ul>
+                   :style="{ height: '50%' }" round closeable :overlay="true">
+            <van-address-list
+                v-model="chosenAddressId"
+                :list="addressList"
+                default-tag-text="默认"
+                @add="onAdd"
+                @edit="updateAddressShow"
+                @select="addressclick"
+            />
 <!--            <div class="addresssub" @click="onAdd">新增地址</div>-->
         </van-popup>
         <!--新增地址-->
@@ -108,7 +105,9 @@
             v-model="addShow"
             position="bottom"
             class="overlay80vh"
-            round closeable
+            round
+            closeable
+
         >
             <van-form style="margin-top: 30px">
                 <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名"/>
