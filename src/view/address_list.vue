@@ -19,7 +19,7 @@
         >
             <van-form>
                 <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名"/>
-                <van-field v-model="address.phone" type="tel" name="电话" label="电话" placeholder="电话"/>
+                <van-field v-model="address.phone" type="tel" name="电话" :rules="[{ pattern, message: '手机号格式错误' }]" label="电话" placeholder="电话"/>
                 <van-field
                     readonly
                     clickable
@@ -74,6 +74,7 @@
     export default {
         data() {
             return {
+                pattern: /^1[3456789]\d{9}$/, // 正则验证
                 chosenAddressId: '',
                 list: [],
                 loading: true,
