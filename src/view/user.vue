@@ -14,12 +14,12 @@
             <div class="mySnacks">
                 <p class="mySnacks-title">我的零食</p>
                 <div>
-                    <van-grid :border="false" icon-size="30px">
+                    <van-grid icon-size="30px">
                         <van-grid-item icon="gold-coin-o" to="payment" text="待付款"/>
                         <van-grid-item icon="bag-o" to="receiving" text="待收货"/>
                         <van-grid-item icon="notes-o" to="myOrder" text="我的订单"/>
                         <van-grid-item v-if="userInfo.manager2 || userInfo.poster2" icon="todo-list-o"
-                                       to="psyOrderList" text="订单配送"/>
+                                       to="Courier" text="订单配送"/>
                         <van-grid-item icon="location-o" to="address_list" text="地址管理"/>
                     </van-grid>
                 </div>

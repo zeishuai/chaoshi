@@ -1,13 +1,14 @@
 <template>
-    <div class="payment-container">
-        <van-row type="flex" justify="center" v-if="goodsList.length < 1">
+    <div class="payment-conter">
+        <van-skeleton v-if="loadingStatus" title :row="10" />
+        <van-row type="flex" justify="center" v-if="orderLists.length < 1">
             <van-col span="8" style="margin-top: 20%">
                 <span>暂无数据...</span>
             </van-col>
         </van-row>
-        <div class="paymentBox" v-if="goodsList.length > 0">
+        <div class="paymentBox" v-if="!loadingStatus && orderLists.length > 0">
             <ul>
-                <li v-for="(item,index) in goodsList" :key="item.id">
+                <li v-for="item in orderLists" :key="item.id">
                     <div class="payment-li-number">
                         <span class="order-no">订单号:{{item.id}}</span>
                         <van-tag plain v-if="item.status === -1">取消支付</van-tag>
@@ -16,25 +17,19 @@
                         <van-tag plain type="primary" v-if="item.status === 2">派送中</van-tag>
                         <van-tag plain type="success" v-if="item.status === 3">已完成</van-tag>
                     </div>
-                    <div class="payment-li-des">
+                    <div class="payment-li-des" v-for="val in item.commbak" :key="val.id">
                         <div class="payment-li-desimg">
-                            <van-image
-                                width="70"
-                                height="70"
-                                radius="10"
-                                :src="item.commbak.pic"
-                            />
+                            <van-image width="70" height="70" radius="10" :src="val.pic"/>
                         </div>
                         <div class="payment-des-txt">
-                            <div>{{item.commbak.name}}</div>
-                            <div>¥{{item.commbak.price}} x {{item.commbak.count}}</div>
+                            <div>{{val.name}}</div>
+                            <div>¥{{val.price}} x {{val.count}}</div>
                         </div>
                     </div>
                     <div class="bottom">
                         <p class="totalTxt">合计：<span class="all-price">¥{{item.totalPrice}}</span></p>
                         <div class="payment-btu">
-                            <van-button type="danger" size="small" @click="closeOrder(item)">取消订单</van-button>
-                            <van-button type="primary" size="small" @click="confirmPay(item)">支付</van-button>
+                            <van-button type="danger" size="small" @click="delivery(item)">配送</van-button>
                         </div>
                     </div>
                 </li>
@@ -44,68 +39,74 @@
 </template>
 
 <script>
-    import {orderList, closeOrder} from "@/request/api";
+    import {getOrderInBuilding, closeOrder, finishOrder} from "@/request/api";
+    import {editOrderStatus} from "../request/api";
 
     export default {
-        name: "receiving",
+        name: "courier",
         data() {
             return {
-                title: '待收货',
+                title: "待付款",
                 show: false,
-                goodsList: []
-            }
+                rateValue: 3,
+                rateMessage: "",
+                orderLists: [],
+                loadingStatus: true
+            };
         },
         created() {
-            this.orderList()
+            this.orderList();
         },
         methods: {
+            // 订单列表
             orderList() {
-                this.goodsList = [];
-                let getLoading = this.$toast.loading('数据加载中...');
-                orderList({status: 2}).then({}).then(res => {
-                    getLoading.clear();
-                    if (res.code === 0 && res.data.length > 0) {
-                        for (let i in res.data) {
-                            res.data[i].commbak = eval(res.data[i].commbak)[0];
-                        }
-                        this.goodsList = res.data;
-                    }
-                }).catch(err => {
-                    getLoading.clear();
-                    console.log(err)
-                })
-            },
-            // 取消订单
-            closeOrder(data) {
-                let getLoading = this.$toast.loading('订单取消中...');
-                closeOrder({orderid: data.id})
+                getOrderInBuilding({status: 1})
                     .then(res => {
-                        getLoading.clear();
-                        if (res.code === 0 ) {
-                            this.orderList()
-                        } else {
-                            this.$toast.fail(res.msg);
+                        this.loadingStatus = false;
+                        if (res.code === 0) {
+                            for (let i = 0; i < res.data.length; i++) {
+                                let nesarry = eval(res.data[i].commbak);
+                                res.data[i].commbak = nesarry;
+                                this.orderLists = res.data;
+                            }
                         }
                     })
                     .catch(err => {
-                        getLoading.clear();
+                        this.loadingStatus = false;
                         console.log(err);
                     });
             },
-            confirmPay(data){
-
+            // 配送订单
+            delivery() {
+                let loadingStatus = this.$toast.loading('数据加载中...');
+                let that = this;
+                editOrderStatus({orderid: data.id})
+                    .then(res => {
+                        loadingStatus.clear();
+                        this.$toast({
+                            message: res.msg,
+                            type: res.code === 0 ? 'success': 'fail',
+                            onClose(){
+                                that.orderList();
+                            }
+                        });
+                    })
+                    .catch(err => {
+                        loadingStatus.clear();
+                        console.log(err);
+                    });
             }
         }
     };
 </script>
 
 <style scoped type="text/css">
-    .payment-container {
+    .payment-conter {
         height: auto;
         min-height: 700px;
         padding-bottom: 58px;
         box-sizing: border-box;
-        background: #EFEFEF;
+        background: #f7f8fa;
         overflow: hidden;
     }
 
@@ -113,7 +114,7 @@
         background: #ffffff;
         padding: 5px 10px;
         box-sizing: border-box;
-        margin-top: 10px;
+        margin-bottom: 10px;
     }
 
     .payment-li-number {
@@ -121,14 +122,31 @@
         justify-content: space-between;
     }
 
-    .order-no{
+    .order-no {
+        width: 198px;
+        overflow: hidden;
+        font-size: 14px;
+        color: #cccccc;
+        overflow: hidden;
+        display: block;
+        height: 24px;
+        color: #cccccc;
+    }
+
+    .payment-li-number span:nth-child(1) {
         font-size: 14px;
         color: #cccccc;
     }
+
+    .payment-li-number span:nth-child(2) {
+        font-size: 14px;
+        color: #f00;
+    }
+
     .payment-li-des {
         margin-top: 20px;
         display: flex;
-        /*border-bottom: 2px solid #EFEFEF;*/
+        border-bottom: 1px solid #efefef;
         padding-bottom: 10px;
         box-sizing: border-box;
     }
@@ -156,26 +174,29 @@
         margin-top: 15px;
     }
 
-    .bottom{
+    .bottom {
         height: 50px;
         overflow: hidden;
         box-sizing: border-box;
-        border-top: 1px solid #EFEFEF;
+        border-top: 1px solid #f1f1f1;
         display: flex;
         justify-content: space-between;
     }
-    .payment-btu{
+
+    .payment-btu {
         height: auto;
         overflow: hidden;
         margin-top: 14px;
     }
-    .totalTxt{
+
+    .totalTxt {
         float: left;
         line-height: 30px;
         margin-top: 14px;
         color: #444;
     }
-    .all-price{
+
+    .all-price {
         color: #f00;
     }
 </style>
