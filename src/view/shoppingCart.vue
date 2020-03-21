@@ -21,7 +21,7 @@
                     <van-row>
                         <van-swipe-cell :right-width="65" :left-width="0" :on-close='onClose'>
                             <van-cell-group>
-                                <van-col span="2" @change="listenCheck">
+                                <van-col span="2">
                                     <div style="margin: 33px auto auto 5px">
                                         <van-checkbox checked-color="#f00" v-model="shoppingList[index].isChecked"
                                                       @change="listenCheck"></van-checkbox>
@@ -225,39 +225,39 @@
         watch: {},
         methods: {
             // 添加一个到购物车
-            // plus(data) {
-            //     let addLoading = this.$toast.loading()
-            //     shopcarAddOne({cid: data.id})
-            //         .then(res => {
-            //             addLoading.clear();
-            //             if (res.code !== 0) {
-            //                 this.$toast.fail(res.msg)
-            //             }else {
-            //                 this.shoppingCarList()
-            //             }
-            //         })
-            //         .catch(err => {
-            //             addLoading.clear();
-            //             console.log(err);
-            //         });
-            // },
+            plus(data) {
+                let addLoading = this.$toast.loading();
+                shopcarAddOne({cid: data.cid})
+                    .then(res => {
+                        addLoading.clear();
+                        if (res.code !== 0) {
+                            this.$toast.fail(res.msg)
+                        } else {
+                            this.shoppingCarList()
+                        }
+                    })
+                    .catch(err => {
+                        addLoading.clear();
+                        console.log(err);
+                    });
+            },
             // // 减少一个到购物车
-            // minus(data) {
-            //     let addLoading = this.$toast.loading()
-            //     shopcarSubOne({cid: data.id})
-            //         .then(res => {
-            //             addLoading.clear();
-            //             if (res.code !== 0) {
-            //                 this.$toast.fail(res.msg)
-            //             }else {
-            //                 this.shoppingCarList()
-            //             }
-            //         })
-            //         .catch(err => {
-            //             addLoading.clear();
-            //             console.log(err);
-            //         });
-            // },
+            minus(data) {
+                let addLoading = this.$toast.loading()
+                shopcarSubOne({cid: data.cid})
+                    .then(res => {
+                        addLoading.clear();
+                        if (res.code !== 0) {
+                            this.$toast.fail(res.msg)
+                        } else {
+                            this.shoppingCarList()
+                        }
+                    })
+                    .catch(err => {
+                        addLoading.clear();
+                        console.log(err);
+                    });
+            },
             // 左滑删除
             onClose(clickPosition, instance) {
                 let e = window.event;
@@ -281,7 +281,6 @@
                 this.sum = tempMoney;
             },
             listenCheck() {
-                console.log('listen')
                 this.money();
                 //处理全选的问题
                 let allLength = this.shoppingList.length;
@@ -295,7 +294,6 @@
             },
             // 全选
             allChong(e) {
-                console.log(e);
                 this.checkedAll = !this.checkedAll;
                 if (this.checkedAll) {
                     for (let x in this.shoppingList) {
@@ -309,20 +307,20 @@
             },
             // 编辑地址
             updateAddressShow(data) {
-                this.addressSta = 2
-                this.address.id = data.id
-                this.address.name = data.name
-                this.address.phone = data.phone
-                this.address.sid = data.sid
-                this.address.bid = data.bid
-                this.address.detailAddress = data.detailAddress
-                this.address.school = data.sname
-                this.address.LH = data.bname
-                this.getSchools()
-                this.getBuildingsBySchool()
-                console.log(this.XXcolumns)
-                this.addShow = true
-                this.isShow = false
+                this.addressSta = 2;
+                this.address.id = data.id;
+                this.address.name = data.name;
+                this.address.phone = data.phone;
+                this.address.sid = data.sid;
+                this.address.bid = data.bid;
+                this.address.detailAddress = data.detailAddress;
+                this.address.school = data.sname;
+                this.address.LH = data.bname;
+                this.getSchools();
+                this.getBuildingsBySchool();
+                console.log(this.XXcolumns);
+                this.addShow = true;
+                this.isShow = false;
             },
             updateAddress() {
                 if (this.address.name == "") {
@@ -345,6 +343,7 @@
                     this.$toast({message: "请填写想写地址"});
                     return false;
                 }
+                let updateAddressLoading = this.$toast.loading('加载中...');
                 updateAddress({
                     id: this.address.id,
                     name: this.address.name,
@@ -353,14 +352,15 @@
                     bid: this.address.bid,
                     detailAddress: this.address.detailAddress
                 }).then(res => {
+                    updateAddressLoading.clear();
                     if (res.code == 0) {
-                        this.$toast({message: res.msg});
-                        this.addressSta = 1
+                        this.$toast.success({message: res.msg});
+                        this.addressSta = 1;
                         this.getUserAddress();
                         this.addShow = false;
                     }
                 }).catch(err => {
-
+                    updateAddressLoading.clear();
                 })
             },
             // 支付
@@ -375,9 +375,10 @@
                     })
                     .then(step => {
                         //获取支付参数
-                        weiXinPayConfig({shops: this.shops, addressid: this.addressid}).then(pay => {
-                            console.log('pay', pay)
-                        })
+                        //
+                        // weiXinPayConfig({shops: this.shops, addressid: this.addressid}).then(pay => {
+                        //     console.log('pay', pay)
+                        // })
                     })
                     .then(startPay => {
                         // wx.config({
@@ -650,12 +651,13 @@
                 }
                 delGoods({})
                     .then(res => {
-                        if (res.code == 0) {
-                            this.$toast({message: res.msg});
-                        }
-                        setTimeout(() => {
-                            this.shoppingCarList();
-                        }, 500);
+                        this.$toast({
+                            message: res.msg,
+                            type: res.code === 0 ? 'success' : 'fail',
+                            onClose() {
+                                this.shoppingCarList();
+                            }
+                        });
                     })
                     .catch(err => {
                         console.log(err);
