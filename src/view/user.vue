@@ -2,78 +2,39 @@
     <div class="my">
         <div class="myBox">
             <div class="personalInfo">
-                <div class="personal-msg">
+                <van-skeleton v-if="loadingUser" title avatar :row="2"/>
+                <div v-if="!loadingUser" class="personal-msg">
                     <img :src="userInfo.avatar" alt="">
                     <div class="personal-msg-des">
                         <div>{{userInfo.userName}}</div>
                         <div>{{memberText}}</div>
                     </div>
-                    <!--          <div class="personal-text">个人中心</div>-->
                 </div>
             </div>
-            <div v-if="memberText == '楼长'">
-                <div class="mySnacks">
-                    <p class="mySnacks-title">我的零食</p>
-                    <div>
-                        <van-grid :border="false" icon-size="30px">
-                            <van-grid-item icon="gold-coin-o" to="payment" text="待付款"/>
-                            <van-grid-item icon="bag-o" to="receiving" text="待收货"/>
-                            <van-grid-item icon="notes-o" to="myOrder" text="我的订单"/>
-                            <van-grid-item icon="bill-o" text="储值活动"/>
-                            <van-grid-item icon="todo-list-o" to="psyOrderList" text="订单配送"/>
-                            <van-grid-item icon="location-o" to="address_list" text="地址管理"/>
-                        </van-grid>
-                    </div>
-                </div>
-                <div class="mySnacks">
-                    <p class="mySnacks-title">我的快递</p>
-                    <div>
-                        <van-grid :border="false" icon-size="30px">
-                            <van-grid-item icon="paid" to="kdPayment" text="待付款"/>
-                            <van-grid-item icon="exchange" to="kdDdFh" text="等待发达"/>
-                            <van-grid-item icon="records" to="kdRecording" text="订单记录"/>
-                        </van-grid>
-                    </div>
+            <div class="mySnacks">
+                <p class="mySnacks-title">我的零食</p>
+                <div>
+                    <van-grid :border="false" icon-size="30px">
+                        <van-grid-item icon="gold-coin-o" to="payment" text="待付款"/>
+                        <van-grid-item icon="bag-o" to="receiving" text="待收货"/>
+                        <van-grid-item icon="notes-o" to="myOrder" text="我的订单"/>
+                        <van-grid-item v-if="userInfo.manager2 || userInfo.poster2" icon="todo-list-o"
+                                       to="psyOrderList" text="订单配送"/>
+                        <van-grid-item icon="location-o" to="address_list" text="地址管理"/>
+                    </van-grid>
                 </div>
             </div>
-            <div v-if="memberText == '配送员'">
-                <div class="mySnacks">
-                    <p class="mySnacks-title">我的零食</p>
-                    <div>
-                        <van-grid :border="false" icon-size="30px">
-                            <van-grid-item icon="gold-coin-o" to="payment" text="待付款"/>
-                            <van-grid-item icon="bag-o" to="receiving" text="待收货"/>
-                            <van-grid-item icon="notes-o" to="myOrder" text="我的订单"/>
-                            <van-grid-item icon="todo-list-o" to="psyOrderList" text="订单配送"/>
-                            <van-grid-item icon="bill-o" text="储值活动"/>
-                            <van-grid-item icon="location-o" to="address_list" text="地址管理"/>
-                        </van-grid>
-                    </div>
-                </div>
-                <div class="mySnacks">
-                    <p class="mySnacks-title">我的快递</p>
-                    <div>
-                        <van-grid :border="false" icon-size="30px">
-                            <van-grid-item icon="paid" to="kdPayment" text="待付款"/>
-                            <van-grid-item icon="exchange" to="kdDdFh" text="等待发达"/>
-                            <van-grid-item icon="records" to="kdRecording" text="订单记录"/>
-                            <van-grid-item icon="todo-list-o" to="psyOrderList" text="订单配送"/>
-                        </van-grid>
-                    </div>
-                </div>
-            </div>
-            <div v-else>
-                <div class="mySnacks">
-                    <p class="mySnacks-title">我的零食</p>
-                    <div>
-                        <van-grid :border="false" icon-size="30px">
-                            <van-grid-item icon="gold-coin-o" to="payment" text="待付款"/>
-                            <van-grid-item icon="bag-o" to="receiving" text="待收货"/>
-                            <van-grid-item icon="notes-o" to="myOrder" text="我的订单"/>
-                            <van-grid-item icon="bill-o" text="储值活动"/>
-                            <van-grid-item icon="location-o" to="address_list" text="地址管理"/>
-                        </van-grid>
-                    </div>
+            <div class="mySnacks">
+                <p class="mySnacks-title">我的快递</p>
+                <div>
+                    <van-grid :border="false" icon-size="30px">
+                        <van-grid-item icon="paid" to="kdPayment" text="待付款"/>
+                        <van-grid-item icon="exchange" to="kdDdFh" text="等待发达"/>
+                        <van-grid-item icon="records" to="kdRecording" text="订单记录"/>
+                        <van-grid-item v-if="userInfo.manager2 || userInfo.poster2"
+                                       icon="todo-list-o"
+                                       to="psyOrderList" text="快递配送"/>
+                    </van-grid>
                 </div>
             </div>
         </div>
@@ -88,7 +49,8 @@
         data() {
             return {
                 userInfo: {},
-                memberText:''
+                memberText: '普通会员',
+                loadingUser: true,
             }
         },
         created() {
@@ -96,22 +58,24 @@
         },
         methods: {
             getUserInfo() {
-                let loding = this.$toast.loading('加载中')
+                let loading = this.$toast.loading('加载中');
                 getUserInfo({}).then(res => {
-                    loding.clear()
-                    if (res.code == 0) {
-                        this.userInfo = res.data
-                        if(res.data.manager2){
-                            this.memberText = '楼长'
+                    loading.clear();
+                    this.loadingUser = false;
+                    if (res.code === 0) {
+                        this.userInfo = res.data;
+                        if (res.data.manager2 && res.data.poster2){
+                            return this.memberText = '楼长+配送员';
                         }
-                        else if(res.data.poster2){
-                            this.memberText = '配送员'
-                        }else{
-                            this.memberText = '普通会员'
+                        if (res.data.manager2) {
+                            return this.memberText = '楼长';
+                        }
+                        if (res.data.poster2) {
+                            return this.memberText = '配送员';
                         }
                     }
                 }).catch(err => {
-                    loding.clear()
+                    loading.clear();
                     console.log(err)
                 })
             }
@@ -133,7 +97,6 @@
         background: #EFEFEF;
         margin: auto;
         padding-bottom: 10px;
-        /*padding: 0 20px;*/
         box-sizing: border-box;
         overflow: hidden;
     }
@@ -141,16 +104,12 @@
     .personalInfo {
         width: 100%;
         height: 140px;
-        padding: 0 0 0px 10px;
+        padding: 6px 0 0 10px;
         box-sizing: border-box;
-        /*background: #F92272;*/
-        /*background: linear-gradient(to right, #0000003a,#0000003a, #0000004a, #0000007a);*/
-        background: #FF0036;
+        background: #f91440;
     }
 
     .personal-msg {
-        /*height: 60%;*/
-        /*border-bottom: 2px solid #ffffff;*/
         position: relative;
         padding-top: 30px;
         box-sizing: border-box;
@@ -170,22 +129,24 @@
     .personal-msg-des {
         float: left;
         margin-left: 10px;
-        margin-top: 15px;
+        margin-top: 6px;
+        overflow: hidden;
     }
 
     .personal-msg-des div:nth-child(1) {
         color: #ffffff;
-        font-size: 16px;
+        font-size: 1.2rem;
     }
 
     .personal-msg-des div:nth-child(2) {
-        color: #000000;
-        font-size: 14px;
-        padding: 0 5px;
+        color: #FF0036;
+        font-size: .8rem;
+        padding: 4px 5px;
         background: #ffffff;
         box-sizing: border-box;
-        border-radius: 10px;
-        margin-top: 5px;
+        border-radius: 14px;
+        margin-top: 10px;
+        text-align: center;;
     }
 
     .personal-text {

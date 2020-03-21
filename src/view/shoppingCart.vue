@@ -14,7 +14,7 @@
             </div>
             <div style="color: #444;text-align: center">购物车空空如也</div>
             <div style="margin: auto;text-align: center;margin-top: 10px">
-                <van-button size="small" plain type="default" color="#f00">去购物</van-button>
+                <van-button size="small" plain type="default" color="#f00" @click="$router.push({path:'/index'})">去购物</van-button>
             </div>
         </div>
         <div class="goodsTxt">
