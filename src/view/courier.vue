@@ -1,6 +1,6 @@
 <template>
     <div class="payment-conter">
-        <van-skeleton v-if="loadingStatus" title :row="10" />
+        <van-skeleton v-if="loadingStatus" title :row="10"/>
         <van-row type="flex" justify="center" v-if="orderLists.length < 1">
             <van-col span="8" style="margin-top: 20%">
                 <span>暂无数据...</span>
@@ -69,6 +69,8 @@
                                 res.data[i].commbak = nesarry;
                                 this.orderLists = res.data;
                             }
+                        }else{
+                            this.orderLists = [];
                         }
                     })
                     .catch(err => {
@@ -79,14 +81,17 @@
             // 配送订单
             delivery(data) {
                 let loadingStatus = this.$toast.loading('数据加载中...');
+                let that = this;
                 editOrderStatus({orderid: data.id})
                     .then(res => {
                         loadingStatus.clear();
                         this.$toast({
                             message: res.msg,
-                            type: res.code === 0 ? 'success': 'fail'
+                            type: res.code === 0 ? 'success' : 'fail',
+                            onClose: function () {
+                                that.orderList()
+                            }
                         });
-                        this.orderList();
                     })
                     .catch(err => {
                         loadingStatus.clear();
@@ -125,9 +130,9 @@
         color: #cccccc;
         display: block;
         height: 24px;
-        overflow: hidden;/*超出部分隐藏*/
-        text-overflow:ellipsis;/* 超出部分显示省略号 */
-        white-space: nowrap;/*规定段落中的文本不进行换行 */
+        overflow: hidden; /*超出部分隐藏*/
+        text-overflow: ellipsis; /* 超出部分显示省略号 */
+        white-space: nowrap; /*规定段落中的文本不进行换行 */
     }
 
     .payment-li-number span:nth-child(1) {
