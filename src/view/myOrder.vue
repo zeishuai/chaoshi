@@ -3,14 +3,18 @@
         <div class="paymentBox">
             <ul>
                 <li v-for="item in orderLists" :key="item.id">
-                    <p class="payment-li-number">
-                        <span>订单号:{{item.id}}</span>
-                        <span v-if="item.status == 0">未支付</span>
-                        <span v-if="item.status == -1">取消支付</span>
-                        <span v-if="item.status == 1">等待派送</span>
-                        <span v-if="item.status == 2">派送中</span>
-                        <span v-if="item.status == 3">已完成</span>
-                    </p>
+                    <van-row>
+                        <van-col span="20">
+                            <span class="order-no">订单号:{{item.id}}</span>
+                        </van-col>
+                        <van-col span="4">
+                            <van-tag plain v-if="item.status === -1">取消支付</van-tag>
+                            <van-tag plain type="danger" v-if="item.status === 0">待付款</van-tag>
+                            <van-tag plain type="warning" v-if="item.status === 1">等待派送</van-tag>
+                            <van-tag plain type="primary" v-if="item.status === 2">派送中</van-tag>
+                            <van-tag plain type="success" v-if="item.status === 3">已完成</van-tag>
+                        </van-col>
+                    </van-row>
                     <div class="payment-li-des" v-for="val in item.commbak" :key="val.id">
                         <div class="payment-li-desimg">
                             <van-image width="70" height="70" radius="10" :src="val.pic"/>
@@ -155,7 +159,8 @@
 
     .paymentBox li {
         background: #ffffff;
-        padding: 5px 10px;
+        padding: 10px 6px 5px 10px;
+        font-size: 14px;
         box-sizing: border-box;
         margin-bottom: 10px;
     }
