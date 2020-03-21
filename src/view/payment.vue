@@ -25,7 +25,7 @@
                         <p class="totalTxt">合计：<span class="all-price">¥{{item.totalPrice}}</span></p>
                         <div class="payment-btu">
                             <van-button type="danger" size="small" @click="closeOrder(item)">取消订单</van-button>
-                            <van-button type="primary" size="small" @click="orderPay(item)">支付</van-button>
+                            <van-button type="primary" size="small" @click="orderrePay(item)">支付</van-button>
                         </div>
                     </div>
                 </li>
@@ -138,17 +138,16 @@
         justify-content: space-between;
     }
 
-    .order-no {
-        width: 138px;
+    .order-no{
+        width: 68%;
         font-size: 14px;
         color: #cccccc;
         display: block;
         height: 24px;
-        overflow: hidden; /*超出部分隐藏*/
-        text-overflow: ellipsis; /* 超出部分显示省略号 */
-        white-space: nowrap; /*规定段落中的文本不进行换行 */
+        overflow: hidden;/*超出部分隐藏*/
+        text-overflow:ellipsis;/* 超出部分显示省略号 */
+        white-space: nowrap;/*规定段落中的文本不进行换行 */
     }
-
     .payment-li-des {
         margin-top: 20px;
         display: flex;

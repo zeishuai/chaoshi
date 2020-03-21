@@ -24,8 +24,9 @@
                                     style="line-height: 30px;width: 40%;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgb(255, 0, 0);;font-size: 16px;font-weight: 600">¥{{item.price}}</span>
                                 <!-- async-change @change="(value)=> onChangeSteps(item.id,value)"-->
                                 <van-stepper
-                                    v-model="item.vald"
-                                    min="0" default-value="0"
+                                    v-model="item.stock"
+                                    min="0"
+                                    @change="stepper(item)"
                                     @plus="plus(item)"
                                     @minus="minus(item)"
                                 />
@@ -38,7 +39,7 @@
     </div>
 </template>
 <script>
-    import {loginByCode, classify, commodityList, shopcarAddOne, shopcarSubOne} from "@/request/api";
+    import {buildingUpdateComm, classify, commodityList, shopcarAddOne, shopcarSubOne} from "@/request/api";
 
     export default {
         name: "inventory",
@@ -63,6 +64,7 @@
         },
         methods: {
             onChange(val) {
+                this.cid = val
                 this.arrs.map((item, index) => {
                     if (index == val) {
                         this.commodityList(item.id);
@@ -83,8 +85,9 @@
             },
             // 商品列表
             commodityList(cid) {
+                const userInfo = JSON.parse(localStorage.getItem('userInfo'))
                 const loading = this.$toast.loading('数据获取中');
-                commodityList({cid: cid})
+                commodityList({cid: cid, bid: userInfo.buildNo})
                     .then(res => {
                         if (res.code == 0) {
                             for (let i = 0; i < this.goodsList.length; i++) {
@@ -99,14 +102,18 @@
                         loading.clear();
                     });
             },
-            // 添加一个到购物车
+            // 更新库存 加
             plus(data) {
                 let addLoading = this.$toast.loading()
-                shopcarAddOne({cid: data.id})
+                const _this = this;
+                console.log(data)
+                buildingUpdateComm({id: data.sid, stock: data.stock+1})
                     .then(res => {
                         addLoading.clear();
                         if (res.code !== 0) {
-                            this.$toast.fail(res.msg)
+                            _this.$toast.fail(res.msg)
+                        }else {
+                            _this.commodityList(this.cid)
                         }
                     })
                     .catch(err => {
@@ -114,21 +121,43 @@
                         console.log(err);
                     });
             },
-            // 减少一个到购物车
+            // 更新库存
             minus(data) {
                 let addLoading = this.$toast.loading()
-                shopcarSubOne({cid: data.id})
+                const _this = this;
+                buildingUpdateComm({id: data.sid, stock: data.stock - 1})
                     .then(res => {
                         addLoading.clear();
                         if (res.code !== 0) {
-                            this.$toast.fail(res.msg)
+                            _this.$toast.fail(res.msg)
+                        }else {
+                            _this.commodityList(this.cid)
                         }
                     })
                     .catch(err => {
                         addLoading.clear();
                         console.log(err);
                     });
-            }
+            },
+            // chang输入更新库存
+            stepper(data) {
+                console.log(data)
+                let addLoading = this.$toast.loading()
+                const _this = this;
+                buildingUpdateComm({id: data.sid, stock: data.stock})
+                    .then(res => {
+                        addLoading.clear();
+                        if (res.code !== 0) {
+                            _this.$toast.fail(res.msg)
+                        }else {
+                            _this.commodityList(this.cid)
+                        }
+                    })
+                    .catch(err => {
+                        addLoading.clear();
+                        console.log(err);
+                    });
+            },
         },
 
         mounted() {

@@ -167,7 +167,7 @@
     }
 
     .order-no{
-        width: 138px;
+        width: 68%;
         font-size: 14px;
         color: #cccccc;
         display: block;

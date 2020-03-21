@@ -26,6 +26,12 @@
                             <div>¥{{val.price}} x {{val.count}}</div>
                         </div>
                     </div>
+                    <div>
+                        <van-cell :title="`${item.uname} ${item.phone}`" icon="contact"/>
+                        <van-cell
+                            title-style="width:100%;overflow:hidden;height:24px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;"
+                            :title="`${item.sname} ${item.bname} ${item.detailAddress}`" icon="location-o"/>
+                    </div>
                     <div class="bottom">
                         <p class="totalTxt">合计：<span class="all-price">¥{{item.totalPrice}}</span></p>
                         <div class="payment-btu">
@@ -122,7 +128,7 @@
     }
 
     .order-no {
-        width: 138px;
+        width: 68%;
         font-size: 14px;
         color: #cccccc;
         display: block;
@@ -176,6 +182,7 @@
     .bottom {
         height: 50px;
         overflow: hidden;
+        padding: 0px 16px;
         box-sizing: border-box;
         border-top: 1px solid #f1f1f1;
         display: flex;

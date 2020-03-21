@@ -32,10 +32,10 @@
                     </div>
                     <div class="bottom">
                         <p class="totalTxt">合计：<span class="all-price">¥{{item.totalPrice}}</span></p>
-                        <div class="payment-btu">
-                            <van-button type="danger" size="small" @click="closeOrder(item)">取消订单</van-button>
-                            <van-button type="primary" size="small" @click="confirmPay(item)">支付</van-button>
-                        </div>
+<!--                        <div class="payment-btu">-->
+<!--                            <van-button type="danger" size="small" @click="closeOrder(item)">取消订单</van-button>-->
+<!--                            <van-button type="primary" size="small" @click="confirmPay(item)">支付</van-button>-->
+<!--                        </div>-->
                     </div>
                 </li>
             </ul>
@@ -124,7 +124,7 @@
     .order-no{
         font-size: 14px;
         color: #cccccc;
-        width: 138px;
+        width: 68%;
         font-size: 14px;
         color: #cccccc;
         display: block;

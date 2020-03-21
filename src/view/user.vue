@@ -66,6 +66,7 @@
                     this.loadingUser = false;
                     if (res.code === 0) {
                         this.userInfo = res.data;
+                        localStorage.setItem('userInfo', JSON.stringify(res.data));
                         if (res.data.manager2 && res.data.poster2){
                             return this.memberText = '楼长+配送员';
                         }

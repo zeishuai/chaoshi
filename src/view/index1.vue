@@ -3,7 +3,7 @@
         <van-row>
             <van-col span="5" style="border-right: 1px solid #f1f1f1;min-height: 700px;">
                 <van-sidebar v-model="activeKey" @change="onChange">
-                    <van-sidebar-item v-for="item in arrs" :title="item.name" :key="item.id"/>
+                    <van-sidebar-item v-for="(item,index) in arrs" :info="null" :title="item.name" :key="item.id"/>
                 </van-sidebar>
             </van-col>
             <van-col span="19" style="background: #fafafa;height: 100%">
@@ -38,7 +38,7 @@
     </div>
 </template>
 <script>
-    import {loginByCode, classify, commodityList, shopcarAddOne, shopcarSubOne} from "@/request/api";
+    import {shopcarList, classify, commodityList, shopcarAddOne, shopcarSubOne} from "@/request/api";
 
     export default {
         name: "index",
@@ -54,27 +54,29 @@
                 arrs: [],
                 judge: "1",
                 goodsList: [],
-                cid: "1" // 商品分类ID
+                cid: "1", // 商品分类ID
+                shoppingList:[],//购物车数据匹配分类徽标
             };
         },
         created() {
             this.classifyList();
             this.commodityList(this.cid);
+            this.shoppingCarList()
         },
         methods: {
-            // onChangeSteps(id,value) {
-            //     let addLoading = this.$toast.loading();
-            //     shopcarAddOne({cid: id}).then(res=>{
-            //         addLoading.clear();
-            //         if (res.code !== 0){
-            //             this.$toast.fail(res.msg)
-            //         }
-            //         this.value = value;
-            //     }).catch(err=>{
-            //         addLoading.clear();
-            //         console.log(err);
-            //     })
-            // },
+
+            // 购物车列表数据
+            shoppingCarList() {
+                let loading = this.$toast.loading('加载中')
+                shopcarList({}).then(res => {
+                    loading.clear()
+                        this.shoppingList = res.data;
+                        this.badge(this.shoppingList)
+                    }).catch(err => {
+                        loading.clear()
+                        //  console.log(err)
+                    });
+            },
             onChange(val) {
                 this.arrs.map((item, index) => {
                     if (index == val) {
@@ -85,9 +87,14 @@
             },
             // 商品分类
             classifyList() {
-                classify({})
-                    .then(res => {
+                classify({}).then(res => {
                         if (res.code == 0) {
+                            for (let i = 0; i < res.data.length; i++) {
+                                res.data[i].badge = null
+                                for (let j = 0; j <this.shoppingList.length; j++) {
+                                    console.log(this.shoppingList[j])
+                                }
+                            }
                             this.arrs = res.data;
                         }
                     })
