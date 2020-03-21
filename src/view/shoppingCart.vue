@@ -264,7 +264,6 @@
                 e.preventDefault();
                 e.stopPropagation()
                 instance.close();//这个函数就是让滑动的模块返回的操作  e.preventDefault()阻止默认行为;e.stopPropagation()阻止冒泡
-                console.log('正在左滑')
                 this.$dialog.confirm({
                     message: '确定删除吗？'
                 }).then(() => {
@@ -552,8 +551,8 @@
                     .then(res => {
                         console.log(res);
                         if (res.code == 0) {
-                            this.$toast({message: res.msg});
-                            this.addressSta = 2
+                            this.$toast.success({message: res.msg});
+                            this.addressSta = 2;
                             this.getUserAddress();
                             this.addShow = false;
                         }
@@ -569,7 +568,6 @@
                         if (res.code == 0) {
                             this.addressList = res.data;
                         }
-                        console.log(this.addressList);
                     })
                     .catch(err => {
                     });
