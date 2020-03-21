@@ -19,7 +19,8 @@
         >
             <van-form>
                 <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名"/>
-                <van-field v-model="address.phone" type="tel" name="电话" :rules="[{ pattern, message: '手机号格式错误' }]" label="电话" placeholder="电话"/>
+                <van-field v-model="address.phone" type="tel" name="电话" :rules="[{ pattern, message: '手机号格式错误' }]"
+                           label="电话" placeholder="电话"/>
                 <van-field
                     readonly
                     clickable
@@ -69,13 +70,20 @@
 
 </template>
 <script>
-    import {addNewAddress, getBuildingsBySchool, getSchools, getUserAddress,updateAddress,setDefaultAddress} from "../request/api";
+    import {
+        addNewAddress,
+        getBuildingsBySchool,
+        getSchools,
+        getUserAddress,
+        updateAddress,
+        setDefaultAddress
+    } from "../request/api";
 
     export default {
         data() {
             return {
                 pattern: /^1[3456789]\d{9}$/, // 正则验证
-                chosenAddressId: '', // 地址默认id
+                chosenAddressId: localStorage.getItem('addressID'), // 地址默认id
                 list: [],
                 loading: true,
                 show: false,
@@ -96,7 +104,7 @@
                     bid: "",
                     detailAddress: ""
                 },
-                addressSta:1,
+                addressSta: 1,
             }
         },
         created() {
@@ -104,16 +112,18 @@
         },
         methods: {
             // 设置默认地址
-            setDefaultAddress(data){
+            setDefaultAddress(data) {
                 let loading = this.$toast.loading('提交中')
-                setDefaultAddress({id:data.id}).then(res => {
+                setDefaultAddress({id: data.id}).then(res => {
                     loading.clear();
-                    if(res.codo === 0){
+                    if (res.code === 0) {
                         this.$toast({message: res.msg});
+                        localStorage.setItem('addressID',data.id)
+                        console.log(data.id)
                         this.chosenAddressId = data.id
                         this.getAddressList()
                     }
-                }).catch(err =>{
+                }).catch(err => {
                     loading.clear();
                     console.log(err)
                 })
@@ -181,6 +191,7 @@
             onConfirmXX(value) {
                 let sid = "";
                 this.address.school = value;
+                console.log(this.address.school)
                 this.XXshowPicker = false;
                 this.XXcolumns1.map(item => {
                     if (item.name == value) {
@@ -192,7 +203,6 @@
             },
             // 楼号选择
             onConfirmLH(value) {
-                console.log(value)
                 this.address.LH = value;
                 this.LHshowPicker = false;
                 this.LHcolumns1.map(item => {
@@ -203,6 +213,7 @@
             },
             // 获取学校
             getSchools() {
+                this.XXcolumns = []
                 getSchools({})
                     .then(res => {
                         if (res.code == 0) {
@@ -220,6 +231,7 @@
             },
             // 获取楼号
             getBuildingsBySchool(sid) {
+                this.LHcolumns = [];
                 getBuildingsBySchool({sid: sid})
                     .then(res => {
                         if (res.code == 0) {

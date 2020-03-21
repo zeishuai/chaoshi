@@ -41,6 +41,8 @@ export const shopcarAddOne = p => get(`/api/user/shopcar/addOne?sessionid=${Toke
 export const shopcarSubOne = p => get(`/api/user/shopcar/subOne?sessionid=${Token}`,p)
 // 支付
 export const shopcarpay = p => post(`/api/user/shopcar/pay?sessionid=${Token}`,p)
+// 订单重新支付
+export const orderrepay  = p => get(`/api/user/order/repay?sessionid=${Token}`,p)
 // 获取用户信息
 export const getUserInfo = p => get(`/api/user/info/getInfo?sessionid=${Token}`,p)
 // 楼长订单列表

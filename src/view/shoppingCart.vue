@@ -10,9 +10,12 @@
                 text-align: center;
                 padding-top: 20px;
                 box-sizing: border-box">
-                <van-icon name="shopping-cart-o" color="#f00" size="5rem"/>
+                <van-icon name="shopping-cart-o" color="#f00000" size="5rem"/>
             </div>
             <div style="color: #444;text-align: center">购物车空空如也</div>
+            <div style="margin: auto;text-align: center;margin-top: 10px">
+                <van-button size="small" plain type="default" color="#f00">去购物</van-button>
+            </div>
         </div>
         <div class="goodsTxt">
             <ul>
@@ -88,74 +91,74 @@
             </van-row>
         </div>
 
-        <van-popup v-model="isShow" position="bottom"
-                   :style="{ height: '50%' }" round closeable :overlay="true">
-            <van-address-list
-                v-model="chosenAddressId"
-                :list="addressList"
-                default-tag-text="默认"
-                @add="onAdd"
-                @edit="updateAddressShow"
-                @select="addressclick"
-            />
-<!--            <div class="addresssub" @click="onAdd">新增地址</div>-->
-        </van-popup>
+       <div>
+           <van-popup v-model="isShow" position="bottom"
+                      :style="{ height: '50%' }" round closeable :overlay="true">
+               <div style="padding-bottom: 10px;box-sizing: border-box">
+                   <van-address-list
+                       v-model="chosenAddressId"
+                       :list="addressList"
+                       default-tag-text="默认"
+                       @add="onAdd"
+                       @edit="updateAddressShow"
+                       @select="addressclick"
+                   />
+               </div>
+           </van-popup>
+       </div>
         <!--新增地址-->
-        <van-popup
-            v-model="addShow"
-            position="bottom"
-            class="overlay80vh"
-            round
-            closeable
-
-        >
-            <van-form style="margin-top: 30px">
-                <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名"/>
-                <van-field v-model="address.phone" name="电话" label="电话" :rules="[{ pattern, message: '手机号格式错误' }]" placeholder="电话"/>
-                <van-field
-                    readonly
-                    clickable
-                    name="picker"
-                    :value="address.school"
-                    label="学校"
-                    placeholder="点击选择学校"
-                    @click="XXshowPicker = true"
-                />
-                <van-popup v-model="XXshowPicker" position="bottom">
-                    <van-picker
-                        show-toolbar
-                        :columns="XXcolumns"
-                        @confirm="onConfirmXX"
-                        @cancel="XXshowPicker = false"
+        <div>
+            <van-popup
+                v-model="addShow"
+                position="bottom"
+                round
+                closeable
+            >
+                <van-form>
+                    <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名"/>
+                    <van-field v-model="address.phone" name="电话" label="电话" :rules="[{ pattern, message: '手机号格式错误' }]"
+                               placeholder="电话"/>
+                    <van-field
+                        readonly
+                        clickable
+                        name="picker"
+                        :value="address.school"
+                        label="学校"
+                        placeholder="点击选择学校"
+                        @click="XXshowPicker = true"
                     />
-                </van-popup>
-                <van-field
-                    readonly
-                    clickable
-                    name="picker"
-                    :value="address.LH"
-                    label="楼号"
-                    :default-index="1"
-                    placeholder="点击选择楼号"
-                    @click="LHshowPicker = true"
-                />
-                <van-popup v-model="LHshowPicker" position="bottom">
-                    <van-picker
-                        show-toolbar
-                        :columns="LHcolumns"
-                        @confirm="onConfirmLH"
-                        @cancel="LHshowPicker = false"
+                    <van-popup get-container="body"v-model="XXshowPicker" position="bottom">
+                        <van-picker show-toolbar :columns="XXcolumns" @cancel="XXshowPicker = false"
+                                    @confirm="onConfirmXX"/> 
+                    </van-popup>
+                    <van-field
+                        readonly
+                        clickable
+                        name="picker"
+                        :value="address.LH"
+                        label="楼号"
+                        :default-index="1"
+                        placeholder="点击选择楼号"
+                        @click="LHshowPicker = true"
                     />
-                </van-popup>
-                <van-field v-model="address.detailAddress" name="详细地址" label="详细地址" placeholder="详细地址"/>
-                <div style="margin: 16px;" v-if="addressSta == 1">
-                    <van-button round block type="info" native-type="submit" @click="addressSubmit">添加</van-button>
-                </div>
-                <div style="margin: 16px;" v-if="addressSta == 2">
-                    <van-button round block type="info" native-type="submit" @click="updateAddress">修改</van-button>
-                </div>
-            </van-form>
-        </van-popup>
+                    <van-popup get-container="body"  v-model="LHshowPicker" position="bottom">
+                        <van-picker
+                            show-toolbar
+                            :columns="LHcolumns"
+                            @confirm="onConfirmLH"
+                            @cancel="LHshowPicker = false"
+                        />
+                    </van-popup>
+                    <van-field v-model="address.detailAddress" name="详细地址" label="详细地址" placeholder="详细地址"/>
+                    <div style="margin: 16px;" v-if="addressSta == 1">
+                        <van-button round block type="info" native-type="submit" @click="addressSubmit">添加</van-button>
+                    </div>
+                    <div style="margin: 16px;" v-if="addressSta == 2">
+                        <van-button round block type="info" native-type="submit" @click="updateAddress">修改</van-button>
+                    </div>
+                </van-form>
+            </van-popup>
+        </div>
     </div>
 </template>
 
@@ -361,6 +364,9 @@
                             payLoading.clear();
                             pay.data.package = pay.data.packageValue;
                             let res = startPay(configData, pay.data);
+                            // 支付调试
+                            this.checkedAll = false
+                            this.sum = 0,
                             this.shoppingCarList();
                         }).catch(err => {
                             this.$toast.fail('网络出错')
@@ -379,6 +385,7 @@
             },
             // 获取学校
             getSchools() {
+                this.XXcolumns = []
                 getSchools({})
                     .then(res => {
                         if (res.code == 0) {
@@ -396,6 +403,7 @@
             },
             // 获取楼号
             getBuildingsBySchool(sid) {
+                this.LHcolumns = [];
                 getBuildingsBySchool({sid: sid})
                     .then(res => {
                         if (res.code == 0) {
@@ -420,6 +428,7 @@
                 this.addShow = true;
                 this.addressSta = 1
                 this.getSchools();
+                this.address = {}
             },
             // 学校选中
             onConfirmXX(value) {
@@ -561,13 +570,14 @@
             },
             // 清空购物车
             delGoods() {
+                const _this = this
                 delGoods({})
                     .then(res => {
                         this.$toast({
                             message: res.msg,
                             type: res.code === 0 ? 'success' : 'fail',
                             onClose() {
-                                this.shoppingCarList();
+                                _this.shoppingCarList();
                             }
                         });
                     })
@@ -580,6 +590,9 @@
 </script>
 
 <style scoped lang="less">
+    body.van-overflow-hidden {
+        overflow: visible !important;
+    }
     .goodsTxt {
         font-size: 14px;
     }

@@ -6,50 +6,74 @@
                     <img :src="userInfo.avatar" alt="">
                     <div class="personal-msg-des">
                         <div>{{userInfo.userName}}</div>
-                        <div>普通会员</div>
+                        <div>{{memberText}}</div>
                     </div>
                     <!--          <div class="personal-text">个人中心</div>-->
                 </div>
-                <!--        <div class="personalInfo-MoneyClass">-->
-                <!--          <ul>-->
-                <!--            <li>-->
-                <!--              <p>0.00</p>-->
-                <!--              <p>余额</p>-->
-                <!--            </li>-->
-                <!--            <li>-->
-                <!--              <p>0.00</p>-->
-                <!--              <p>积分</p>-->
-                <!--            </li>-->
-                <!--            <li>-->
-                <!--              <p>0.00</p>-->
-                <!--              <p>可用余额</p>-->
-                <!--            </li>-->
-                <!--          </ul>-->
-                <!--        </div>-->
             </div>
-            <div class="mySnacks">
-                <p class="mySnacks-title">我的零食</p>
-                <div>
-                    <van-grid :border="false" icon-size="30px">
-                        <van-grid-item icon="gold-coin-o" to="payment" text="待付款"/>
-                        <van-grid-item icon="bag-o" to="receiving" text="待收货"/>
-                        <!--  <van-grid-item icon="comment-circle-o" to="evaluated" text="待评价" />-->
-                        <!--  <van-grid-item icon="refund-o" to="getGoodsPrice" text="退货/退款" />-->
-                        <van-grid-item icon="notes-o" to="myOrder" text="我的订单"/>
-                        <van-grid-item icon="bill-o" text="储值活动"/>
-                        <van-grid-item icon="bill-o" to="psyOrderList" text="订单配送"/>
-                        <van-grid-item icon="location-o" to="address_list" text="地址管理"/>
-                    </van-grid>
+            <div v-if="memberText == '楼长'">
+                <div class="mySnacks">
+                    <p class="mySnacks-title">我的零食</p>
+                    <div>
+                        <van-grid :border="false" icon-size="30px">
+                            <van-grid-item icon="gold-coin-o" to="payment" text="待付款"/>
+                            <van-grid-item icon="bag-o" to="receiving" text="待收货"/>
+                            <van-grid-item icon="notes-o" to="myOrder" text="我的订单"/>
+                            <van-grid-item icon="bill-o" text="储值活动"/>
+                            <van-grid-item icon="todo-list-o" to="psyOrderList" text="订单配送"/>
+                            <van-grid-item icon="location-o" to="address_list" text="地址管理"/>
+                        </van-grid>
+                    </div>
+                </div>
+                <div class="mySnacks">
+                    <p class="mySnacks-title">我的快递</p>
+                    <div>
+                        <van-grid :border="false" icon-size="30px">
+                            <van-grid-item icon="paid" to="kdPayment" text="待付款"/>
+                            <van-grid-item icon="exchange" to="kdDdFh" text="等待发达"/>
+                            <van-grid-item icon="records" to="kdRecording" text="订单记录"/>
+                        </van-grid>
+                    </div>
                 </div>
             </div>
-            <div class="mySnacks">
-                <p class="mySnacks-title">我的快递</p>
-                <div>
-                    <van-grid :border="false" icon-size="30px">
-                        <van-grid-item icon="paid" to="kdPayment" text="待付款"/>
-                        <van-grid-item icon="exchange" to="kdDdFh" text="等待发达"/>
-                        <van-grid-item icon="records" to="kdRecording" text="订单记录"/>
-                    </van-grid>
+            <div v-if="memberText == '配送员'">
+                <div class="mySnacks">
+                    <p class="mySnacks-title">我的零食</p>
+                    <div>
+                        <van-grid :border="false" icon-size="30px">
+                            <van-grid-item icon="gold-coin-o" to="payment" text="待付款"/>
+                            <van-grid-item icon="bag-o" to="receiving" text="待收货"/>
+                            <van-grid-item icon="notes-o" to="myOrder" text="我的订单"/>
+                            <van-grid-item icon="todo-list-o" to="psyOrderList" text="订单配送"/>
+                            <van-grid-item icon="bill-o" text="储值活动"/>
+                            <van-grid-item icon="location-o" to="address_list" text="地址管理"/>
+                        </van-grid>
+                    </div>
+                </div>
+                <div class="mySnacks">
+                    <p class="mySnacks-title">我的快递</p>
+                    <div>
+                        <van-grid :border="false" icon-size="30px">
+                            <van-grid-item icon="paid" to="kdPayment" text="待付款"/>
+                            <van-grid-item icon="exchange" to="kdDdFh" text="等待发达"/>
+                            <van-grid-item icon="records" to="kdRecording" text="订单记录"/>
+                            <van-grid-item icon="todo-list-o" to="psyOrderList" text="订单配送"/>
+                        </van-grid>
+                    </div>
+                </div>
+            </div>
+            <div v-else>
+                <div class="mySnacks">
+                    <p class="mySnacks-title">我的零食</p>
+                    <div>
+                        <van-grid :border="false" icon-size="30px">
+                            <van-grid-item icon="gold-coin-o" to="payment" text="待付款"/>
+                            <van-grid-item icon="bag-o" to="receiving" text="待收货"/>
+                            <van-grid-item icon="notes-o" to="myOrder" text="我的订单"/>
+                            <van-grid-item icon="bill-o" text="储值活动"/>
+                            <van-grid-item icon="location-o" to="address_list" text="地址管理"/>
+                        </van-grid>
+                    </div>
                 </div>
             </div>
         </div>
@@ -63,7 +87,8 @@
         name: "user",
         data() {
             return {
-                userInfo: {}
+                userInfo: {},
+                memberText:''
             }
         },
         created() {
@@ -76,6 +101,14 @@
                     loding.clear()
                     if (res.code == 0) {
                         this.userInfo = res.data
+                        if(res.data.manager2){
+                            this.memberText = '楼长'
+                        }
+                        else if(res.data.poster2){
+                            this.memberText = '配送员'
+                        }else{
+                            this.memberText = '普通会员'
+                        }
                     }
                 }).catch(err => {
                     loding.clear()
