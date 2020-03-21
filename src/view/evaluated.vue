@@ -137,10 +137,10 @@
   .paymentBox li {
     width: 95%;
     background: #ffffff;
-      padding: 15px 10px 10px 10px;
+    padding: 15px 10px 10px 10px;
     box-sizing: border-box;
     margin: auto;
-    margin-top: 10px;
+    margin-bottom: 10px;
     border-radius: 15px;
   }
 

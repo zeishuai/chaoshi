@@ -108,7 +108,7 @@
         background: #ffffff;
         padding: 15px 10px 10px 10px;
         box-sizing: border-box;
-        margin-top: 10px;
+        margin-bottom: 10px;
     }
 
     .payment-li-number {
