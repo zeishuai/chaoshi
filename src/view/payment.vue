@@ -101,7 +101,7 @@
                             let that = this;
                             setTimeout(function () {
                                 that.orderList();
-                            }, 3000);
+                            }, 5000);
                         }).catch(err => {
                             this.$toast.fail('网络出错')
                         })
