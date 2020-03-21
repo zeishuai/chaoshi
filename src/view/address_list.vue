@@ -75,7 +75,7 @@
         data() {
             return {
                 pattern: /^1[3456789]\d{9}$/, // 正则验证
-                chosenAddressId: '',
+                chosenAddressId: '', // 地址默认id
                 list: [],
                 loading: true,
                 show: false,
