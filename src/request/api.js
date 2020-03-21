@@ -27,6 +27,8 @@ export const getBuildingsBySchool = p => get(`/api/user/info/getBuildingsBySchoo
 export const addNewAddress = p => post(`/api/user/info/addNewAddress?sessionid=${Token}`, p)
 //修改地址
 export const updateAddress = p =>post(`/api/user/info/updateAddress?sessionid=${Token}`,p)
+// 设置默认地主
+export const setDefaultAddress = p =>get(`/api/user/info/setDefaultAddress?sessionid=${Token}`,p)
 // 登录
 export const loginByCode = p => get(`/api/system/wxfdb0d4b10b8496bf/loginByCode`, p)
 // 商品分类

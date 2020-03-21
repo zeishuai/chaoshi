@@ -71,12 +71,14 @@
         },
         methods: {
             getUserInfo() {
+                let loding = this.$toast.loading('加载中')
                 getUserInfo({}).then(res => {
-                    console.log(res)
+                    loding.clear()
                     if (res.code == 0) {
                         this.userInfo = res.data
                     }
                 }).catch(err => {
+                    loding.clear()
                     console.log(err)
                 })
             }

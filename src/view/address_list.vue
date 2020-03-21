@@ -8,6 +8,7 @@
             default-tag-text="默认"
             @add="onAdd"
             @edit="onEdit"
+            @select="setDefaultAddress"
         />
         <van-popup
             v-model="show"
@@ -56,8 +57,11 @@
                     />
                 </van-popup>
                 <van-field v-model="address.detailAddress" name="详细地址" label="详细地址" placeholder="详细地址"/>
-                <div style="margin: 16px;">
+                <div style="margin: 16px;" v-if="addressSta === 1">
                     <van-button block type="danger" native-type="submit" @click="addressSubmit">添加</van-button>
+                </div>
+                <div style="margin: 16px;" v-if="addressSta === 2">
+                    <van-button block type="danger" native-type="submit" @click="updateAddress">修改</van-button>
                 </div>
             </van-form>
         </van-popup>
@@ -65,17 +69,16 @@
 
 </template>
 <script>
-    import {addNewAddress, getBuildingsBySchool, getSchools, getUserAddress} from "../request/api";
+    import {addNewAddress, getBuildingsBySchool, getSchools, getUserAddress,updateAddress,setDefaultAddress} from "../request/api";
 
     export default {
         data() {
             return {
-                chosenAddressId: '1',
+                chosenAddressId: '',
                 list: [],
                 loading: true,
                 show: false,
                 isShow: false, // 选中地址
-                addShow: false, // 新增地址
                 XXcolumns: [], // 学校地址
                 XXcolumns1: [],
                 XXshowPicker: false,
@@ -92,19 +95,79 @@
                     bid: "",
                     detailAddress: ""
                 },
+                addressSta:1,
             }
         },
         created() {
             this.getAddressList();
         },
         methods: {
+            // 设置默认地址
+            setDefaultAddress(data){
+                let loading = this.$toast.loading('提交中')
+                setDefaultAddress({id:data.id}).then(res => {
+                    loading.clear();
+                    if(res.codo === 0){
+                        this.$toast({message: res.msg});
+                        this.chosenAddressId = data.id
+                        this.getAddressList()
+                    }
+                }).catch(err =>{
+                    loading.clear();
+                    console.log(err)
+                })
+            },
+            // 修改地址
+            updateAddress() {
+                if (this.address.name == "") {
+                    this.$toast({message: "请填写名字"});
+                    return false;
+                }
+                if (this.address.phone == "") {
+                    this.$toast({message: "请填写电话"});
+                    return false;
+                }
+                if (this.address.sid == "") {
+                    this.$toast({message: "请选择学校"});
+                    return false;
+                }
+                if (this.address.bid == "") {
+                    this.$toast({message: "请选择楼号"});
+                    return false;
+                }
+                if (this.address.detailAddress == "") {
+                    this.$toast({message: "请填写想写地址"});
+                    return false;
+                }
+                let updateAddressLoading = this.$toast.loading('加载中...');
+                console.log(this.address)
+                updateAddress({
+                    id: this.address.id,
+                    name: this.address.name,
+                    phone: this.address.phone,
+                    sid: this.address.sid,
+                    bid: this.address.bid,
+                    detailAddress: this.address.detailAddress
+                }).then(res => {
+                    updateAddressLoading.clear();
+                    if (res.code == 0) {
+                        this.$toast.success({message: res.msg});
+                        this.addressSta = 1;
+                        this.getAddressList();
+                        this.show = false;
+                    }
+                }).catch(err => {
+                    updateAddressLoading.clear();
+                })
+            },
+            // 列表
             getAddressList() {
                 getUserAddress().then(res => {
                     this.loading = false;
                     if (res.code === 0 && res.data.length > 0) {
                         for (let i in res.data) {
                             res.data[i].tel = res.data[i].phone;
-                            res.data[i].address = res.data[i].detailAddress;
+                            res.data[i].address = `${res.data[i].sname} ${res.data[i].bname} ${res.data[i].detailAddress}`;
                         }
                         this.list = res.data;
                     }
@@ -128,6 +191,7 @@
             },
             // 楼号选择
             onConfirmLH(value) {
+                console.log(value)
                 this.address.LH = value;
                 this.LHshowPicker = false;
                 this.LHcolumns1.map(item => {
@@ -175,15 +239,21 @@
                     });
             },
             onAdd() {
+                this.addressSta = 1
                 this.show = true;
+                this.address = {}
+                this.getSchools();
             },
             onEdit(item, index) {
-                console.log(item);
-                this.address = item;
                 this.getSchools();
                 this.getBuildingsBySchool(item.sid);
+                this.address = item;
+                this.addressSta = 2
+                this.address.school = item.sname
+                this.address.LH = item.bname
                 this.show = true;
             },
+            // 新增地址
             addressSubmit() {
                 if (!this.address.name) {
                     return this.$toast({message: "请填写名字"});
@@ -234,24 +304,4 @@
     }
 </script>
 <style lang="less" scoped>
-    .van-address-list__bottom {
-        // position: inherit;
-        // margin-top: 20px;
-    }
-
-    .sbumit {
-        // position: fixed;
-        // bottom: 0;
-        // left: 0;
-        z-index: 999;
-        box-sizing: border-box;
-        width: 80%;
-        padding: 5px 16px;
-        color: #fff;
-        background-color: #ee0a24;
-        border: 1px solid #ee0a24;
-        text-align: center;
-        margin: auto;
-        border-radius: 50px;
-    }
 </style>

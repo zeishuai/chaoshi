@@ -561,18 +561,8 @@
                     this.addressid = this.addressList[this.addressliact].id
                 }
             },
+            // 清空购物车
             delGoods() {
-                this.sum = 0;
-                for (var i = 0; i < this.shoppingList.length; i++) {
-                    if (this.shoppingList[i].isSelect) {
-                        this.shoppingList.splice(i, 1);
-                        i--;
-                    }
-                }
-                if (this.allSelect) {
-                    this.shoppingList.splice(0, this.shoppingList.length);
-                    this.allSelect = false;
-                }
                 delGoods({})
                     .then(res => {
                         this.$toast({
