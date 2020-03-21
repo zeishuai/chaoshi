@@ -90,33 +90,30 @@
             </van-row>
         </div>
 
-        <van-popup v-model="isShow" position="top" class="overlay80vh" :overlay="true">
+        <van-popup v-model="isShow" position="bottom"
+                   :style="{ height: '50%' }" round closeable  :overlay="true">
             <ul class="addressul">
-                <li :class="addressliact == index ? 'addressliact': 'addressli'" v-for="(item,index) in addressList"
-                    :key="item.id">
-                    <div class="addressli1" @click="addressclick(index)">
-                        <div>
-                            <span>{{item.name}}</span>
-                            <span>{{item.phone}}</span>
-                        </div>
-                        <div>{{item.sname}}{{item.bname}}{{item.detailAddress}}</div>
-                    </div>
-                    <div class="addressli2" @click="updateAddressShow(item)">
-                        <van-icon name="edit"/>
-                    </div>
-                </li>
+
+                <van-address-list
+                    v-model="chosenAddressId"
+                    :list="addressList"
+                    default-tag-text="默认"
+                    @add="onAdd"
+                    @edit="updateAddressShow"
+                    @select="addressclick"
+                />
             </ul>
             <div class="addresssub" @click="onAdd">新增地址</div>
-            <!-- <van-address-list v-model="chosenAddressId" :list="addressList1" @add="onAdd" @edit="onEdit" /> -->
         </van-popup>
         <!--新增地址-->
         <van-popup
             v-model="addShow"
-            position="top"
+            position="bottom"
             class="overlay80vh"
+            round closeable
             :overlay="true"
         >
-            <van-form>
+            <van-form style="margin-top: 30px">
                 <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名"/>
                 <van-field v-model="address.phone" name="电话" label="电话" placeholder="电话"/>
                 <van-field
@@ -156,10 +153,10 @@
                 </van-popup>
                 <van-field v-model="address.detailAddress" name="详细地址" label="详细地址" placeholder="详细地址"/>
                 <div style="margin: 16px;" v-if="addressSta == 1">
-                    <van-button round block type="info" native-type="submit" @click="addressSubmit">提交1</van-button>
+                    <van-button round block type="info" native-type="submit" @click="addressSubmit">提交</van-button>
                 </div>
                 <div style="margin: 16px;" v-if="addressSta == 2">
-                    <van-button round block type="info" native-type="submit" @click="updateAddress">提交2</van-button>
+                    <van-button round block type="info" native-type="submit" @click="updateAddress">修改</van-button>
                 </div>
             </van-form>
         </van-popup>
@@ -317,9 +314,7 @@
                 this.address.LH = data.bname;
                 this.getSchools();
                 this.getBuildingsBySchool();
-                console.log(this.XXcolumns);
                 this.addShow = true;
-                this.isShow = false;
             },
             updateAddress() {
                 if (this.address.name == "") {
@@ -367,6 +362,10 @@
                 const payLoading = this.$toast.loading();
                 let configData = {};
                 let payConfig = {};
+                if(this.shops === ''){
+                    this.$toast({message:'没有选择商品哦~'})
+                    return false
+                }
                 weiXinConfig({url: window.location.href})
                     .then(res => {
                         payLoading.clear();
@@ -445,10 +444,9 @@
                 // })
             },
             // 选择地址
-            addressclick(index) {
-                this.addressliact = index;
-                this.addressid = this.addressList[index].id;
-                this.isShow = false;
+            addressclick(data) {
+                this.addressid = data.id
+                this.isShow = false
                 this.shopcarpay();
             },
             // 获取学校
@@ -492,7 +490,6 @@
             },
             onAdd() {
                 this.addShow = true;
-                this.isShow = false
                 this.addressSta = 1
                 this.getSchools();
             },
@@ -563,13 +560,20 @@
             },
             // 获取地址列表
             getUserAddress() {
+                let addLoading = this.$toast.loading();
                 getUserAddress({})
                     .then(res => {
                         if (res.code == 0) {
+                            addLoading.clear();
+                            for (let i = 0; i <res.data.length ; i++) {
+                                res.data[i].tel = res.data[i].phone
+                                res.data[i].address =`${res.data[i].sname} ${res.data[i].bname} ${res.data[i].detailAddress}`
+                            }
                             this.addressList = res.data;
                         }
                     })
                     .catch(err => {
+                        addLoading.clear();
                     });
             },
             // 购物车列表
@@ -615,10 +619,7 @@
             },
             // 结算
             buyGoods() {
-                //alert("购买成功,共花费" + this.sum + "元");shops
-                if (this.addressid === '') {
-                    this.isShow = true;
-                }
+                this.isShow = true;
                 let picid = []
                 for (let i = 0; i < this.shoppingList.length; i++) {
                     if (this.shoppingList[i].isChecked) {
@@ -628,11 +629,6 @@
                 this.shops = picid.join(',');
                 for (let i = 0; i < this.addressList.length; i++) {
                     this.addressid = this.addressList[this.addressliact].id
-                }
-                if (this.addressid === '' || this.shops === '') {
-                    this.$toast({message: '请选择商品或者地址哦~'})
-                } else {
-                    this.shopcarpay()
                 }
             },
             delGoods() {
