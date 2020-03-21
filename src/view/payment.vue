@@ -25,7 +25,7 @@
                         <p class="totalTxt">合计：<span class="all-price">¥{{item.totalPrice}}</span></p>
                         <div class="payment-btu">
                             <van-button type="danger" size="small" @click="closeOrder(item)">取消订单</van-button>
-                            <van-button type="primary" size="small" @click="orderrePay(item)">支付</van-button>
+                            <van-button type="primary" size="small" @click="orderPay(item)">支付</van-button>
                         </div>
                     </div>
                 </li>
@@ -35,7 +35,9 @@
 </template>
 
 <script>
-    import {orderList, closeOrder,orderrepay} from "@/request/api";
+    import {orderList, closeOrder, orderrepay} from "@/request/api";
+    import {weiXinConfig, weiXinPayConfig, weiXinRePayConfig} from "../request/api";
+    import {startPay} from "../function/wechat";
 
     export default {
         name: "payment",
@@ -72,7 +74,7 @@
                 closeOrder({orderid: data.id})
                     .then(res => {
                         getLoading.clear();
-                        if (res.code === 0 ) {
+                        if (res.code === 0) {
                             this.orderList()
                         } else {
                             this.$toast.fail(res.msg);
@@ -83,17 +85,28 @@
                         console.log(err);
                     });
             },
-            orderrePay(data){
-                let loading = this.$toast.loading('提交中...')
-                orderrepay({orderid:data.id}).then(res =>{
-                    loading.clear()
-                    if(res.code === 0){
-                        this.orderList()
-                    }
-                }).catch(err => {
-                    loading.clear()
-                    console.log(err)
-                })
+            orderPay(data) {
+                let payLoading = this.$toast.loading('正在支付...');
+                let configData = {};
+                weiXinConfig({url: window.location.href})
+                    .then(res => {
+                        configData = res.data;
+                    })
+                    .then(step => {
+                        //获取支付参数
+                        weiXinRePayConfig({orderid: data.id}).then(pay => {
+                            payLoading.clear();
+                            pay.data.package = pay.data.packageValue;
+                            let res = startPay(configData, pay.data);
+                            this.orderList()
+                        }).catch(err => {
+                            this.$toast.fail('网络出错')
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        payLoading.clear();
+                    });
             }
         }
     };
@@ -122,16 +135,17 @@
         justify-content: space-between;
     }
 
-    .order-no{
+    .order-no {
         width: 138px;
         font-size: 14px;
         color: #cccccc;
         display: block;
         height: 24px;
-        overflow: hidden;/*超出部分隐藏*/
-        text-overflow:ellipsis;/* 超出部分显示省略号 */
-        white-space: nowrap;/*规定段落中的文本不进行换行 */
+        overflow: hidden; /*超出部分隐藏*/
+        text-overflow: ellipsis; /* 超出部分显示省略号 */
+        white-space: nowrap; /*规定段落中的文本不进行换行 */
     }
+
     .payment-li-des {
         margin-top: 20px;
         display: flex;
@@ -163,7 +177,7 @@
         margin-top: 15px;
     }
 
-    .bottom{
+    .bottom {
         height: 50px;
         overflow: hidden;
         box-sizing: border-box;
@@ -171,18 +185,21 @@
         display: flex;
         justify-content: space-between;
     }
-    .payment-btu{
+
+    .payment-btu {
         height: auto;
         overflow: hidden;
         margin-top: 14px;
     }
-    .totalTxt{
+
+    .totalTxt {
         float: left;
         line-height: 30px;
         margin-top: 14px;
         color: #444;
     }
-    .all-price{
+
+    .all-price {
         color: #f00;
     }
 </style>

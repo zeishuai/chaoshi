@@ -351,7 +351,6 @@
             // 支付
             shopcarpay() {
                 let configData = {};
-                let payConfig = {};
                 if (!this.shops) {
                     return this.$toast({message: '没有选择商品哦~'})
                 }

@@ -51,3 +51,4 @@ export const editOrderStatus = p => get(`/api/user/building/postOrder?sessionid=
 
 export const weiXinConfig = p => get(`/api/system/wxfdb0d4b10b8496bf/getConfig?sessionid=${Token}`,p)
 export const weiXinPayConfig = p => post(`/api/user/shopcar/pay?sessionid=${Token}`,p)
+export const weiXinRePayConfig = p => get(`/api/user/order/repay?sessionid=${Token}`,p)
