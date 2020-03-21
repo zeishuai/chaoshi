@@ -1,7 +1,7 @@
 <template>
     <div class="payment-conter">
         <van-skeleton v-if="loadingStatus" title :row="10"/>
-        <van-row type="flex" justify="center" v-if="orderLists.length < 1">
+        <van-row type="flex" justify="center" v-if="!loadingStatus && orderLists.length < 1">
             <van-col span="8" style="margin-top: 20%">
                 <span>暂无数据...</span>
             </van-col>

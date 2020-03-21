@@ -98,7 +98,10 @@
                             payLoading.clear();
                             pay.data.package = pay.data.packageValue;
                             let res = startPay(configData, pay.data);
-                            this.orderList()
+                            let that = this;
+                            setTimeout(function () {
+                                that.orderList();
+                            }, 3000);
                         }).catch(err => {
                             this.$toast.fail('网络出错')
                         })
