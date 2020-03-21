@@ -14,7 +14,8 @@
             </div>
             <div style="color: #444;text-align: center">购物车空空如也</div>
             <div style="margin: auto;text-align: center;margin-top: 10px">
-                <van-button size="small" plain type="default" color="#f00" @click="$router.push({path:'/index'})">去购物</van-button>
+                <van-button size="small" plain type="default" color="#f00" @click="$router.push({path:'/index'})">去购物
+                </van-button>
             </div>
         </div>
         <div class="goodsTxt">
@@ -91,21 +92,21 @@
             </van-row>
         </div>
 
-       <div>
-           <van-popup v-model="isShow" position="bottom"
-                      :style="{ height: '50%' }" round closeable :overlay="true">
-               <div style="padding-bottom: 10px;box-sizing: border-box">
-                   <van-address-list
-                       v-model="chosenAddressId"
-                       :list="addressList"
-                       default-tag-text="默认"
-                       @add="onAdd"
-                       @edit="updateAddressShow"
-                       @select="addressclick"
-                   />
-               </div>
-           </van-popup>
-       </div>
+        <div>
+            <van-popup v-model="isShow" position="bottom"
+                       :style="{ height: '50%' }" round closeable :overlay="true">
+                <div style="padding-bottom: 10px;box-sizing: border-box">
+                    <van-address-list
+                        v-model="chosenAddressId"
+                        :list="addressList"
+                        default-tag-text="默认"
+                        @add="onAdd"
+                        @edit="updateAddressShow"
+                        @select="addressclick"
+                    />
+                </div>
+            </van-popup>
+        </div>
         <!--新增地址-->
         <div>
             <van-popup
@@ -129,7 +130,8 @@
                     />
                     <van-popup get-container="body" v-model="XXshowPicker" position="bottom">
                         <van-picker show-toolbar :columns="XXcolumns" @cancel="XXshowPicker = false"
-                                    @confirm="onConfirmXX"/> 
+                                    @confirm="onConfirmXX"/>
+                         
                     </van-popup>
                     <van-field
                         readonly
@@ -141,7 +143,7 @@
                         placeholder="点击选择楼号"
                         @click="LHshowPicker = true"
                     />
-                    <van-popup get-container="body"  v-model="LHshowPicker" position="bottom">
+                    <van-popup get-container="body" v-model="LHshowPicker" position="bottom">
                         <van-picker
                             show-toolbar
                             :columns="LHcolumns"
@@ -367,7 +369,7 @@
                             // 支付调试
                             this.checkedAll = false
                             this.sum = 0,
-                            this.shoppingCarList();
+                                this.shoppingCarList();
                         }).catch(err => {
                             this.$toast.fail('网络出错')
                         })
@@ -570,13 +572,13 @@
             },
             // 清空购物车
             delGoods() {
-                const _this = this
+                const _this = this;
                 delGoods({})
                     .then(res => {
                         this.$toast({
                             message: res.msg,
                             type: res.code === 0 ? 'success' : 'fail',
-                            onClose() {
+                            onClose: function () {
                                 _this.shoppingCarList();
                             }
                         });
@@ -593,6 +595,7 @@
     body.van-overflow-hidden {
         overflow: visible !important;
     }
+
     .goodsTxt {
         font-size: 14px;
     }
