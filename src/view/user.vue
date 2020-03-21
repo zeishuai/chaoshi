@@ -38,6 +38,7 @@
                         <van-grid-item icon="notes-o" to="myOrder" text="我的订单"/>
                         <van-grid-item icon="bill-o" text="储值活动"/>
                         <van-grid-item icon="bill-o" to="psyOrderList" text="订单配送"/>
+                        <van-grid-item icon="location-o" to="address_list" text="地址管理"/>
                     </van-grid>
                 </div>
             </div>
