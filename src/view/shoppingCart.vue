@@ -19,11 +19,12 @@
                 <li style="margin-bottom: 10px;background: #ffffff;padding: 10px;" v-for="(item,index) in shoppingList"
                     :key="item.id">
                     <van-row>
-                        <van-swipe-cell :right-width="65" :left-width="0" :on-close='onClose'>
+                        <van-swipe-cell>
                             <van-cell-group>
                                 <van-col span="2">
                                     <div style="margin: 33px auto auto 5px">
-                                        <van-checkbox checked-color="#f00" v-model="shoppingList[index].isChecked"
+                                        <van-checkbox checked-color="#f00"
+                                                      v-model="shoppingList[index].isChecked"
                                                       @change="listenCheck"></van-checkbox>
                                     </div>
                                 </van-col>
@@ -65,9 +66,6 @@
                                     </van-row>
                                 </van-col>
                             </van-cell-group>
-                            <template #right>
-                                <van-button square type="danger" text="删除"/>
-                            </template>
                         </van-swipe-cell>
                     </van-row>
                 </li>
@@ -91,7 +89,7 @@
         </div>
 
         <van-popup v-model="isShow" position="bottom"
-                   :style="{ height: '50%' }" round closeable  :overlay="true">
+                   :style="{ height: '50%' }" round closeable :overlay="true">
             <ul class="addressul">
 
                 <van-address-list
@@ -153,7 +151,7 @@
                 </van-popup>
                 <van-field v-model="address.detailAddress" name="详细地址" label="详细地址" placeholder="详细地址"/>
                 <div style="margin: 16px;" v-if="addressSta == 1">
-                    <van-button round block type="info" native-type="submit" @click="addressSubmit">提交</van-button>
+                    <van-button round block type="info" native-type="submit" @click="addressSubmit">添加</van-button>
                 </div>
                 <div style="margin: 16px;" v-if="addressSta == 2">
                     <van-button round block type="info" native-type="submit" @click="updateAddress">修改</van-button>
@@ -178,6 +176,7 @@
     } from "@/request/api";
     import {weiXinConfig, weiXinPayConfig} from "../request/api";
     import Loding from "../components/loding";
+    import {startPay} from "../function/wechat";
 
     export default {
         name: "shoppingCart",
@@ -254,18 +253,6 @@
                         addLoading.clear();
                         console.log(err);
                     });
-            },
-            // 左滑删除
-            onClose(clickPosition, instance) {
-                let e = window.event;
-                e.preventDefault();
-                e.stopPropagation()
-                instance.close();//这个函数就是让滑动的模块返回的操作  e.preventDefault()阻止默认行为;e.stopPropagation()阻止冒泡
-                this.$dialog.confirm({
-                    message: '确定删除吗？'
-                }).then(() => {
-                    instance.close();
-                });
             },
             money() {
                 let tempMoney = 0;
@@ -359,89 +346,32 @@
             },
             // 支付
             shopcarpay() {
-                const payLoading = this.$toast.loading();
                 let configData = {};
                 let payConfig = {};
-                if(this.shops === ''){
-                    this.$toast({message:'没有选择商品哦~'})
-                    return false
+                if (!this.shops) {
+                    return this.$toast({message: '没有选择商品哦~'})
                 }
+                let payLoading = this.$toast.loading('正在支付...');
                 weiXinConfig({url: window.location.href})
                     .then(res => {
-                        payLoading.clear();
                         configData = res.data;
                     })
                     .then(step => {
                         //获取支付参数
-                        //
-                        // weiXinPayConfig({shops: this.shops, addressid: this.addressid}).then(pay => {
-                        //     console.log('pay', pay)
-                        // })
-                    })
-                    .then(startPay => {
-                        // wx.config({
-                        //     debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-                        //     appId: configData.appId, // 必填，公众号的唯一标识
-                        //     timestamp: configData.timestamp, // 必填，生成签名的时间戳
-                        //     nonceStr: configData.nonceStr, // 必填，生成签名的随机串
-                        //     signature: configData.signature,// 必填，签名
-                        //     jsApiList: ['chooseWXPay'] // 必填，需要使用的JS接口列表
-                        // });
-                        // wx.ready(function () {
-                        //     wx.chooseWXPay({
-                        //         timestamp: res.data.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-                        //         nonceStr: res.data.nonceStr, // 支付签名随机串，不长于 32 位
-                        //         package: res.data.packageValue, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
-                        //         signType: res.data.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-                        //         paySign: res.data.paySign, // 支付签名
-                        //         success: function (res) {
-                        //             // 支付成功后的回调函数
-                        //             console.log(res)
-                        //         },
-                        //         error: function (err) {
-                        //             console.log(err)
-                        //         }
-                        //     });
-                        // });
+                        weiXinPayConfig({shops: this.shops, addressid: this.addressid}).then(pay => {
+                            console.log('支付参数',pay);
+                            pay.data.package = pay.data.packageValue;
+                            let res = startPay(configData, pay.data);
+                            console.log(res);
+                            payLoading.clear();
+                        }).catch(err => {
+                            this.$toast.fail('网络出错')
+                        })
                     })
                     .catch(err => {
                         console.log(err);
                         payLoading.clear();
                     });
-                // shopcarpay({
-                //     shops: this.shops,
-                //     addressid: this.addressid
-                // }).then(res => {
-                //     if (res.code == 0) {
-                //         this.$toast({message: '支付功能暂无开通~'})
-                //         wx.config({
-                //             debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-                //             appId: res.data.appId, // 必填，公众号的唯一标识
-                //             timestamp: '', // 必填，生成签名的时间戳
-                //             nonceStr: '', // 必填，生成签名的随机串
-                //             signature: '',// 必填，签名
-                //             jsApiList: [] // 必填，需要使用的JS接口列表
-                //         });
-                //         wx.ready(function () {
-                //             wx.chooseWXPay({
-                //                 timestamp: res.data.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-                //                 nonceStr: res.data.nonceStr, // 支付签名随机串，不长于 32 位
-                //                 package: res.data.packageValue, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
-                //                 signType: res.data.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-                //                 paySign: res.data.paySign, // 支付签名
-                //                 success: function (res) {
-                //                     // 支付成功后的回调函数
-                //                     console.log(res)
-                //                 },
-                //                 error: function (err) {
-                //                     console.log(err)
-                //                 }
-                //             });
-                //         });
-                //     }
-                // }).catch(err => {
-                //
-                // })
             },
             // 选择地址
             addressclick(data) {
@@ -565,9 +495,9 @@
                     .then(res => {
                         if (res.code == 0) {
                             addLoading.clear();
-                            for (let i = 0; i <res.data.length ; i++) {
+                            for (let i = 0; i < res.data.length; i++) {
                                 res.data[i].tel = res.data[i].phone
-                                res.data[i].address =`${res.data[i].sname} ${res.data[i].bname} ${res.data[i].detailAddress}`
+                                res.data[i].address = `${res.data[i].sname} ${res.data[i].bname} ${res.data[i].detailAddress}`
                             }
                             this.addressList = res.data;
                         }
