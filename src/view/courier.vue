@@ -89,6 +89,7 @@
                             message: res.msg,
                             type: res.code === 0 ? 'success' : 'fail',
                             onClose: function () {
+                                console.log('回调')
                                 that.orderList()
                             }
                         });
