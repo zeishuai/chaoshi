@@ -359,11 +359,10 @@
                     .then(step => {
                         //获取支付参数
                         weiXinPayConfig({shops: this.shops, addressid: this.addressid}).then(pay => {
-                            console.log('支付参数',pay);
+                            payLoading.clear();
                             pay.data.package = pay.data.packageValue;
                             let res = startPay(configData, pay.data);
-                            console.log(res);
-                            payLoading.clear();
+                            this.shoppingCarList();
                         }).catch(err => {
                             this.$toast.fail('网络出错')
                         })
