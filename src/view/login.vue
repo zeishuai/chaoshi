@@ -19,6 +19,7 @@
             return {};
         },
         created() {
+            localStorage.setItem('token','acc75c98-cf87-4be8-8eaf-7b312ec7fe8e')
             if (localStorage.getItem('token')) {
                 return this.$router.push({path: '/index'})
             }

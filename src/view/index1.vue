@@ -1,16 +1,17 @@
 <template>
     <div class="index" style="background: #FAFAFA;overflow: hidden">
         <van-row>
-            <van-col span="6">
+            <van-col span="5" style="border-right: 1px solid #f1f1f1;min-height: 700px;">
                 <van-sidebar v-model="activeKey" @change="onChange">
                     <van-sidebar-item v-for="item in arrs" :title="item.name" :key="item.id"/>
                 </van-sidebar>
             </van-col>
-            <van-col span="18" style="background: #fafafa;height: 100%">
+            <van-col span="19" style="background: #fafafa;height: 100%">
                 <van-skeleton v-if="goodsList.length < 1" title :row="10"/>
-                <van-row v-if="goodsList.length > 0" v-for="item in goodsList" :key="item.id" style="margin-bottom: 10px;background: #fff">
+                <van-row v-if="goodsList.length > 0" v-for="item in goodsList" :key="item.id"
+                         style="margin-bottom: 10px;background: #fff;padding-top: 13px">
                     <van-col span="7" style="padding-left:10px;padding-right:10px">
-                        <van-image width="100%" height="70" style="overflow: hidden" :src="item.pic"/>
+                        <van-image width="100%" height="78" style="overflow: hidden" :src="item.pic"/>
                     </van-col>
                     <van-col span="17">
                         <div class="goodsTxtBox">
@@ -19,12 +20,14 @@
                                 <span>{{item.specification}}</span>
                             </div>
                             <div class="goodsTxt" style="display: flex;">
-                                <span style="line-height: 30px;width: 40%;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgb(255, 0, 0);;font-size: 16px;font-weight: 600">¥{{item.price}}</span>
+                                <span
+                                    style="line-height: 30px;width: 40%;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgb(255, 0, 0);;font-size: 16px;font-weight: 600">¥{{item.price}}</span>
+                                <!-- async-change @change="(value)=> onChangeSteps(item.id,value)"-->
                                 <van-stepper
                                     v-model="item.vald"
                                     min="0" default-value="0"
-                                    async-change
-                                    @change="(value)=> onChangeSteps(item.id,value)"
+                                    @plus="plus(item)"
+                                    @minus="minus(item)"
                                 />
                             </div>
                         </div>
@@ -36,11 +39,9 @@
 </template>
 <script>
     import {loginByCode, classify, commodityList, shopcarAddOne, shopcarSubOne} from "@/request/api";
-    import Loding from "../components/loding";
 
     export default {
         name: "index",
-        components: {Loding},
         data() {
             return {
                 value: '',
@@ -61,18 +62,19 @@
             this.commodityList(this.cid);
         },
         methods: {
-            onChangeSteps(id,value) {
-                let addLoading = this.$toast.loading();
-                shopcarAddOne({cid: id}).then(res=>{
-                    addLoading.clear();
-                    if (res.code !== 0){
-                        this.$toast.fail(res.msg)
-                    }
-                }).catch(err=>{
-                    addLoading.clear();
-                    console.log(err);
-                })
-            },
+            // onChangeSteps(id,value) {
+            //     let addLoading = this.$toast.loading();
+            //     shopcarAddOne({cid: id}).then(res=>{
+            //         addLoading.clear();
+            //         if (res.code !== 0){
+            //             this.$toast.fail(res.msg)
+            //         }
+            //         this.value = value;
+            //     }).catch(err=>{
+            //         addLoading.clear();
+            //         console.log(err);
+            //     })
+            // },
             onChange(val) {
                 this.arrs.map((item, index) => {
                     if (index == val) {
@@ -112,35 +114,33 @@
             },
             // 添加一个到购物车
             plus(data) {
-                console.log('plus', data);
+                let addLoading = this.$toast.loading()
                 shopcarAddOne({cid: data.id})
                     .then(res => {
-                        this.$toast({message: res.msg});
+                        addLoading.clear();
+                        if (res.code !== 0) {
+                            this.$toast.fail(res.msg)
+                        }
                     })
                     .catch(err => {
+                        addLoading.clear();
                         console.log(err);
                     });
             },
             // 减少一个到购物车
             minus(data) {
+                let addLoading = this.$toast.loading()
                 shopcarSubOne({cid: data.id})
                     .then(res => {
-                        this.$toast({message: res.data.msg});
+                        addLoading.clear();
+                        if (res.code !== 0) {
+                            this.$toast.fail(res.msg)
+                        }
                     })
                     .catch(err => {
+                        addLoading.clear();
                         console.log(err);
                     });
-                // let apiurl = `&cid=${data.id}`;
-                // this.$axios({
-                //   method: "get",
-                //   url: apiurl
-                // })
-                //   .then(res => {
-                //     this.$toast({ message: res.data.msg });
-                //   })
-                //   .catch(err => {
-                //     console.log(err);
-                //   });
             }
         },
 

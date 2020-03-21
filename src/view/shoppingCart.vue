@@ -1,35 +1,80 @@
 <template>
-    <div class="carBox">
-        <van-row class="shoppingItem" v-for="(item,index) in shoppingList" :key="item.id">
-            <van-col span="2" @change="listenCheck">
-                <div style="margin: 33px auto auto 5px">
-                    <van-checkbox checked-color="#f00" v-model="shoppingList[index].isChecked"
-                                  @change="listenCheck"></van-checkbox>
-                </div>
-            </van-col>
+    <div class="carBox" style="overflow: hidden">
+        <div :style="shoppingList.length > 0 ? 'display:none':'display:block'">
+            <div
+                style="margin: 77px auto 20px auto;
+                background: #EDEDED;
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                text-align: center;
+                padding-top: 20px;
+                box-sizing: border-box">
+                <van-icon name="shopping-cart-o" color="#f00" size="5rem"/>
+            </div>
+            <div style="color: #444;text-align: center">购物车空空如也</div>
+        </div>
+        <div class="goodsTxt">
+            <ul>
+                <li style="margin-bottom: 10px;background: #ffffff;padding: 10px;" v-for="(item,index) in shoppingList"
+                    :key="item.id">
+                    <van-row>
+                        <van-swipe-cell :right-width="65" :left-width="0" :on-close='onClose'>
+                            <van-cell-group>
+                                <van-col span="2" @change="listenCheck">
+                                    <div style="margin: 33px auto auto 5px">
+                                        <van-checkbox checked-color="#f00" v-model="shoppingList[index].isChecked"
+                                                      @change="listenCheck"></van-checkbox>
+                                    </div>
+                                </van-col>
+                                <van-col span="22">
+                                    <van-row>
 
-            <van-col span="20">
-                <div class="shoppingImg">
-                    <img :src="item.pic" alt/>
-                </div>
-                <div class="itemRight">
-                    <div class="title">{{item.name}}</div>
-                    <div>{{item.specification}}</div>
-                    <div class="numAndMoney">
-                        <div>￥{{item.price}}</div>
-                        <div class="numberControl">
-                            <van-stepper
-                                disable-input
-                                v-model="item.count"
-                                default-value="item.count"
-                                @minus="numDel(item,index)"
-                                @plus="numAdd(item,index)"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </van-col>
-        </van-row>
+                                        <van-col span="7">
+                                            <div style="margin-left: 10px;margin-right: 10px;">
+                                                <van-image
+                                                    width="100%"
+                                                    height="80px"
+                                                    :src="item.pic"
+                                                />
+                                            </div>
+                                        </van-col>
+
+                                        <van-col span="17">
+                                            <div class="title">{{item.name}}</div>
+                                            <div>{{item.specification}}</div>
+                                            <div style="margin-top: 10px;">
+                                                <van-row>
+                                                    <van-col span="12">
+                                                        <div style="color: #f00;font-size: 15px;margin-top: 8px">
+                                                            ￥{{item.price}}
+                                                        </div>
+                                                    </van-col>
+                                                    <van-col span="12">
+                                                        <van-stepper
+                                                            disable-input
+                                                            v-model="item.count"
+                                                            default-value="item.count"
+                                                            @plus="plus(item)"
+                                                            @minus="minus(item)"
+                                                        />
+                                                    </van-col>
+                                                </van-row>
+                                            </div>
+                                        </van-col>
+                                    </van-row>
+                                </van-col>
+                            </van-cell-group>
+                            <template #right>
+                                <van-button square type="danger" text="删除"/>
+                            </template>
+                        </van-swipe-cell>
+                    </van-row>
+                </li>
+            </ul>
+        </div>
+
+
         <div class="bottomMain" style="width: 100%">
             <van-row>
                 <van-col span="6">
@@ -130,13 +175,16 @@
         getBuildingsBySchool,
         addNewAddress,
         updateAddress,
-        shopcarpay
+        shopcarpay,
+        shopcarAddOne,
+        shopcarSubOne
     } from "@/request/api";
-    import WxPay from "@/request/WxPay";
     import {weiXinConfig, weiXinPayConfig} from "../request/api";
+    import Loding from "../components/loding";
 
     export default {
         name: "shoppingCart",
+        components: {Loding},
         data() {
             return {
                 checkedAll: false,
@@ -168,7 +216,6 @@
                 shoppingList: [],
                 allSelect: false,
                 sum: 0,
-                pic: {url: "../../static/img/sele.png"}
             };
         },
         created() {
@@ -177,6 +224,53 @@
         },
         watch: {},
         methods: {
+            // 添加一个到购物车
+            // plus(data) {
+            //     let addLoading = this.$toast.loading()
+            //     shopcarAddOne({cid: data.id})
+            //         .then(res => {
+            //             addLoading.clear();
+            //             if (res.code !== 0) {
+            //                 this.$toast.fail(res.msg)
+            //             }else {
+            //                 this.shoppingCarList()
+            //             }
+            //         })
+            //         .catch(err => {
+            //             addLoading.clear();
+            //             console.log(err);
+            //         });
+            // },
+            // // 减少一个到购物车
+            // minus(data) {
+            //     let addLoading = this.$toast.loading()
+            //     shopcarSubOne({cid: data.id})
+            //         .then(res => {
+            //             addLoading.clear();
+            //             if (res.code !== 0) {
+            //                 this.$toast.fail(res.msg)
+            //             }else {
+            //                 this.shoppingCarList()
+            //             }
+            //         })
+            //         .catch(err => {
+            //             addLoading.clear();
+            //             console.log(err);
+            //         });
+            // },
+            // 左滑删除
+            onClose(clickPosition, instance) {
+                let e = window.event;
+                e.preventDefault();
+                e.stopPropagation()
+                instance.close();//这个函数就是让滑动的模块返回的操作  e.preventDefault()阻止默认行为;e.stopPropagation()阻止冒泡
+                console.log('正在左滑')
+                this.$dialog.confirm({
+                    message: '确定删除吗？'
+                }).then(() => {
+                    instance.close();
+                });
+            },
             money() {
                 let tempMoney = 0;
                 for (let i in this.shoppingList) {
@@ -520,22 +614,6 @@
                     }
                 }
             },
-            numAdd(item, index) {
-                item.num++;
-                if (item.isSelect == true) {
-                    this.sum = this.sum + item.price;
-                }
-            },
-            // 减去
-            numDel(item, index) {
-                item.num--;
-                if (item.isSelect == true) {
-                    this.sum = this.sum - item.price;
-                }
-                if (item.num == 0) {
-                    this.shoppingList.splice(index, 1);
-                }
-            },
             // 结算
             buyGoods() {
                 //alert("购买成功,共花费" + this.sum + "元");shops
@@ -588,91 +666,120 @@
 </script>
 
 <style scoped lang="less">
-    .carBox {
-        background: #f7f8fa;
-    }
-
-    button {
-        outline: none;
-        border-color: transparent;
-        box-shadow: none;
-    }
-
-    .shoppingMain {
-        padding-top: 10px;
-        width: 100%;
-        height: auto;
-        margin-bottom: 70px;
-        padding-bottom: 100px;
-        box-sizing: border-box;
-    }
-
-    .shoppingItem {
-        width: 96%;
-        margin-left: 2%;
-        background: #fff;
-        border-radius: 5px;
-        display: flex;
-        margin-bottom: 10px;
-        padding: 10px 0;
-        box-sizing: border-box;
-    }
-
-    .selectCircle {
-        width: 20px;
-        height: 20px;
-        border: 1px solid #cccccc;
-        border-radius: 50%;
-        margin: 38px 0px auto 10px;
-        overflow: hidden;
-    }
-
-    .shoppingImg {
-        width: 70px;
-        height: 70px;
-        padding: 10px;
-        float: left;
-    }
-
-    .shoppingImg img {
-        height: 100%;
-        width: 100%;
-    }
-
-    .itemRight {
+    .goodsTxt {
         font-size: 14px;
-        width: 300px;
-        padding-top: 10px;
-        /*margin-top: 26px;*/
-        text-align: left;
-        box-sizing: border-box;
+    }
+
+    .van-hairline--top-bottom::after {
+        border-width: 0 0;
     }
 
     .title {
+        /*margin-bottom: 6px;*/
+        /*min-height: 36px;*/
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
 
-    .numAndMoney {
-        margin-top: 10px;
-        display: flex;
-        position: relative;
-    }
-
-    input {
-        width: 40px;
-        height: 20px;
-        margin: 10px;
+    .carBox .van-swipe-cell__left,
+    .van-swipe-cell__right {
+        display: inline-block;
+        width: 65px;
+        height: 44px;
+        font-size: 15px;
+        line-height: 44px;
+        color: #fff;
         text-align: center;
+        background-color: #f44;
     }
 
-    .numberControl {
-        position: absolute;
-        right: 30px;
-        top: -14px;
-    }
+    /*.carBox {*/
+    /*    background: #f7f8fa;*/
+    /*}*/
+
+    /*button {*/
+    /*    outline: none;*/
+    /*    border-color: transparent;*/
+    /*    box-shadow: none;*/
+    /*}*/
+
+    /*.shoppingMain {*/
+    /*    padding-top: 10px;*/
+    /*    width: 100%;*/
+    /*    height: auto;*/
+    /*    margin-bottom: 70px;*/
+    /*    padding-bottom: 100px;*/
+    /*    box-sizing: border-box;*/
+    /*}*/
+
+    /*.shoppingItem {*/
+    /*    width: 96%;*/
+    /*    margin-left: 2%;*/
+    /*    background: #fff;*/
+    /*    border-radius: 5px;*/
+    /*    display: flex;*/
+    /*    margin-bottom: 10px;*/
+    /*    padding: 10px 0;*/
+    /*    box-sizing: border-box;*/
+    /*}*/
+
+    /*.selectCircle {*/
+    /*    width: 20px;*/
+    /*    height: 20px;*/
+    /*    border: 1px solid #cccccc;*/
+    /*    border-radius: 50%;*/
+    /*    margin: 38px 0px auto 10px;*/
+    /*    overflow: hidden;*/
+    /*}*/
+
+    /*.shoppingImg {*/
+    /*    width: 70px;*/
+    /*    height: 70px;*/
+    /*    padding: 10px;*/
+    /*    float: left;*/
+    /*}*/
+
+    /*.shoppingImg img {*/
+    /*    height: 100%;*/
+    /*    width: 100%;*/
+    /*}*/
+
+    /*.itemRight {*/
+    /*    font-size: 14px;*/
+    /*    width: 300px;*/
+    /*    padding-top: 10px;*/
+    /*    !*margin-top: 26px;*!*/
+    /*    text-align: left;*/
+    /*    box-sizing: border-box;*/
+    /*}*/
+
+    /*.title {*/
+    /*    display: -webkit-box;*/
+    /*    -webkit-line-clamp: 2;*/
+    /*    -webkit-box-orient: vertical;*/
+    /*    overflow: hidden;*/
+    /*}*/
+
+    /*.numAndMoney {*/
+    /*    margin-top: 10px;*/
+    /*    display: flex;*/
+    /*    position: relative;*/
+    /*}*/
+
+    /*input {*/
+    /*    width: 40px;*/
+    /*    height: 20px;*/
+    /*    margin: 10px;*/
+    /*    text-align: center;*/
+    /*}*/
+
+    /*.numberControl {*/
+    /*    position: absolute;*/
+    /*    right: 30px;*/
+    /*    top: -14px;*/
+    /*}*/
 
     .bottomMain {
         position: fixed;
@@ -798,12 +905,4 @@
         background-color: rgb(255, 0, 0);
         border: 1px solid rgb(255, 0, 0);
     }
-
-    // .van-address-list {
-    //   position: relative;
-    //   overflow: hidden;
-    // }
-    // .van-address-list__bottom {
-    //   position: absolute;
-    // }
 </style>

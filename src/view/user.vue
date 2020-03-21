@@ -44,7 +44,7 @@
             <div class="mySnacks">
                 <p class="mySnacks-title">我的快递</p>
                 <div>
-                    <van-grid :border="false" icon-size="40px">
+                    <van-grid :border="false" icon-size="30px">
                         <van-grid-item icon="paid" to="kdPayment" text="待付款"/>
                         <van-grid-item icon="exchange" to="kdDdFh" text="等待发达"/>
                         <van-grid-item icon="records" to="kdRecording" text="订单记录"/>
@@ -86,6 +86,8 @@
 <style scoped type="text/css">
     .my {
         background: #f7f8fa;
+        padding-bottom: 50px;
+        box-sizing: border-box;
     }
 
     .myBox {

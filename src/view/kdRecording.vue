@@ -3,14 +3,14 @@
     <div class="paymentBox">
       <ul>
         <li v-for="(item,index) in goodsList" :key="item.id">
-          <p class="payment-li-number">
-            <span>订单号:{{item.id}}</span>
-            <span v-if="item.status == 0">未支付</span>
-            <span v-if="item.status == -1">取消支付</span>
-            <span v-if="item.status == 1">等待派送</span>
-            <span v-if="item.status == 2">派送中</span>
-            <span v-if="item.status == 3">已完成</span>
-          </p>
+            <div class="payment-li-number">
+                <span class="order-no">订单号:{{item.id}}</span>
+                <van-tag plain v-if="item.status === -1">取消支付</van-tag>
+                <van-tag plain type="danger" v-if="item.status === 0">待付款</van-tag>
+                <van-tag plain type="warning" v-if="item.status === 1">等待派送</van-tag>
+                <van-tag plain type="primary" v-if="item.status === 2">派送中</van-tag>
+                <van-tag plain type="success" v-if="item.status === 3">已完成</van-tag>
+            </div>
           <div
             :class="item.orderType == '2' ? 'none': 'payment-li-des'"
             v-for="val in item.commbak"
@@ -24,13 +24,20 @@
               <div>¥{{val.price}} x {{val.count}}</div>
             </div>
           </div>
-          <div class="payment-btu" v-if="item.status == 0">
-            <span @click="closeOrder(item)">取消</span>
-            <span >付款</span>
-          </div>
-          <div class="payment-btu" v-if="item.status == 3">
-            <span @click="finishOrder(item)">完成订单</span>
-          </div>
+            <div class="bottom" v-if="item.status == 0">
+                <p class="totalTxt">合计：<span class="all-price">¥{{item.totalPrice}}</span></p>
+                <div class="payment-btu">
+                    <van-button type="danger" style="margin-right: 10px" size="small" @click="closeOrder(item)">取消订单</van-button>
+                    <van-button type="primary" size="small" @click="confirmPay(item)">支付</van-button>
+                </div>
+            </div>
+            <div class="bottom" v-if="item.status == 3">
+                <p class="totalTxt">合计：<span class="all-price">¥{{item.totalPrice}}</span></p>
+                <div class="payment-btu">
+                    <van-button type="danger" style="margin-right: 10px" size="small" @click="closeOrder(item)">取消订单</van-button>
+                    <van-button type="primary" size="small" @click="finishOrder(item)">完成订单</van-button>
+                </div>
+            </div>
         </li>
       </ul>
     </div>
@@ -48,7 +55,7 @@ export default {
       goodsList: []
     };
   },
-  created() { 
+  created() {
     this.getOrderInBuilding();
   },
   methods: {
@@ -132,13 +139,13 @@ export default {
 
 .payment-li-number span:nth-child(2) {
   font-size: 14px;
-  color: #a92d29;
+  color: #f00;
 }
 
 .payment-li-des {
   margin-top: 20px;
   display: flex;
-  border-bottom: 2px solid #efefef;
+  /*border-bottom: 2px solid #efefef;*/
   padding-bottom: 20px;
   box-sizing: border-box;
 }
@@ -177,19 +184,8 @@ export default {
   display: flex;
   justify-content: space-between;
 }
-
-.totalTxt p:nth-child(1) {
-  font-size: 13px;
-  color: #cccccc;
-}
-
-.totalTxt p:nth-child(2) {
-  font-size: 15px;
-  color: #000000;
-}
-
-.totalTxt p:nth-child(2) span {
-  color: #a92d29;
+.all-price{
+    color: #f00;
 }
 
 .payment-btu {
@@ -199,18 +195,17 @@ export default {
   font-size: 14px;
 }
 
-.payment-btu span {
-  padding: 5px 15px;
-  box-sizing: border-box;
-  text-align: center;
-  border: 1px solid #000000;
-  border-radius: 50px;
-  margin-left: 10px;
-  color: #000000;
-}
-
-.payment-btu span:nth-child(2) {
-  border-color: #a92d29;
-  color: #a92d29;
+.bottom{
+    height: 50px;
+    overflow: hidden;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border-top: 1px solid #EFEFEF;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
 }
 </style>

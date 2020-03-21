@@ -3,16 +3,16 @@
     <div class="paymentBox">
       <ul>
         <li v-for="(item,index) in goodsList" :key="item.id">
-
-          <div class="payment-li-des">
+          <div class="payment-li-des" v-for="val in item.commbak"
+               :key="val.id">
             <div class="payment-des-txt">
-              <div>{{item.des}}</div>
+              <div>{{val.des}}</div>
               <div>数量：{{item.number}}</div>
-              <div class="address">配送地址：{{item.address}}</div>
+              <div class="address">配送地址：{{item.sname}}{{item.bname}}{{item.detailAddress}}</div>
             </div>
           </div>
           <div class="payment-btu">
-            <span>确认发达</span>
+              <van-button type="primary" size="small" @click="confirmPay(item)">支付</van-button>
           </div>
         </li>
       </ul>
@@ -28,65 +28,30 @@
       return {
         // 要展示我要送的商品数量，送到的地点就行了',
         show: false,
-        goodsList: [
-          {
-            id: 1,
-            des: '付邮免费送！2019护考复习资料安抚爱疯饿哦金融股看法app的卡片',
-            url: 'https://img.yzcdn.cn/vant/cat.jpeg',
-            money:'100.00',
-            number:'2',
-            orderNum:'sm1231323423423',
-            address:'重庆市渝中区大坪街道长江二路354号'
-          },
-          {
-            id: 2,
-            des: '付邮免费送！2019护考复习资料安抚爱疯饿哦金融股看法app的卡片',
-            url: 'https://img.yzcdn.cn/vant/cat.jpeg',
-            money:'100.00',
-            number:'32',
-            orderNum:'sm1231323423423',
-            address:'重庆市渝中区大坪街道长江二路354号'
-          },
-          {
-            id: 3,
-            des: '付邮免费送！2019护考复习资料安抚爱疯饿哦金融股看法app的卡片',
-            url: 'https://img.yzcdn.cn/vant/cat.jpeg',
-            money:'100.00',
-            number:'22',
-            orderNum:'sm1231323423423',
-            address:'重庆市渝中区大坪街道长江二路354号'
-          },
-          {
-            id: 4,
-            des: '付邮免费送！2019护考复习资料安抚爱疯饿哦金融股看法app的卡片',
-            url: 'https://img.yzcdn.cn/vant/cat.jpeg',
-            money:'100.00',
-            number:'21',
-            orderNum:'sm1231323423423',
-            address:'重庆市渝中区大坪街道长江二路354号'
-          },
-          {
-            id: 5,
-            des: '付邮免费送！2019护考复习资料安抚爱疯饿哦金融股看法app的卡片',
-            url: 'https://img.yzcdn.cn/vant/cat.jpeg',
-            money:'100.00',
-            number:'11',
-            orderNum:'sm1231323423423',
-            address:'重庆市渝中区大坪街道长江二路354号'
-          }
-        ]
+        goodsList: []
       }
     },
     created() {
-      this.getOrderInBuilding()
+      this.orderList()
     },
     methods: {
       // 列表
-      getOrderInBuilding(){
-        getOrderInBuilding({}).then(res => {
-          console.log(res)
-        })
-      }
+        orderList() {
+            this.goodsList = [];
+            let getLoading = this.$toast.loading('数据加载中...');
+            getOrderInBuilding({status: 2}).then({}).then(res => {
+                getLoading.clear();
+                if (res.code === 0 && res.data.length > 0) {
+                    for (let i in res.data) {
+                        res.data[i].commbak = eval(res.data[i].commbak)[0];
+                    }
+                    this.goodsList = res.data;
+                }
+            }).catch(err => {
+                getLoading.clear();
+                console.log(err)
+            })
+        },
     }
   };
 </script>
@@ -188,21 +153,7 @@
     font-size: 14px
   }
 
-  .payment-btu span {
-    padding: 5px 15px;
-    box-sizing: border-box;
-    text-align: center;
-    border: 1px solid #000000;
-    border-radius: 50px;
-    margin-left: 10px;
-    border-color: rgb(255, 0, 0);
-    color: rgb(255, 0, 0);
-  }
 
-  .payment-btu span:nth-child(2) {
-    border-color: #a92d29;
-    color: #a92d29;
-  }
   .address{
     width: 100%;
     /*overflow: hidden;/*超出部分隐藏*/
