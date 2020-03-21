@@ -21,6 +21,9 @@
                         <van-grid-item v-if="userInfo.manager2 || userInfo.poster2" icon="todo-list-o"
                                        to="Courier" text="订单配送"/>
                         <van-grid-item icon="location-o" to="address_list" text="地址管理"/>
+                        <van-grid-item v-if="userInfo.manager2"
+                                       icon="todo-list-o"
+                                       to="Inventory" text="商品库存"/>
                     </van-grid>
                 </div>
             </div>

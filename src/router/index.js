@@ -18,7 +18,8 @@ const kdRecording = () => import ('@/view/kdRecording')
 const psyOrderList = () => import('@/view/psyOrderList')
 const address_list = () => import('@/view/address_list')
 const reLogin = () => import('@/view/relogin')
-const Courier = () => import('@/view/courier')
+const Courier = () => import('@/view/courier');
+const Inventory = () => import('@/view/inventory');
 
 Vue.use(Router)
 
@@ -156,6 +157,14 @@ const router = new Router({
             path: '/courier',
             name: 'Courier',
             component: Courier,
+            meta: {
+                requireLogin: true
+            }
+        },
+        {
+            path: '/inventory',
+            name: 'Inventory',
+            component: Inventory,
             meta: {
                 requireLogin: true
             }
