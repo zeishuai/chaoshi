@@ -26,7 +26,7 @@
 </template>
 
 <script>
-  import {getOrderInBuilding} from "@/request/api"
+  import {orderList} from "@/request/api"
   export default {
     name: "psyOrderList",
     data() {
@@ -44,7 +44,7 @@
         orderList() {
             this.goodsList = [];
             let getLoading = this.$toast.loading('数据加载中...');
-            getOrderInBuilding({status: 2}).then({}).then(res => {
+            orderList({status: 2}).then({}).then(res => {
                 getLoading.clear();
                 if (res.code === 0 && res.data.length > 0) {
                     for (let i in res.data) {
@@ -74,7 +74,7 @@
   .paymentBox li {
     width: 95%;
     background: #ffffff;
-    padding: 5px 10px;
+      padding: 15px 10px 10px 10px;
     box-sizing: border-box;
     margin: auto;
     margin-top: 10px;

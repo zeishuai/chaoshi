@@ -5,11 +5,7 @@
                 <li v-for="(item,index) in goodsList" :key="item.id">
                     <div class="payment-li-number">
                         <span class="order-no">订单号:{{item.id}}</span>
-                        <van-tag plain v-if="item.status === -1">取消支付</van-tag>
-                        <van-tag plain type="danger" v-if="item.status === 0">待付款</van-tag>
-                        <van-tag plain type="warning" v-if="item.status === 1">等待派送</van-tag>
-                        <van-tag plain type="primary" v-if="item.status === 2">派送中</van-tag>
-                        <van-tag plain type="success" v-if="item.status === 3">已完成</van-tag>
+                        <van-tag plain type="danger">待付款</van-tag>
                     </div>
                     <div class="payment-li-des">
                         <div class="payment-li-desimg">
@@ -115,9 +111,10 @@
 
     .paymentBox li {
         background: #ffffff;
-        padding: 5px 10px;
+        padding: 15px 10px 10px 10px;
         box-sizing: border-box;
         margin-top: 10px;
+        font-size: 14px;
     }
 
     .payment-li-number {
@@ -126,14 +123,14 @@
     }
 
     .order-no{
-        width: 198px;
-        overflow: hidden;
+        width: 138px;
         font-size: 14px;
         color: #cccccc;
-        overflow: hidden;
         display: block;
         height: 24px;
-        color: #cccccc;
+        overflow: hidden;/*超出部分隐藏*/
+        text-overflow:ellipsis;/* 超出部分显示省略号 */
+        white-space: nowrap;/*规定段落中的文本不进行换行 */
     }
     .payment-li-des {
         margin-top: 20px;

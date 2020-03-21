@@ -155,9 +155,10 @@
 
     .paymentBox li {
         background: #ffffff;
-        padding: 5px 10px;
+        padding: 15px 10px 10px 10px;
         box-sizing: border-box;
-        margin-bottom: 10px;
+        margin-top: 10px;
+        font-size: 14px;
     }
 
     .payment-li-number {
@@ -166,24 +167,24 @@
     }
 
     .order-no{
-        width: 198px;
-        overflow: hidden;
+        width: 138px;
         font-size: 14px;
         color: #cccccc;
-        overflow: hidden;
         display: block;
         height: 24px;
-        color: #cccccc;
+        overflow: hidden;/*超出部分隐藏*/
+        text-overflow:ellipsis;/* 超出部分显示省略号 */
+        white-space: nowrap;/*规定段落中的文本不进行换行 */
     }
     .payment-li-number span:nth-child(1) {
-        font-size: 14px;
+        font-size: 12px;
         color: #cccccc;
     }
 
-    .payment-li-number span:nth-child(2) {
-        font-size: 14px;
-        color: #f00;
-    }
+    /*.payment-li-number span:nth-child(2) {*/
+    /*    font-size: 12px;*/
+    /*    color: #f00;*/
+    /*}*/
 
     .payment-li-des {
         margin-top: 20px;

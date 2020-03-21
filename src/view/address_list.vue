@@ -26,12 +26,11 @@
                     clickable
                     name="picker"
                     :value="address.school"
-                    v-model="address.sid"
                     label="学校"
                     placeholder="点击选择学校"
                     @click="XXshowPicker = true"
                 />
-                <van-popup v-model="XXshowPicker" position="bottom">
+                <van-popup get-container="body" v-model="XXshowPicker" position="bottom">
                     <van-picker
                         show-toolbar
                         :columns="XXcolumns"
@@ -49,7 +48,7 @@
                     placeholder="点击选择楼号"
                     @click="LHshowPicker = true"
                 />
-                <van-popup v-model="LHshowPicker" position="bottom">
+                <van-popup get-container="body" v-model="LHshowPicker" position="bottom">
                     <van-picker
                         show-toolbar
                         :columns="LHcolumns"
@@ -259,11 +258,11 @@
             },
             onEdit(item, index) {
                 this.getSchools();
-                this.getBuildingsBySchool(item.sid);
                 this.address = item;
                 this.addressSta = 2
                 this.address.school = item.sname
                 this.address.LH = item.bname
+                this.getBuildingsBySchool(item.sid);
                 this.show = true;
             },
             // 新增地址

@@ -127,7 +127,7 @@
                         placeholder="点击选择学校"
                         @click="XXshowPicker = true"
                     />
-                    <van-popup get-container="body"v-model="XXshowPicker" position="bottom">
+                    <van-popup get-container="body" v-model="XXshowPicker" position="bottom">
                         <van-picker show-toolbar :columns="XXcolumns" @cancel="XXshowPicker = false"
                                     @confirm="onConfirmXX"/> 
                     </van-popup>

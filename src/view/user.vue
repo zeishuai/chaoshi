@@ -2,13 +2,13 @@
     <div class="my">
         <div class="myBox">
             <div class="personalInfo">
-                <van-skeleton v-if="loadingUser" title avatar :row="2"/>
-                <div v-if="!loadingUser" class="personal-msg">
+                <div class="personal-msg">
                     <img :src="userInfo.avatar" alt="">
                     <div class="personal-msg-des">
                         <div>{{userInfo.userName}}</div>
                         <div>{{memberText}}</div>
                     </div>
+                    <!--          <div class="personal-text">个人中心</div>-->
                 </div>
             </div>
             <div class="mySnacks">
@@ -49,8 +49,7 @@
         data() {
             return {
                 userInfo: {},
-                memberText: '普通会员',
-                loadingUser: true,
+                memberText:''
             }
         },
         created() {
@@ -75,7 +74,7 @@
                         }
                     }
                 }).catch(err => {
-                    loading.clear();
+                    loding.clear()
                     console.log(err)
                 })
             }
@@ -97,6 +96,7 @@
         background: #EFEFEF;
         margin: auto;
         padding-bottom: 10px;
+        /*padding: 0 20px;*/
         box-sizing: border-box;
         overflow: hidden;
     }
@@ -129,8 +129,7 @@
     .personal-msg-des {
         float: left;
         margin-left: 10px;
-        margin-top: 6px;
-        overflow: hidden;
+        margin-top: 8px;
     }
 
     .personal-msg-des div:nth-child(1) {

@@ -120,7 +120,7 @@ export default {
 .paymentBox li {
   width: 95%;
   background: #ffffff;
-  padding: 5px 10px;
+    padding: 15px 10px 10px 10px;
   box-sizing: border-box;
   margin: auto;
   margin-top: 10px;

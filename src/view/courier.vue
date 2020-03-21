@@ -77,7 +77,7 @@
                     });
             },
             // 配送订单
-            delivery() {
+            delivery(data) {
                 let loadingStatus = this.$toast.loading('数据加载中...');
                 let that = this;
                 editOrderStatus({orderid: data.id})
@@ -103,7 +103,7 @@
 <style scoped type="text/css">
     .payment-conter {
         height: auto;
-        min-height: 700px;
+        /*min-height: 700px;*/
         padding-bottom: 58px;
         box-sizing: border-box;
         background: #f7f8fa;
@@ -112,7 +112,7 @@
 
     .paymentBox li {
         background: #ffffff;
-        padding: 5px 10px;
+        padding: 15px 10px 10px 10px;
         box-sizing: border-box;
         margin-bottom: 10px;
     }
@@ -123,14 +123,14 @@
     }
 
     .order-no {
-        width: 198px;
-        overflow: hidden;
+        width: 138px;
         font-size: 14px;
         color: #cccccc;
-        overflow: hidden;
         display: block;
         height: 24px;
-        color: #cccccc;
+        overflow: hidden;/*超出部分隐藏*/
+        text-overflow:ellipsis;/* 超出部分显示省略号 */
+        white-space: nowrap;/*规定段落中的文本不进行换行 */
     }
 
     .payment-li-number span:nth-child(1) {

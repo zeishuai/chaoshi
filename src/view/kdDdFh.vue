@@ -111,7 +111,7 @@
 
     .paymentBox li {
         background: #ffffff;
-        padding: 5px 10px;
+        padding: 15px 10px 10px 10px;
         box-sizing: border-box;
         margin-top: 10px;
     }
@@ -122,8 +122,14 @@
     }
 
     .order-no{
+        width: 138px;
         font-size: 14px;
         color: #cccccc;
+        display: block;
+        height: 24px;
+        overflow: hidden;/*超出部分隐藏*/
+        text-overflow:ellipsis;/* 超出部分显示省略号 */
+        white-space: nowrap;/*规定段落中的文本不进行换行 */
     }
     .payment-li-des {
         margin-top: 20px;
