@@ -16,7 +16,14 @@ module.exports = {
         pathRewrite: {
           '^/api': '' //路径重写
           }
-      }
+      },
+        '/upload': {
+            target: 'http://wkht.qdytcy.com', //源地址
+            changeOrigin: true, //改变源
+            pathRewrite: {
+                '^/upload': '' //路径重写
+            }
+        }
     },
 
     // Various Dev Server settings
