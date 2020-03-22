@@ -33,9 +33,6 @@
                                 <van-button type="danger" size="small" @click="closeOrder(item)">取消订单</van-button>
                                 <van-button type="primary" size="small" @click="rePayFunc(item)">支付</van-button>
                             </div>
-                            <div v-if="item.status == 3">
-                                <van-button type="primary" size="small" @click="finishOrder(item)">完成订单</van-button>
-                            </div>
                         </div>
                     </div>
                 </li>

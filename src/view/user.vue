@@ -24,7 +24,7 @@
                         <van-grid-item v-if="userInfo.manager2"
                                        icon="notes-o"
                                        to="Inventory" text="商品库存"/>
-                        <van-grid-item v-if="userInfo.manager2 || userInfo.poster2"
+                        <van-grid-item v-if="userInfo.manager2"
                                        icon="tosend"
                                        to="confirm/courier" text="确认送达"/>
                     </van-grid>
