@@ -1,6 +1,12 @@
 <template>
     <div class="payment-container">
-        <div class="paymentBox">
+        <van-skeleton v-if="dataLoading" title :row="10"/>
+        <van-row type="flex" justify="center" v-if="!dataLoading && goodsList.length < 1">
+            <van-col span="8" style="margin-top: 20%;text-align: center">
+                <span>暂无数据...</span>
+            </van-col>
+        </van-row>
+        <div class="paymentBox" v-if="!dataLoading && goodsList.length > 0">
             <ul>
                 <li v-for="(item,index) in goodsList" :key="item.id">
                     <div class="payment-li-number">
@@ -45,7 +51,8 @@
             return {
                 title: '待付款',
                 show: false,
-                goodsList: []
+                goodsList: [],
+                dataLoading: true
             }
         },
         created() {
@@ -57,6 +64,7 @@
                 let getLoading = this.$toast.loading('数据加载中...');
                 orderList({status: 0}).then({}).then(res => {
                     getLoading.clear();
+                    this.dataLoading = false;
                     if (res.code === 0 && res.data.length > 0) {
                         for (let i in res.data) {
                             res.data[i].commbak = eval(res.data[i].commbak)[0];
@@ -65,20 +73,22 @@
                     }
                 }).catch(err => {
                     getLoading.clear();
+                    this.dataLoading = false;
                     console.log(err)
                 })
             },
             // 取消订单
             closeOrder(data) {
+                this.dataLoading = true;
                 let getLoading = this.$toast.loading('订单取消中...');
                 closeOrder({orderid: data.id})
                     .then(res => {
                         getLoading.clear();
-                        if (res.code === 0) {
-                            this.orderList()
-                        } else {
-                            this.$toast.fail(res.msg);
-                        }
+                        this.$toast({
+                            message: res.msg,
+                            type: res.code === 0 ? 'success' : 'fail'
+                        });
+                        this.orderList()
                     })
                     .catch(err => {
                         getLoading.clear();

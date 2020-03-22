@@ -19,11 +19,14 @@
                         <van-grid-item icon="bag-o" to="receiving" text="待收货"/>
                         <van-grid-item icon="notes-o" to="myOrder" text="我的订单"/>
                         <van-grid-item v-if="userInfo.manager2 || userInfo.poster2" icon="todo-list-o"
-                                       to="Courier" text="订单配送"/>
+                                       to="courier" text="订单配送"/>
                         <van-grid-item icon="location-o" to="address_list" text="地址管理"/>
                         <van-grid-item v-if="userInfo.manager2"
-                                       icon="todo-list-o"
+                                       icon="notes-o"
                                        to="Inventory" text="商品库存"/>
+                        <van-grid-item v-if="userInfo.manager2 || userInfo.poster2"
+                                       icon="tosend"
+                                       to="confirm/courier" text="确认送达"/>
                     </van-grid>
                 </div>
             </div>

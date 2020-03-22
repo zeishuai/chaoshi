@@ -2,7 +2,7 @@
     <div class="payment-conter">
         <van-skeleton v-if="loadingStatus" title :row="10"/>
         <van-row type="flex" justify="center" v-if="!loadingStatus && orderLists.length < 1">
-            <van-col span="8" style="margin-top: 20%">
+            <van-col span="8" style="margin-top: 20%;text-align: center">
                 <span>暂无数据...</span>
             </van-col>
         </van-row>
@@ -35,7 +35,7 @@
                     <div class="bottom">
                         <p class="totalTxt">合计：<span class="all-price">¥{{item.totalPrice}}</span></p>
                         <div class="payment-btu">
-                            <van-button type="danger" size="small" @click="delivery(item)">配送</van-button>
+                            <van-button type="danger" size="small" @click="delivery(item)">确认送达</van-button>
                         </div>
                     </div>
                 </li>
@@ -49,7 +49,7 @@
     import {editOrderStatus} from "../request/api";
 
     export default {
-        name: "courier",
+        name: "confirmCourier",
         data() {
             return {
                 title: "待付款",
@@ -67,9 +67,11 @@
             // 订单列表
             orderList() {
                 this.orderLists = [];
-                getOrderInBuilding({status: 1})
+                let loadingData = this.$toast.loading('数据加载中..');
+                getOrderInBuilding({status: 2})
                     .then(res => {
                         this.loadingStatus = false;
+                        loadingData.clear();
                         if (res.code === 0) {
                             for (let i = 0; i < res.data.length; i++) {
                                 res.data[i].commbak = eval(res.data[i].commbak);
@@ -78,12 +80,14 @@
                         }
                     })
                     .catch(err => {
+                        loadingData.clear();
                         this.loadingStatus = false;
                         console.log(err);
                     });
             },
             // 配送订单
             delivery(data) {
+                return this.$toast.fail("等一下");
                 let loadingStatus = this.$toast.loading('数据加载中...');
                 let that = this;
                 editOrderStatus({orderid: data.id})

@@ -19,6 +19,7 @@ const psyOrderList = () => import('@/view/psyOrderList')
 const address_list = () => import('@/view/address_list')
 const reLogin = () => import('@/view/relogin')
 const Courier = () => import('@/view/courier');
+const ConfirmCourier = () => import('@/view/confirmCourier');
 const Inventory = () => import('@/view/inventory');
 
 Vue.use(Router)
@@ -157,6 +158,14 @@ const router = new Router({
             path: '/courier',
             name: 'Courier',
             component: Courier,
+            meta: {
+                requireLogin: true
+            }
+        },
+        {
+            path: '/confirm/courier',
+            name: 'ConfirmCourier',
+            component: ConfirmCourier,
             meta: {
                 requireLogin: true
             }
