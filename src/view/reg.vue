@@ -20,7 +20,6 @@
                     method: 'get',
                     url: apiurl,
                 }).then(res => {
-                    console.log(res)
                     localStorage.setItem('token', res.data.data.token);
                     localStorage.setItem('userInfo', JSON.stringify(res.data.data.user));
                     if (localStorage.getItem('token')) {

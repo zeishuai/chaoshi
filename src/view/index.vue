@@ -107,7 +107,6 @@
                 this.$router.push({path: '/'})
             },
             toggle(index) {
-                console.log(index)
                 this.activenav = index;
             },
             plus() {

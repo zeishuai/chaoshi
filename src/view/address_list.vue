@@ -117,9 +117,8 @@
                     loading.clear();
                     if (res.code === 0) {
                         this.$toast({message: res.msg});
-                        localStorage.setItem('addressID',data.id)
-                        console.log(data.id)
-                        this.chosenAddressId = data.id
+                        localStorage.setItem('addressID',data.id);
+                        this.chosenAddressId = data.id;
                         this.getAddressList()
                     }
                 }).catch(err => {
@@ -150,7 +149,6 @@
                     return false;
                 }
                 let updateAddressLoading = this.$toast.loading('加载中...');
-                console.log(this.address)
                 updateAddress({
                     id: this.address.id,
                     name: this.address.name,
@@ -190,7 +188,6 @@
             onConfirmXX(value) {
                 let sid = "";
                 this.address.school = value;
-                console.log(this.address.school)
                 this.XXshowPicker = false;
                 this.XXcolumns1.map(item => {
                     if (item.name == value) {

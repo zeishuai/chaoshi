@@ -68,7 +68,6 @@ export default {
             res.data[index].commbak = nesarry;
             this.goodsList = res.data;
           }
-          console.log(this.goodsList);
           // this.goodsList = res.data;
         }
       });
@@ -77,7 +76,6 @@ export default {
     closeOrder(data) {
       closeOrder({ orderid: data.id })
         .then(res => {
-          console.log(res);
           if (res.code == 0) {
             this.$toast({ message: res.msg });
           } else {
@@ -92,7 +90,6 @@ export default {
     finishOrder() {
       finishOrder({ orderid: data.id })
         .then(res => {
-          console.log(res);
           if (res.code == 0) {
             this.$toast({ message: res.msg });
           } else {

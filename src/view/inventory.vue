@@ -1,12 +1,12 @@
 <template>
     <div class="index" style="background: #FAFAFA;overflow: hidden">
         <van-row>
-            <van-col span="5" style="border-right: 1px solid #f1f1f1;min-height: 700px;">
+            <van-col span="5.5" style="border-right: 1px solid #f1f1f1;min-height: 700px;">
                 <van-sidebar v-model="activeKey" @change="onChange">
                     <van-sidebar-item v-for="item in arrs" :title="item.name" :key="item.id"/>
                 </van-sidebar>
             </van-col>
-            <van-col span="19" style="background: #fafafa;height: 100%">
+            <van-col span="18" style="background: #fafafa;height: 100%">
                 <van-skeleton v-if="goodsList.length < 1" title :row="10"/>
                 <van-row v-if="goodsList.length > 0" v-for="item in goodsList" :key="item.id"
                          style="margin-bottom: 10px;background: #fff;padding-top: 13px">

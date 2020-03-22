@@ -484,7 +484,6 @@
                     detailAddress: this.address.detailAddress
                 })
                     .then(res => {
-                        console.log(res);
                         if (res.code == 0) {
                             this.$toast.success({message: res.msg});
                             this.addressSta = 2;
