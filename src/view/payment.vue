@@ -25,7 +25,7 @@
                         <p class="totalTxt">合计：<span class="all-price">¥{{item.totalPrice}}</span></p>
                         <div class="payment-btu">
                             <van-button type="danger" size="small" @click="closeOrder(item)">取消订单</van-button>
-                            <van-button type="primary" size="small" @click="orderrePay(item)">支付</van-button>
+                            <van-button type="primary" size="small" @click="orderRePay(item)">支付</van-button>
                         </div>
                     </div>
                 </li>
@@ -35,8 +35,8 @@
 </template>
 
 <script>
-    import {orderList, closeOrder, orderrepay} from "@/request/api";
-    import {weiXinConfig, weiXinPayConfig, weiXinRePayConfig} from "../request/api";
+    import {orderList, closeOrder} from "@/request/api";
+    import {weiXinConfig, weiXinRePayConfig} from "../request/api";
     import {startPay} from "../function/wechat";
 
     export default {
@@ -85,7 +85,7 @@
                         console.log(err);
                     });
             },
-            orderPay(data) {
+            orderRePay(data) {
                 let payLoading = this.$toast.loading('正在支付...');
                 let configData = {};
                 weiXinConfig({url: window.location.href})

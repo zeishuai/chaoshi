@@ -1,6 +1,12 @@
 <template>
     <div class="payment-conter">
-        <div class="paymentBox">
+        <van-skeleton v-if="dataLoading" title :row="10"/>
+        <van-row type="flex" justify="center" v-if="!dataLoading && orderLists.length < 1">
+            <van-col span="8" style="margin-top: 20%;text-align: center">
+                <span>暂无数据...</span>
+            </van-col>
+        </van-row>
+        <div class="paymentBox" v-if="!dataLoading && orderLists.length > 0">
             <ul>
                 <li v-for="item in orderLists" :key="item.id">
                     <div class="payment-li-number">
@@ -25,20 +31,13 @@
                         <div class="payment-btu">
                             <div v-if="item.status == 0">
                                 <van-button type="danger" size="small" @click="closeOrder(item)">取消订单</van-button>
-                                <van-button type="primary" size="small" @click="showToast(item)">支付</van-button>
+                                <van-button type="primary" size="small" @click="rePayFunc(item)">支付</van-button>
                             </div>
                             <div v-if="item.status == 3">
                                 <van-button type="primary" size="small" @click="finishOrder(item)">完成订单</van-button>
                             </div>
                         </div>
                     </div>
-
-                    <!--<div class="payment-btu" v-if="item.type == '3'">
-                      <span @click="showToast">评价</span>
-                    </div>
-                    <div class="payment-btu" v-if="item.type == '4'">
-                      <span @click="showToast">退货</span>
-                    </div>-->
                 </li>
             </ul>
         </div>
@@ -77,6 +76,8 @@
 
 <script>
     import {orderList, closeOrder, finishOrder} from "@/request/api";
+    import {weiXinConfig, weiXinRePayConfig} from "../request/api";
+    import {startPay} from "../function/wechat";
 
     export default {
         name: "receiving",
@@ -86,26 +87,29 @@
                 show: false,
                 rateValue: 3,
                 rateMessage: "",
-                orderLists: []
+                orderLists: [],
+                dataLoading: true
             };
         },
         created() {
-            this.orderList();
+            this.getOrderList();
         },
         methods: {
             // 订单列表
-            orderList() {
+            getOrderList() {
+                this.orderLists = [];
                 orderList({})
                     .then(res => {
-                        if (res.code == 0) {
+                        this.dataLoading = false;
+                        if (res.code === 0) {
                             for (let i = 0; i < res.data.length; i++) {
-                                let nesarry = eval(res.data[i].commbak);
-                                res.data[i].commbak = nesarry;
+                                res.data[i].commbak = eval(res.data[i].commbak);
                                 this.orderLists = res.data;
                             }
                         }
                     })
                     .catch(err => {
+                        this.dataLoading = false;
                         console.log(err);
                     });
             },
@@ -113,30 +117,54 @@
             closeOrder(data) {
                 closeOrder({orderid: data.id})
                     .then(res => {
-                        console.log(res);
-                        if (res.code == 0) {
-                            this.$toast({message: res.msg});
-                        } else {
-                            this.$toast({message: res.msg});
-                        }
+                        this.$toast({
+                            message: res.msg,
+                            type: res.code === 0 ? 'success' : 'fail'
+                        });
+                        this.getOrderList();
                     })
                     .catch(err => {
                         console.log(err);
                     });
             },
             // 订单完成
-            finishOrder() {
+            finishOrder(data) {
                 finishOrder({orderid: data.id})
                     .then(res => {
-                        console.log(res);
-                        if (res.code == 0) {
-                            this.$toast({message: res.msg});
-                        } else {
-                            this.$toast({message: res.msg});
-                        }
+                        this.$toast({
+                            message: res.msg,
+                            type: res.code === 0 ? 'success' : 'fail'
+                        });
+                        this.getOrderList();
                     })
                     .catch(err => {
                         console.log(err);
+                    });
+            },
+            rePayFunc(data) {
+                let payLoading = this.$toast.loading('正在支付...');
+                let configData = {};
+                weiXinConfig({url: window.location.href})
+                    .then(res => {
+                        configData = res.data;
+                    })
+                    .then(step => {
+                        //获取支付参数
+                        weiXinRePayConfig({orderid: data.id}).then(pay => {
+                            payLoading.clear();
+                            pay.data.package = pay.data.packageValue;
+                            let res = startPay(configData, pay.data);
+                            let that = this;
+                            setTimeout(function () {
+                                that.orderList();
+                            }, 5000);
+                        }).catch(err => {
+                            this.$toast.fail('网络出错')
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        payLoading.clear();
                     });
             }
         }
@@ -166,16 +194,17 @@
         justify-content: space-between;
     }
 
-    .order-no{
+    .order-no {
         width: 68%;
         font-size: 14px;
         color: #cccccc;
         display: block;
         height: 24px;
-        overflow: hidden;/*超出部分隐藏*/
-        text-overflow:ellipsis;/* 超出部分显示省略号 */
-        white-space: nowrap;/*规定段落中的文本不进行换行 */
+        overflow: hidden; /*超出部分隐藏*/
+        text-overflow: ellipsis; /* 超出部分显示省略号 */
+        white-space: nowrap; /*规定段落中的文本不进行换行 */
     }
+
     .payment-li-number span:nth-child(1) {
         font-size: 12px;
         color: #cccccc;
@@ -217,7 +246,7 @@
         margin-top: 15px;
     }
 
-    .bottom{
+    .bottom {
         height: 50px;
         overflow: hidden;
         box-sizing: border-box;
@@ -225,18 +254,21 @@
         display: flex;
         justify-content: space-between;
     }
-    .payment-btu{
+
+    .payment-btu {
         height: auto;
         overflow: hidden;
         margin-top: 14px;
     }
-    .totalTxt{
+
+    .totalTxt {
         float: left;
         line-height: 30px;
         margin-top: 14px;
         color: #444;
     }
-    .all-price{
+
+    .all-price {
         color: #f00;
     }
 </style>
