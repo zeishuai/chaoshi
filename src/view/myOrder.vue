@@ -144,6 +144,7 @@
             rePayFunc(data) {
                 let payLoading = this.$toast.loading('正在支付...');
                 let configData = {};
+                let that = this;
                 weiXinConfig({url: window.location.href})
                     .then(res => {
                         configData = res.data;
@@ -154,9 +155,8 @@
                             payLoading.clear();
                             pay.data.package = pay.data.packageValue;
                             let res = startPay(configData, pay.data);
-                            let that = this;
                             setTimeout(function () {
-                                that.orderList();
+                                that.getOrderList();
                             }, 5000);
                         }).catch(err => {
                             this.$toast.fail('网络出错')
