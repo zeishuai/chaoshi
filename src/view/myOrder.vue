@@ -157,7 +157,7 @@
                             setTimeout(function () {
                                 that.getOrderList();
                                 payLoading.clear();
-                            }, 6000);
+                            }, 8000);
                         }).catch(err => {
                             this.$toast.fail('网络出错')
                         })
