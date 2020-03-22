@@ -46,7 +46,6 @@
 
 <script>
     import {getOrderInBuilding, closeOrder, finishOrder} from "@/request/api";
-    import {editOrderStatus} from "../request/api";
 
     export default {
         name: "confirmCourier",
@@ -87,17 +86,16 @@
             },
             // 配送订单
             delivery(data) {
-                return this.$toast.fail("等一下");
                 let loadingStatus = this.$toast.loading('数据加载中...');
                 let that = this;
-                editOrderStatus({orderid: data.id})
+                finishOrder({orderid: data.id})
                     .then(res => {
                         loadingStatus.clear();
-                        that.orderList();
                         this.$toast({
                             message: res.msg,
                             type: res.code === 0 ? 'success' : 'fail'
                         });
+                        that.orderList();
                     })
                     .catch(err => {
                         loadingStatus.clear();
