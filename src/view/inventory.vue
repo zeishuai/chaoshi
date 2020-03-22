@@ -55,19 +55,21 @@
                 arrs: [],
                 judge: "1",
                 goodsList: [],
-                cid: "1" // 商品分类ID
+                cid: "" // 商品分类ID
             };
         },
         created() {
             this.classifyList();
-            this.commodityList(this.cid);
+            setTimeout(() =>{
+                this.commodityList(this.cid);
+            },500)
         },
         methods: {
             onChange(val) {
-                this.cid = val
                 this.arrs.map((item, index) => {
                     if (index == val) {
                         this.commodityList(item.id);
+                        this.cid = item.id
                     }
                 });
                 // this.cid = index
@@ -78,6 +80,7 @@
                     .then(res => {
                         if (res.code == 0) {
                             this.arrs = res.data;
+                            this.cid = this.arrs[0].id
                         }
                     })
                     .catch(err => {
