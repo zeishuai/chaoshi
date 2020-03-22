@@ -152,12 +152,12 @@
                     .then(step => {
                         //获取支付参数
                         weiXinRePayConfig({orderid: data.id}).then(pay => {
-                            payLoading.clear();
                             pay.data.package = pay.data.packageValue;
                             let res = startPay(configData, pay.data);
                             setTimeout(function () {
                                 that.getOrderList();
-                            }, 5000);
+                                payLoading.clear();
+                            }, 6000);
                         }).catch(err => {
                             this.$toast.fail('网络出错')
                         })
