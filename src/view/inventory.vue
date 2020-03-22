@@ -26,9 +26,9 @@
                                 <van-stepper
                                     v-model="item.stock"
                                     min="0"
-                                    @change="stepper(item)"
                                     @plus="plus(item)"
                                     @minus="minus(item)"
+                                    @blur="stepper(item)"
                                 />
                             </div>
                         </div>
@@ -39,8 +39,7 @@
     </div>
 </template>
 <script>
-    import {buildingUpdateComm, classify, commodityList, shopcarAddOne, shopcarSubOne} from "@/request/api";
-
+    import {buildingUpdateComm, classify, commodityList} from "@/request/api";
     export default {
         name: "inventory",
         data() {
@@ -72,7 +71,6 @@
                         this.cid = item.id
                     }
                 });
-                // this.cid = index
             },
             // 商品分类
             classifyList() {
@@ -109,7 +107,6 @@
             plus(data) {
                 let addLoading = this.$toast.loading()
                 const _this = this;
-                console.log(data)
                 buildingUpdateComm({id: data.sid, stock: data.stock+1})
                     .then(res => {
                         addLoading.clear();
@@ -144,7 +141,6 @@
             },
             // chang输入更新库存
             stepper(data) {
-                console.log(data)
                 let addLoading = this.$toast.loading()
                 const _this = this;
                 buildingUpdateComm({id: data.sid, stock: data.stock})
@@ -172,12 +168,6 @@
     li {
         list-style: none;
     }
-
-    .goodsImg {
-        /*float: left;*/
-        margin-right: 10px;
-    }
-
     .goodsTxtBox {
         /*width: 180px;*/
         /*float: left;*/
