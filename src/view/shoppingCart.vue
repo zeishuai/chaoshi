@@ -560,7 +560,21 @@
             },
             // 结算
             buyGoods() {
-                this.isShow = true;
+                if(this.shoppingList.length == 0) {
+                    this.isShow = false;
+                    this.$dialog.confirm({
+                    title: '温馨提示',
+                    message: '你还没有选购商品，是否现在取选购'
+                    }).then(() => {
+                    // on confirm
+                        this.$router.push({path:'/index'})
+                    }).catch(() => {
+                    // on cancel
+                    });
+                }else{
+                    this.isShow = true;
+                }
+                
                 let picid = []
                 for (let i = 0; i < this.shoppingList.length; i++) {
                     if (this.shoppingList[i].isChecked) {
