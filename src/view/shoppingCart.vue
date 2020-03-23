@@ -358,6 +358,7 @@
                 if (!this.shops) {
                     return this.$toast({message: '没有选择商品哦~'})
                 }
+                let that = this;
                 let payLoading = this.$toast.loading('正在支付...');
                 weiXinConfig({url: window.location.href})
                     .then(res => {
@@ -370,9 +371,11 @@
                             pay.data.package = pay.data.packageValue;
                             let res = startPay(configData, pay.data);
                             // 支付调试
-                            this.checkedAll = false;
-                            this.sum = 0;
-                            this.shoppingCarList();
+                            setTimeout(function () {
+                                that.checkedAll = false;
+                                that.sum = 0;
+                                that.shoppingCarList();
+                            }, 8000)
                         }).catch(err => {
                             this.$toast.fail('网络出错')
                         })
@@ -560,25 +563,24 @@
             },
             // 结算
             buyGoods() {
-                if(this.shoppingList.length == 0) {
+                if (this.shoppingList.length == 0) {
                     this.isShow = false;
                     this.$dialog.confirm({
-                    title: '温馨提示',
-                    message: '你还没有选购商品，是否现在取选购'
+                        title: '温馨提示',
+                        message: '你还没有选购商品，是否现在取选购'
                     }).then(() => {
-                    // on confirm
-                        this.$router.push({path:'/index'})
+                        // on confirm
+                        this.$router.push({path: '/index'})
                     }).catch(() => {
-                    // on cancel
+                        // on cancel
                     });
-                }else{
+                } else {
                     for(let i=0;i<this.shoppingList.length;i++){
                         if(this.shoppingList[i].isChecked){
                             this.isShow = true;
                         }
                     }
                 }
-                
                 let picid = []
                 for (let i = 0; i < this.shoppingList.length; i++) {
                     if (this.shoppingList[i].isChecked) {
