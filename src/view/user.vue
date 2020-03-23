@@ -55,7 +55,7 @@
         data() {
             return {
                 userInfo: {},
-                memberText:''
+                memberText:'普通会员'
             }
         },
         created() {
