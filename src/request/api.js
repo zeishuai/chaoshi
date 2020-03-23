@@ -62,4 +62,19 @@ export const getSpecListApi = p => get(`/api/user/post/getSize?sessionid=${Token
 export const postPay = p => post(`/api/user/post/pay?sessionid=${Token}`, p)
 // 楼长我的快递订单
 export const postGetOrder = p =>get(`/api/user/post/getOrder?sessionid=${Token}`, p)
+// 快递取消订单
+export const a = cancelOrder => get(`/api/user/post/cancelOrder?sessionid=${Token}`, p)
+
+
+// 快递取消订单
+export const cancelOrder = p => get(`/api/user/post/cancelOrder?sessionid=${Token}`, p)
+// 快递改为问题件
+export const wentiOrder = p => get(`/api/user/post/wentiOrder?sessionid=${Token}`, p)
+// 快递改为配送状态
+export const kuaidiPostOrder = p => get(`/api/user/post/postOrder?sessionid=${Token}`, p)
+// 快递完成订单
+export const kuaidiFinishOrder = p => get(`/api/user/post/finishOrder?sessionid=${Token}`, p)
+// 快递配送订单列表
+export const getPostOrder = p => get(`/api/user/post/getPostOrder?sessionid=${Token}`, p)
+
 

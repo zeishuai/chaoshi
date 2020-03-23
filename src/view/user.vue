@@ -35,9 +35,9 @@
                 <div>
                     <van-grid :border="false" icon-size="30px">
                         <van-grid-item icon="paid" to="kdPayment" text="待付款"/>
-                        <van-grid-item icon="exchange" to="kdDdFh" text="等待发达"/>
+                        <van-grid-item icon="exchange" to="kdDdFh" text="等待送达"/>
                         <van-grid-item icon="records" to="kdRecording" text="订单记录"/>
-                        <van-grid-item v-if="userInfo.manager2 || userInfo.poster2"
+                        <van-grid-item v-if="userInfo.poster2"
                                        icon="todo-list-o"
                                        to="psyOrderList" text="快递配送"/>
                     </van-grid>
