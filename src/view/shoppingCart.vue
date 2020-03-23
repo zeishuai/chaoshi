@@ -153,10 +153,14 @@
                     </van-popup>
                     <van-field v-model="address.detailAddress" name="详细地址" label="详细地址" placeholder="详细地址"/>
                     <div style="margin: 16px;" v-if="addressSta == 1">
-                        <van-button color="#f00" round block type="info" native-type="submit" @click="addressSubmit">添加</van-button>
+                        <van-button color="#f00" round block type="info" native-type="submit" @click="addressSubmit">
+                            添加
+                        </van-button>
                     </div>
                     <div style="margin: 16px;" v-if="addressSta == 2">
-                        <van-button color="#f00" round block type="info" native-type="submit" @click="updateAddress">修改</van-button>
+                        <van-button color="#f00" round block type="info" native-type="submit" @click="updateAddress">
+                            修改
+                        </van-button>
                     </div>
                 </van-form>
             </van-popup>
@@ -366,9 +370,9 @@
                             pay.data.package = pay.data.packageValue;
                             let res = startPay(configData, pay.data);
                             // 支付调试
-                            this.checkedAll = false
-                            this.sum = 0,
-                                this.shoppingCarList();
+                            this.checkedAll = false;
+                            this.sum = 0;
+                            this.shoppingCarList();
                         }).catch(err => {
                             this.$toast.fail('网络出错')
                         })

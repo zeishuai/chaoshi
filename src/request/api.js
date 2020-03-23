@@ -2,8 +2,8 @@
  * api接口统一管理
  */
 import {
-  get,
-  post
+    get,
+    post
 } from './http'
 
 const Token = localStorage.getItem("token");
@@ -26,36 +26,38 @@ export const getBuildingsBySchool = p => get(`/api/user/info/getBuildingsBySchoo
 // 新增地址
 export const addNewAddress = p => post(`/api/user/info/addNewAddress?sessionid=${Token}`, p)
 //修改地址
-export const updateAddress = p =>post(`/api/user/info/updateAddress?sessionid=${Token}`,p)
+export const updateAddress = p => post(`/api/user/info/updateAddress?sessionid=${Token}`, p)
 // 设置默认地主
-export const setDefaultAddress = p =>get(`/api/user/info/setDefaultAddress?sessionid=${Token}`,p)
+export const setDefaultAddress = p => get(`/api/user/info/setDefaultAddress?sessionid=${Token}`, p)
 // 登录
 export const loginByCode = p => get(`/api/system/wxfdb0d4b10b8496bf/loginByCode`, p)
 // 商品分类
 export const classify = p => get(`/api/user/shop/classify/list?sessionid=${Token}`, p)
 // 商品列表
-export const commodityList = p => get(`/api/user/shop/commodity/list?sessionid=${Token}`,p)
+export const commodityList = p => get(`/api/user/shop/commodity/list?sessionid=${Token}`, p)
 // 添加一个到购物车
-export const shopcarAddOne = p => get(`/api/user/shopcar/addOne?sessionid=${Token}`,p)
+export const shopcarAddOne = p => get(`/api/user/shopcar/addOne?sessionid=${Token}`, p)
 // 减少购物车
-export const shopcarSubOne = p => get(`/api/user/shopcar/subOne?sessionid=${Token}`,p)
+export const shopcarSubOne = p => get(`/api/user/shopcar/subOne?sessionid=${Token}`, p)
 // 支付
-export const shopcarpay = p => post(`/api/user/shopcar/pay?sessionid=${Token}`,p)
+export const shopcarpay = p => post(`/api/user/shopcar/pay?sessionid=${Token}`, p)
 // 订单重新支付
-export const orderrepay  = p => get(`/api/user/order/repay?sessionid=${Token}`,p)
+export const orderrepay = p => get(`/api/user/order/repay?sessionid=${Token}`, p)
 // 获取用户信息
-export const getUserInfo = p => get(`/api/user/info/getInfo?sessionid=${Token}`,p)
+export const getUserInfo = p => get(`/api/user/info/getInfo?sessionid=${Token}`, p)
 // 楼长订单列表
-export const getOrderInBuilding = p => get(`/api/user/building/getOrderInBuilding?sessionid=${Token}`,p)
-export const editOrderStatus = p => get(`/api/user/building/postOrder?sessionid=${Token}`,p)
+export const getOrderInBuilding = p => get(`/api/user/building/getOrderInBuilding?sessionid=${Token}`, p)
+export const editOrderStatus = p => get(`/api/user/building/postOrder?sessionid=${Token}`, p)
 // 楼长更新更新商品价格和库存
-export const buildingUpdateComm = p => post(`/api/user/building/updateComm?sessionid=${Token}`,p)
-export const weiXinConfig = p => get(`/api/system/wxfdb0d4b10b8496bf/getConfig?sessionid=${Token}`,p)
-export const weiXinPayConfig = p => post(`/api/user/shopcar/pay?sessionid=${Token}`,p)
-export const weiXinRePayConfig = p => get(`/api/user/order/repay?sessionid=${Token}`,p)
+export const buildingUpdateComm = p => post(`/api/user/building/updateComm?sessionid=${Token}`, p)
+export const weiXinConfig = p => get(`/api/system/wxfdb0d4b10b8496bf/getConfig?sessionid=${Token}`, p)
+export const weiXinPayConfig = p => post(`/api/user/shopcar/pay?sessionid=${Token}`, p)
+export const weiXinRePayConfig = p => get(`/api/user/order/repay?sessionid=${Token}`, p)
 
 // 获取配送站
-export const getPostStation = p => get(`/api/user/post/getPostStation?sessionid=${Token}`,p)
+export const getPostStation = p => get(`/api/user/post/getPostStation?sessionid=${Token}`, p);
+//获取规格
+export const getSpecListApi = p => get(`/api/user/post/getSize?sessionid=${Token}`, p);
 // 快递代取下单/user/post/pay
-export const postPay = p =>post(`/api/user/post/pay?sessionid=${Token}`,p)
+export const postPay = p => post(`/api/user/post/pay?sessionid=${Token}`, p)
 
