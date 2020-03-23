@@ -30,7 +30,7 @@ export const updateAddress = p => post(`/api/user/info/updateAddress?sessionid=$
 // 设置默认地主
 export const setDefaultAddress = p => get(`/api/user/info/setDefaultAddress?sessionid=${Token}`, p)
 // 登录
-export const loginByCode = p => get(`/api/system/wxfdb0d4b10b8496bf/loginByCode`, p)
+export const loginByCode = p => get(`/api/system/wx8c464155e57164db/loginByCode`, p)
 // 商品分类
 export const classify = p => get(`/api/user/shop/classify/list?sessionid=${Token}`, p)
 // 商品列表
@@ -50,7 +50,7 @@ export const getOrderInBuilding = p => get(`/api/user/building/getOrderInBuildin
 export const editOrderStatus = p => get(`/api/user/building/postOrder?sessionid=${Token}`, p)
 // 楼长更新更新商品价格和库存
 export const buildingUpdateComm = p => post(`/api/user/building/updateComm?sessionid=${Token}`, p)
-export const weiXinConfig = p => get(`/api/system/wxfdb0d4b10b8496bf/getConfig?sessionid=${Token}`, p)
+export const weiXinConfig = p => get(`/api/system/wx8c464155e57164db/getConfig?sessionid=${Token}`, p)
 export const weiXinPayConfig = p => post(`/api/user/shopcar/pay?sessionid=${Token}`, p)
 export const weiXinRePayConfig = p => get(`/api/user/order/repay?sessionid=${Token}`, p)
 

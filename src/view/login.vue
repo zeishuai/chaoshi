@@ -27,7 +27,7 @@
         methods: {
             onSubmit() {
                 //开始登录
-                let AppId = 'wxfdb0d4b10b8496bf';
+                let AppId = 'wx8c464155e57164db';
                 let redirectUri = urlencode('http://ui.qdytcy.com/reg');
                 let scope = 'snsapi_userinfo';
                 let wxUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize?';
