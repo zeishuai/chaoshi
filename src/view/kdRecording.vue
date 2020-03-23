@@ -49,7 +49,7 @@
           <van-row>订单创建时间:{{item.createDate}}</van-row>
           <van-row>订单支付时间:{{item.payDate}}</van-row>
           <van-row>订单完成时间:{{item.finishDate}}</van-row>
-          <van-row type="flex" justify="end" v-if="item.status == '0'">
+          <van-row type="flex" justify="end" v-if="item.status == '0' &&(userInfo.manager2 || userInfo.poster2)" >
             <van-button style="margin-right:15px" type="default" size="small">取消订单</van-button>
             <van-button type="danger" size="small">支付</van-button>
           </van-row>
@@ -68,7 +68,8 @@ export default {
     return {
       title: "楼长快递-订单记录",
       show: false,
-      goodsList: []
+      goodsList: [],
+      userInfo:localStorage.getItem('userInfo')
     };
   },
   created() {

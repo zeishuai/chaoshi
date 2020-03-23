@@ -1,182 +1,149 @@
 <template>
-    <div class="payment-container">
-        <div class="paymentBox">
-            <ul>
-                <li v-for="(item,index) in goodsList" :key="item.id">
-                    <div class="payment-li-number">
-                        <span class="order-no">订单号:{{item.id}}</span>
-                        <van-tag plain v-if="item.status === -1">取消支付</van-tag>
-                        <van-tag plain type="danger" v-if="item.status === 0">待付款</van-tag>
-                        <van-tag plain type="warning" v-if="item.status === 1">等待派送</van-tag>
-                        <van-tag plain type="primary" v-if="item.status === 2">派送中</van-tag>
-                        <van-tag plain type="success" v-if="item.status === 3">已完成</van-tag>
-                    </div>
-                    <div class="payment-li-des">
-                        <div class="payment-li-desimg">
-                            <van-image
-                                width="70"
-                                height="70"
-                                radius="10"
-                                :src="item.commbak.pic"
-                            />
-                        </div>
-                        <div class="payment-des-txt">
-                            <div>{{item.commbak.name}}</div>
-                            <div>¥{{item.commbak.price}} x {{item.commbak.count}}</div>
-                        </div>
-                    </div>
-                    <div class="bottom">
-                        <p class="totalTxt">合计：<span class="all-price">¥{{item.totalPrice}}</span></p>
-                        <div class="payment-btu">
-                            <van-button type="danger" size="small" @click="closeOrder(item)">取消订单</van-button>
-                            <van-button type="primary" size="small" @click="confirmPay(item)">支付</van-button>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
+  <div class="payment-conter">
+    <div class="paymentBox">
+      <ul>
+        <li v-for="item in goodsList" :key="item.id">
+          <van-row type="flex" justify="space-between">
+            <van-col span="19">订单号：{{item.id}}</van-col>
+            <van-col span="5">
+              <van-tag v-if="item.status == '0'" plain type="danger">未支付</van-tag>
+              <van-tag v-if="item.status == '1'" plain type="primary">等待派送</van-tag>
+              <van-tag v-if="item.status == '2'" plain type="success">问题件</van-tag>
+              <van-tag v-if="item.status == '3'" plain type="danger">配送中</van-tag>
+              <van-tag v-if="item.status == '4'" plain type="warning">已完成</van-tag>  
+              <van-tag v-if="item.status == '5'" plain type="warning">已取消</van-tag>  
+            </van-col>
+          </van-row>
+          <van-row>
+            <van-image
+              width="80"
+              height="80"
+              :src="item.pics"
+            />
+          </van-row>
+          <van-row type="flex" justify="space-between">代收点名称:{{item.postStation}}</van-row>
+          <van-row
+            type="flex"
+            justify="space-between"
+          >代收点地址:{{item.paddress ? item.paddress : '暂无地址'}}</van-row>
+          <van-row>代收类型:{{item.xiaoneiwai}}</van-row>
+          <van-row>
+            <van-col span="12">快点尺寸:{{item.size}}</van-col>
+            <van-col span="12">快点单量:{{item.danliang}}</van-col>
+          </van-row>
+          <van-row>
+            <van-col span="12">取件码:{{item.code}}</van-col>
+            <van-col span="12">小费:{{item.xiaofei}}</van-col>
+          </van-row>
+          <van-row>备注:{{item.content}}</van-row>
+          <van-row style="color:f00">总计:{{item.totalPrice}}元</van-row>
+          <van-row>
+            <van-col span="12">收件人姓名:{{item.uname}}</van-col>
+            <van-col span="12">收件人电话:{{item.phone}}</van-col>
+          </van-row>
+          <van-row>收货地址:{{item.sname}} {{item.bname}} {{item.detailAddress}}</van-row>
+          <van-row>
+            <van-col span="12">配送员姓名:{{item.posterName}}</van-col>
+            <van-col span="12">配送员电话:{{item.posterPhone}}</van-col>
+          </van-row>
+          <van-row>订单创建时间:{{item.createDate}}</van-row>
+          <van-row>订单支付时间:{{item.payDate}}</van-row>
+          <van-row>订单完成时间:{{item.finishDate}}</van-row>
+          <van-row type="flex" justify="end" v-if="item.status == '0' &&(userInfo.manager2 || userInfo.poster2)" >
+            <van-button style="margin-right:15px" type="default" size="small">取消订单</van-button>
+            <van-button type="danger" size="small">支付</van-button>
+          </van-row>
+        </li>
+      </ul>
     </div>
+  </div>
 </template>
 
 <script>
-    import {orderList, closeOrder} from "@/request/api";
-
-    export default {
-        name: "payment",
-        data() {
-            return {
-                title: '待付款',
-                show: false,
-                goodsList: []
-            }
-        },
-        created() {
-            this.orderList()
-        },
-        methods: {
-            orderList() {
-                this.goodsList = [];
-                let getLoading = this.$toast.loading('数据加载中...');
-                orderList({status: 0}).then({}).then(res => {
-                    getLoading.clear();
-                    if (res.code === 0 && res.data.length > 0) {
-                        for (let i in res.data) {
-                            res.data[i].commbak = eval(res.data[i].commbak)[0];
-                        }
-                        this.goodsList = res.data;
-                    }
-                }).catch(err => {
-                    getLoading.clear();
-                    console.log(err)
-                })
-            },
-            // 取消订单
-            closeOrder(data) {
-                let getLoading = this.$toast.loading('订单取消中...');
-                closeOrder({orderid: data.id})
-                    .then(res => {
-                        getLoading.clear();
-                        if (res.code === 0 ) {
-                            this.orderList()
-                        } else {
-                            this.$toast.fail(res.msg);
-                        }
-                    })
-                    .catch(err => {
-                        getLoading.clear();
-                        console.log(err);
-                    });
-            },
-            confirmPay(data){
-
-            }
-        }
+import { postGetOrder, closeOrder, finishOrder } from "@/request/api";
+import tools from '@/utils/tool'
+export default {
+  name: "kdRecording",
+  data() {
+    return {
+      title: "楼长快递-待付款",
+      show: false,
+      goodsList: [],
+      userInfo:localStorage.getItem('userInfo')
     };
+  },
+  created() {
+    this.postGetOrder();
+  },
+  methods: {
+    // 列表
+    postGetOrder() {
+      postGetOrder({status:0}).then(res => {
+        if (res.code === 0) {
+          for (let index = 0; index < res.data.length; index++) {
+            res.data[index].createDate = tools.formatLongDate(res.data[index].createDate)
+            res.data[index].payDate = tools.formatLongDate(res.data[index].payDate)
+            res.data[index].finishDate = tools.formatLongDate(res.data[index].finishDate)
+          }
+          this.goodsList = res.data;
+        }
+      });
+    },
+    // 取消订单
+    closeOrder(data) {
+      closeOrder({ orderid: data.id })
+        .then(res => {
+          if (res.code == 0) {
+            this.$toast({ message: res.msg });
+          } else {
+            this.$toast({ message: res.msg });
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // 订单完成
+    finishOrder() {
+      finishOrder({ orderid: data.id })
+        .then(res => {
+          if (res.code == 0) {
+            this.$toast({ message: res.msg });
+          } else {
+            this.$toast({ message: res.msg });
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  }
+};
 </script>
 
 <style scoped type="text/css">
-    .payment-container {
-        height: auto;
-        min-height: 700px;
-        padding-bottom: 58px;
-        box-sizing: border-box;
-        background: #EFEFEF;
-        overflow: hidden;
-    }
+.payment-conter {
+  height: auto;
+  min-height: 700px;
+  padding-bottom: 58px;
+  box-sizing: border-box;
+  background: #efefef;
+  overflow: hidden;
+}
 
-    .paymentBox li {
-        background: #ffffff;
-        padding: 15px 10px 10px 10px;
-        box-sizing: border-box;
-        margin-bottom: 10px;
-    }
+.paymentBox li {
+  width: 95%;
+  background: #ffffff;
+  padding: 15px 10px 10px 10px;
+  box-sizing: border-box;
+  margin: auto;
+  margin-bottom: 10px;
+  border-radius: 15px;
+  font-size: 14px;
+}
+.van-row{
+  margin-bottom: 10px;
+}
 
-    .payment-li-number {
-        display: flex;
-        justify-content: space-between;
-    }
 
-    .order-no{
-        width: 68%;
-        font-size: 14px;
-        color: #cccccc;
-        display: block;
-        height: 24px;
-        overflow: hidden;/*超出部分隐藏*/
-        text-overflow:ellipsis;/* 超出部分显示省略号 */
-        white-space: nowrap;/*规定段落中的文本不进行换行 */
-    }
-    .payment-li-des {
-        margin-top: 20px;
-        display: flex;
-        /*border-bottom: 2px solid #EFEFEF;*/
-        padding-bottom: 10px;
-        box-sizing: border-box;
-    }
-
-    .payment-li-desimg {
-        float: left;
-    }
-
-    .payment-des-txt {
-        width: 500px;
-        float: left;
-        margin-left: 10px;
-    }
-
-    .payment-des-txt div:nth-child(1) {
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow: hidden;
-        font-size: 16px;
-    }
-
-    .payment-des-txt div:nth-child(2) {
-        font-size: 13px;
-        margin-top: 15px;
-    }
-
-    .bottom{
-        height: 50px;
-        overflow: hidden;
-        box-sizing: border-box;
-        border-top: 1px solid #EFEFEF;
-        display: flex;
-        justify-content: space-between;
-    }
-    .payment-btu{
-        height: auto;
-        overflow: hidden;
-        margin-top: 14px;
-    }
-    .totalTxt{
-        float: left;
-        line-height: 30px;
-        margin-top: 14px;
-        color: #444;
-    }
-    .all-price{
-        color: #f00;
-    }
 </style>

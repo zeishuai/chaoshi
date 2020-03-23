@@ -572,7 +572,11 @@
                     // on cancel
                     });
                 }else{
-                    this.isShow = true;
+                    for(let i=0;i<this.shoppingList.length;i++){
+                        if(this.shoppingList[i].isChecked){
+                            this.isShow = true;
+                        }
+                    }
                 }
                 
                 let picid = []
