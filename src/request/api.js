@@ -60,4 +60,6 @@ export const getPostStation = p => get(`/api/user/post/getPostStation?sessionid=
 export const getSpecListApi = p => get(`/api/user/post/getSize?sessionid=${Token}`, p);
 // 快递代取下单/user/post/pay
 export const postPay = p => post(`/api/user/post/pay?sessionid=${Token}`, p)
+// 楼长我的快递订单
+export const postGetOrder = p =>get(`/api/user/post/getOrder?sessionid=${Token}`, p)
 
