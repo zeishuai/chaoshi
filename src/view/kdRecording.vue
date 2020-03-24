@@ -69,7 +69,7 @@
                         <van-button style="margin-right:15px" type="default" size="small" @click="wentiOrder(item)">
                             改为问题件
                         </van-button>
-                        <van-button type="danger" size="small" @click="postOrder(item)">配送中</van-button>
+                        <van-button type="danger" size="small" @click="postOrder(item)">开始配送</van-button>
                     </van-row>
 
                     <van-row type="flex" justify="end" v-if="item.status == '3' && userInfo.poster2">
