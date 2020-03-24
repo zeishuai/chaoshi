@@ -137,7 +137,7 @@
                     <van-field
                         name="picker"
                         clickable
-                        disabled
+                        readonly
                         :value="address.school"
                         label="学校"
                         placeholder="点击选择学校"
@@ -152,7 +152,7 @@
                         />
                     </van-popup>
                     <van-field
-                        disabled
+                        readonly
                         clickable
                         name="picker"
                         :value="address.LH"
@@ -260,7 +260,7 @@
         methods: {
             // 添加一个到购物车
             plus(data) {
-                let addLoading = this.$toast.loading();
+                let addLoading = this.$toast.loading('加载中');
                 shopcarAddOne({cid: data.cid})
                     .then(res => {
                         addLoading.clear();
@@ -277,7 +277,7 @@
             },
             // // 减少一个到购物车
             minus(data) {
-                let addLoading = this.$toast.loading();
+                let addLoading = this.$toast.loading('加载中');
                 shopcarSubOne({cid: data.cid})
                     .then(res => {
                         addLoading.clear();
@@ -428,12 +428,14 @@
             },
             // 获取学校
             getSchools() {
+                let addLoading = this.$toast.loading('加载中');
                 this.XXcolumns = [];
                 getSchools({})
                     .then(res => {
                         if (res.code == 0) {
                             for (let i = 0; i < res.data.length; i++) {
                                 this.XXcolumns.push(res.data[i].name);
+                                addLoading.clear()
                             }
                             this.XXcolumns1 = res.data;
                         } else {
@@ -441,15 +443,18 @@
                         }
                     })
                     .catch(err => {
+                        addLoading.clear()
                         console.log(err);
                     });
             },
             // 获取楼号
             getBuildingsBySchool(sid) {
+                let addLoading = this.$toast.loading('加载中');
                 this.LHcolumns = [];
                 getBuildingsBySchool({sid: sid})
                     .then(res => {
                         if (res.code == 0) {
+                            addLoading.clear()
                             if (res.data.length == 0) {
                                 this.LHcolumns = [];
                             } else {
@@ -464,6 +469,7 @@
                         }
                     })
                     .catch(err => {
+                        addLoading.clear()
                         console.log(err);
                     });
             },
@@ -518,28 +524,30 @@
                     this.$toast({message: "请填写想写地址"});
                     return false;
                 }
+                let addLoading = this.$toast.loading('加载中');
                 addNewAddress({
                     name: this.address.name,
                     phone: this.address.phone,
                     sid: this.address.sid,
                     bid: this.address.bid,
                     detailAddress: this.address.detailAddress
-                })
-                    .then(res => {
+                }).then(res => {
                         if (res.code == 0) {
                             this.$toast.success({message: res.msg});
+                            addLoading.clear()
                             this.addressSta = 2;
                             this.getUserAddress();
                             this.addShow = false;
                         }
                     })
                     .catch(err => {
+                        addLoading.clear()
                         console.log(err);
                     });
             },
             // 获取地址列表
             getUserAddress() {
-                let addLoading = this.$toast.loading();
+                let addLoading = this.$toast.loading('加载中');
                 getUserAddress({})
                     .then(res => {
                         if (res.code == 0) {
@@ -559,11 +567,14 @@
             },
             // 购物车列表
             shoppingCarList() {
+                let addLoading = this.$toast.loading('加载中');
                 shopcarList({})
                     .then(res => {
+                        addLoading.clear()
                         this.shoppingList = res.data;
                     })
                     .catch(err => {
+                        addLoading.clear()
                         //  console.log(err)
                     });
             },
