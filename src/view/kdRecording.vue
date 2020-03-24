@@ -187,7 +187,7 @@
             // 配送中
             postOrder(item) {
                 let loading = this.$toast.loading('加载中');
-                kuaidiPostOrder({id: item.id, pid: item.posterId}).then(res => {
+                kuaidiPostOrder({id: item.id, pid: this.userInfo.userId}).then(res => {
                     loading.clear();
                     if (res.code === 0) {
                         this.postGetOrder()
