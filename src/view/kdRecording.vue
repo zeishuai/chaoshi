@@ -119,11 +119,6 @@
                     loadingData.clear();
                     this.isLoading = false;
                     if (res.code === 0) {
-                        for (let index = 0; index < res.data.length; index++) {
-                            res.data[index].createDate = tools.formatLongDate(res.data[index].createDate)
-                            res.data[index].payDate = tools.formatLongDate(res.data[index].payDate)
-                            res.data[index].finishDate = tools.formatLongDate(res.data[index].finishDate)
-                        }
                         this.goodsList = res.data;
                     }
                 }).catch(err => {

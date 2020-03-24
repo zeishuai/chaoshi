@@ -81,7 +81,7 @@
                         }
                     }
                 }).catch(err => {
-                    loding.clear()
+                    loading.clear();
                     console.log(err)
                 })
             }

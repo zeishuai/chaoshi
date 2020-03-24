@@ -27,7 +27,7 @@
                     <van-row
                         type="flex"
                         justify="space-between"
-                    >代收点地址:{{item.paddress ? item.paddress : '暂无地址'}}
+                    >代收点地址:{{item.paddress ? item.paddress : '未填地址'}}
                     </van-row>
                     <van-row>代收类型:{{item.xiaoneiwai}}</van-row>
                     <van-row>
@@ -50,8 +50,8 @@
                         <van-col span="12">配送员电话:{{item.posterPhone}}</van-col>
                     </van-row>
                     <van-row>订单创建时间:{{item.createDate}}</van-row>
-                    <van-row>订单支付时间:{{item.payDate}}</van-row>
-                    <van-row>订单完成时间:{{item.finishDate}}</van-row>
+                    <van-row v-if="item.payDate">订单支付时间:{{item.payDate}}</van-row>
+                    <van-row v-if="item.finishDate">订单完成时间:{{item.finishDate}}</van-row>
                     <van-row type="flex" justify="end">
                         <van-button style="margin-right:15px" type="default" size="small" @click="cancelOrder(item)">
                             取消订单
@@ -99,11 +99,6 @@
                     loadingData.clear();
                     this.isLoading = false;
                     if (res.code === 0) {
-                        for (let index = 0; index < res.data.length; index++) {
-                            res.data[index].createDate = tools.formatLongDate(res.data[index].createDate)
-                            res.data[index].payDate = tools.formatLongDate(res.data[index].payDate)
-                            res.data[index].finishDate = tools.formatLongDate(res.data[index].finishDate)
-                        }
                         this.goodsList = res.data;
                     }
                 }).catch(err => {
