@@ -191,19 +191,23 @@
                     loading.clear();
                     if (res.code === 0) {
                         this.postGetOrder()
+                        return this.$toast.success(res.msg);
                     }
+                   return this.$toast.fail(res.msg);
                 }).catch(err => {
                     loading.clear()
                 })
             },
             // 完成订单
-            kuaidiFinishOrder() {
+            kuaidiFinishOrder(data) {
                 let loading = this.$toast.loading('加载中');
-                kuaidiFinishOrder({}).then(res => {
+                kuaidiFinishOrder({id: data.id}).then(res => {
                     loading.clear();
                     if (res.code === 0) {
-                        this.postGetOrder()
+                        this.$toast.success(res.msg);
+                        return this.postGetOrder()
                     }
+                    return this.$toast.fail(res.msg);
                 }).catch(err => {
                     loading.clear()
                 })

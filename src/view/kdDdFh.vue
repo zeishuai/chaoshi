@@ -12,7 +12,7 @@
                     <van-row type="flex" justify="space-between">
                         <van-col span="19">订单号：{{item.id}}</van-col>
                         <van-col span="5">
-                            <van-tag plain type="primary">等待发达</van-tag>
+                            <van-tag plain type="primary">等待送达</van-tag>
                         </van-col>
                     </van-row>
                     <van-row>
