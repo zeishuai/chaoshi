@@ -20,6 +20,7 @@
                             width="80"
                             height="80"
                             :src="item.pics"
+                            @click="previewFunc(item.pics)"
                         />
                     </van-row>
                     <van-row type="flex" justify="space-between">代收点名称:{{item.postStation}}</van-row>
@@ -58,6 +59,7 @@
                 </li>
             </ul>
         </div>
+        <van-image-preview v-model="imageShow" :images="images" :closeable="true" />
     </div>
 </template>
 
@@ -73,13 +75,19 @@
                 show: false,
                 goodsList: [],
                 userInfo: localStorage.getItem('userInfo'),
-                isLoading: true
+                isLoading: true,
+                imageShow: false,
+                images: []
             };
         },
         created() {
             this.postGetOrder();
         },
         methods: {
+            previewFunc(url){
+                this.images = [url];
+                this.imageShow = true;
+            },
             // 列表
             postGetOrder() {
                 let loadingData = this.$toast.loading('数据加载中...');

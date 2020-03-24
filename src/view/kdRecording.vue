@@ -25,6 +25,7 @@
                             width="80"
                             height="80"
                             :src="item.pics"
+                            @click="previewFunc(item.pics)"
                         />
                     </van-row>
                     <van-row type="flex" justify="space-between">代收点名称:{{item.postStation}}</van-row>
@@ -80,13 +81,14 @@
                 </li>
             </ul>
         </div>
+        <van-image-preview v-model="imageShow" :images="images" :closeable="true" />
     </div>
 </template>
 
 <script>
     import {postGetOrder, cancelOrder, wentiOrder, kuaidiPostOrder, kuaidiFinishOrder} from "@/request/api";
     import tools from '@/utils/tool'
-    import {weiXinConfig, weiXinRePayConfig} from "../request/api";
+    import {expressRePayConfig, weiXinConfig, weiXinRePayConfig} from "../request/api";
     import {startPay} from "../function/wechat";
 
     export default {
@@ -97,13 +99,19 @@
                 show: false,
                 goodsList: [],
                 userInfo: JSON.parse(localStorage.getItem('userInfo')),
-                isLoading: true
+                isLoading: true,
+                imageShow: false,
+                images:[]
             };
         },
         created() {
             this.postGetOrder();
         },
         methods: {
+            previewFunc(url){
+                this.images = [url];
+                this.imageShow = true;
+            },
             // 列表
             postGetOrder() {
                 let loadingData = this.$toast.loading('数据加载中...');
@@ -150,7 +158,7 @@
                     })
                     .then(step => {
                         //获取支付参数
-                        weiXinRePayConfig({orderid: data.id}).then(pay => {
+                        expressRePayConfig({orderid: data.id}).then(pay => {
                             payLoading.clear();
                             pay.data.package = pay.data.packageValue;
                             let res = startPay(configData, pay.data);

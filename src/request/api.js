@@ -53,6 +53,7 @@ export const buildingUpdateComm = p => post(`/api/user/building/updateComm?sessi
 export const weiXinConfig = p => get(`/api/system/wx8c464155e57164db/getConfig?sessionid=${Token}`, p)
 export const weiXinPayConfig = p => post(`/api/user/shopcar/pay?sessionid=${Token}`, p)
 export const weiXinRePayConfig = p => get(`/api/user/order/repay?sessionid=${Token}`, p)
+export const expressRePayConfig = p => get(`/api/user/post/repay?sessionid=${Token}`, p)
 
 // 获取配送站
 export const getPostStation = p => get(`/api/user/post/getPostStation?sessionid=${Token}`, p);
