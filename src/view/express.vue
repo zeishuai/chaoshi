@@ -4,11 +4,11 @@
             <van-form>
                 <div @click="postAddresShow">
                     <van-field
-                        readonly
                         v-model="addressName"
+                        disabled
                         name="送货地址"
                         label="送货地址"
-                        placeholder="送货地址"
+                        placeholder="请选择送货地址"
                     />
                 </div>
                 <div @click="quHuoShowClidk">
@@ -16,14 +16,15 @@
                         v-model="postStationname"
                         name="取货地址"
                         label="取货地址"
-                        placeholder="取货地址"
+                        placeholder="请选择取货地址"
+                        disabled
                     />
                 </div>
                 <van-field
                     v-model="from.code"
                     name="取件信息"
                     label="取件信息"
-                    placeholder="取件信息"
+                    placeholder="请填写取件信息"
                 />
                 <van-field name="uploader" label="可选附图">
                     <template #input>
@@ -36,7 +37,7 @@
                     v-model="from.content"
                     name="备注信息"
                     label="备注信息"
-                    placeholder="备注信息"
+                    placeholder="请填写备注信息"
                 />
                 <van-field name="radio" label="规格">
                     <template #input>

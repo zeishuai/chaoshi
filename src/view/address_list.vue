@@ -22,7 +22,7 @@
                 <van-field v-model="address.phone" type="tel" name="电话" :rules="[{ pattern, message: '手机号格式错误' }]"
                            label="电话" placeholder="电话"/>
                 <van-field
-                    readonly
+                    disabled
                     clickable
                     name="picker"
                     :value="address.school"
@@ -39,7 +39,7 @@
                     />
                 </van-popup>
                 <van-field
-                    readonly
+                    disabled
                     clickable
                     name="picker"
                     :value="address.LH"
