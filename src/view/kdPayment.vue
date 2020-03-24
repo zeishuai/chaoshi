@@ -1,11 +1,12 @@
 <template>
     <div class="payment-conter">
-        <van-row type="flex" justify="center" v-if="goodsList.length < 1">
+        <van-row type="flex" justify="center" v-if="!isLoading && goodsList.length < 1">
             <van-col span="8" style="margin-top: 20%;text-align: center">
                 <span>暂无数据...</span>
             </van-col>
         </van-row>
-        <div class="paymentBox">
+        <van-skeleton v-if="isLoading" title :row="10"/>
+        <div class="paymentBox" v-if="!isLoading && goodsList.length > 0">
             <ul>
                 <li v-for="item in goodsList" :key="item.id">
                     <van-row type="flex" justify="space-between">
@@ -75,7 +76,8 @@
                 title: "楼长快递-待付款",
                 show: false,
                 goodsList: [],
-                userInfo: localStorage.getItem('userInfo')
+                userInfo: localStorage.getItem('userInfo'),
+                isLoading: true
             };
         },
         created() {
@@ -84,7 +86,10 @@
         methods: {
             // 列表
             postGetOrder() {
+                let loadingData = this.$toast.loading('数据加载中...');
                 postGetOrder({status: 0}).then(res => {
+                    loadingData.clear();
+                    this.isLoading = false;
                     if (res.code === 0) {
                         for (let index = 0; index < res.data.length; index++) {
                             res.data[index].createDate = tools.formatLongDate(res.data[index].createDate)
@@ -93,7 +98,10 @@
                         }
                         this.goodsList = res.data;
                     }
-                });
+                }).catch(err => {
+                    this.isLoading = false;
+                    loadingData.clear()
+                })
             },
             // 取消订单
             cancelOrder(data) {

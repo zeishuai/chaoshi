@@ -15,7 +15,7 @@
         methods: {
             // 登陆获取token
             onSubmit(values) {
-                let apiurl = '/api/system/wx8c464155e57164db/loginByCode?code=' + values
+                let apiurl = '/api/system/wxfdb0d4b10b8496bf/loginByCode?code=' + values
                 this.$axios({
                     method: 'get',
                     url: apiurl,

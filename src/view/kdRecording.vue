@@ -1,11 +1,12 @@
 <template>
     <div class="payment-conter">
-        <van-row type="flex" justify="center" v-if="goodsList.length < 1">
+        <van-row type="flex" justify="center" v-if="!isLoading && goodsList.length < 1">
             <van-col span="8" style="margin-top: 20%;text-align: center">
                 <span>暂无数据...</span>
             </van-col>
         </van-row>
-        <div class="paymentBox">
+        <van-skeleton v-if="isLoading" title :row="10"/>
+        <div class="paymentBox" v-if="!isLoading && goodsList.length > 0">
             <ul>
                 <li v-for="item in goodsList" :key="item.id">
                     <van-row type="flex" justify="space-between">
@@ -71,7 +72,9 @@
                     </van-row>
 
                     <van-row type="flex" justify="end" v-if="item.status == '3' && userInfo.poster2">
-                        <van-button style="margin-right:15px" type="default" size="small" @click="kuaidiFinishOrder(item)">完成订单</van-button>
+                        <van-button style="margin-right:15px" type="default" size="small"
+                                    @click="kuaidiFinishOrder(item)">完成订单
+                        </van-button>
                     </van-row>
 
                 </li>
@@ -81,7 +84,7 @@
 </template>
 
 <script>
-    import {postGetOrder, cancelOrder, wentiOrder, kuaidiPostOrder,kuaidiFinishOrder} from "@/request/api";
+    import {postGetOrder, cancelOrder, wentiOrder, kuaidiPostOrder, kuaidiFinishOrder} from "@/request/api";
     import tools from '@/utils/tool'
     import {weiXinConfig, weiXinRePayConfig} from "../request/api";
     import {startPay} from "../function/wechat";
@@ -93,17 +96,20 @@
                 title: "楼长快递-订单记录",
                 show: false,
                 goodsList: [],
-                userInfo: JSON.parse(localStorage.getItem('userInfo'))
+                userInfo: JSON.parse(localStorage.getItem('userInfo')),
+                isLoading: true
             };
         },
         created() {
             this.postGetOrder();
-            console.log(this.userInfo)
         },
         methods: {
             // 列表
             postGetOrder() {
+                let loadingData = this.$toast.loading('数据加载中...');
                 postGetOrder({}).then(res => {
+                    loadingData.clear();
+                    this.isLoading = false;
                     if (res.code === 0) {
                         for (let index = 0; index < res.data.length; index++) {
                             res.data[index].createDate = tools.formatLongDate(res.data[index].createDate)
@@ -112,23 +118,25 @@
                         }
                         this.goodsList = res.data;
                     }
-                });
+                }).catch(err => {
+                    loadingData.clear();
+                    this.isLoading = false;
+                })
             },
             // 取消订单
             cancelOrder(data) {
-                let loading = this.$toast.loading('加载中')
+                let loading = this.$toast.loading('加载中');
                 cancelOrder({id: data.id})
                     .then(res => {
-                        if (res.code == 0) {
-                            loading.clear()
-                            this.$toast({message: res.msg});
-                            this.postGetOrder()
-                        } else {
-                            loading.clear()
-                            this.$toast({message: res.msg});
+                        loading.clear();
+                        if (res.code === 0) {
+                            this.$toast.success(res.msg);
+                            return this.postGetOrder()
                         }
+                        return this.$toast.fail(res.msg)
                     })
                     .catch(err => {
+                        loading.clear();
                         console.log(err);
                     });
             },
@@ -163,23 +171,22 @@
             wentiOrder(item) {
                 let loading = this.$toast.loading('加载中')
                 wentiOrder({id: item.id}).then(res => {
-                    console.log(res)
-                    if (res.code == 0) {
-                        loading.clear()
-                        this.$toast({message: res.msg})
-                        this.postGetOrder()
+                    loading.clear();
+                    if (res.code === 0) {
+                        this.$toast.success(res.msg);
+                        return this.postGetOrder()
                     }
+                    return this.$toast.fail(res.msg)
                 }).catch(err => {
                     loading.clear()
                 })
             },
             // 配送中
             postOrder(item) {
-                console.log(item)
-                let loading = this.$toast.loading('加载中')
+                let loading = this.$toast.loading('加载中');
                 kuaidiPostOrder({id: item.id, pid: item.posterId}).then(res => {
-                    if (res.code == 0) {
-                        loading.clear()
+                    loading.clear();
+                    if (res.code === 0) {
                         this.postGetOrder()
                     }
                 }).catch(err => {
@@ -188,13 +195,13 @@
             },
             // 完成订单
             kuaidiFinishOrder() {
-                let loading = this.$toast.loading('加载中')
+                let loading = this.$toast.loading('加载中');
                 kuaidiFinishOrder({}).then(res => {
-                    if (res.code == 0) {
-                        loading.clear()
+                    loading.clear();
+                    if (res.code === 0) {
                         this.postGetOrder()
                     }
-                }).catch(err =>{
+                }).catch(err => {
                     loading.clear()
                 })
             }

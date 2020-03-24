@@ -1,11 +1,12 @@
 <template>
     <div class="payment-conter">
-        <van-row type="flex" justify="center" v-if="goodsList.length < 1">
+        <van-row type="flex" justify="center" v-if="!isLoading && goodsList.length < 1">
             <van-col span="8" style="margin-top: 20%;text-align: center">
                 <span>暂无数据...</span>
             </van-col>
         </van-row>
-        <div class="paymentBox">
+        <van-skeleton v-if="isLoading" title :row="10"/>
+        <div class="paymentBox" v-if="!isLoading && goodsList.length > 0">
             <ul>
                 <li v-for="item in goodsList" :key="item.id">
                     <van-row type="flex" justify="space-between">
@@ -25,7 +26,8 @@
                     <van-row
                         type="flex"
                         justify="space-between"
-                    >代收点地址:{{item.paddress ? item.paddress : '暂无地址'}}</van-row>
+                    >代收点地址:{{item.paddress ? item.paddress : '暂无地址'}}
+                    </van-row>
                     <van-row>代收类型:{{item.xiaoneiwai}}</van-row>
                     <van-row>
                         <van-col span="12">快点尺寸:{{item.size}}</van-col>
@@ -49,10 +51,10 @@
                     <van-row>订单创建时间:{{item.createDate}}</van-row>
                     <van-row>订单支付时间:{{item.payDate}}</van-row>
                     <van-row>订单完成时间:{{item.finishDate}}</van-row>
-<!--                    <van-row type="flex" justify="end" v-if="item.status == '0' &&(userInfo.manager2 || userInfo.poster2)" >-->
-<!--                        <van-button style="margin-right:15px" type="default" size="small">取消订单</van-button>-->
-<!--                        <van-button type="danger" size="small">支付</van-button>-->
-<!--                    </van-row>-->
+                    <!--                    <van-row type="flex" justify="end" v-if="item.status == '0' &&(userInfo.manager2 || userInfo.poster2)" >-->
+                    <!--                        <van-button style="margin-right:15px" type="default" size="small">取消订单</van-button>-->
+                    <!--                        <van-button type="danger" size="small">支付</van-button>-->
+                    <!--                    </van-row>-->
                 </li>
             </ul>
         </div>
@@ -60,8 +62,9 @@
 </template>
 
 <script>
-    import { postGetOrder, closeOrder, finishOrder } from "@/request/api";
+    import {postGetOrder, closeOrder, finishOrder} from "@/request/api";
     import tools from '@/utils/tool'
+
     export default {
         name: "kdRecording",
         data() {
@@ -69,7 +72,8 @@
                 title: "楼长快递-待付款",
                 show: false,
                 goodsList: [],
-                userInfo:localStorage.getItem('userInfo')
+                userInfo: localStorage.getItem('userInfo'),
+                isLoading: true
             };
         },
         created() {
@@ -78,7 +82,10 @@
         methods: {
             // 列表
             postGetOrder() {
-                postGetOrder({status:3}).then(res => {
+                let loadingData = this.$toast.loading('数据加载中...');
+                postGetOrder({status: 3}).then(res => {
+                    loadingData.clear();
+                    this.isLoading = false;
                     if (res.code === 0) {
                         for (let index = 0; index < res.data.length; index++) {
                             res.data[index].createDate = tools.formatLongDate(res.data[index].createDate)
@@ -87,33 +94,42 @@
                         }
                         this.goodsList = res.data;
                     }
-                });
+                }).catch(err => {
+                    loadingData.clear();
+                    this.isLoading = false;
+                })
             },
             // 取消订单
             closeOrder(data) {
-                closeOrder({ orderid: data.id })
+                let loadingData = this.$toast.loading('数据加载中...');
+                closeOrder({orderid: data.id})
                     .then(res => {
-                        if (res.code == 0) {
-                            this.$toast({ message: res.msg });
-                        } else {
-                            this.$toast({ message: res.msg });
-                        }
+                        loadingData.clear();
+                        this.$toast({
+                            message:res.msg,
+                            type: res.code === 0 ? 'success' : 'fail'
+                        });
+                        this.postGetOrder();
                     })
                     .catch(err => {
+                        loadingData.clear();
                         console.log(err);
                     });
             },
             // 订单完成
             finishOrder() {
-                finishOrder({ orderid: data.id })
+                let loadingData = this.$toast.loading('数据加载中...');
+                finishOrder({orderid: data.id})
                     .then(res => {
-                        if (res.code == 0) {
-                            this.$toast({ message: res.msg });
-                        } else {
-                            this.$toast({ message: res.msg });
-                        }
+                        loadingData.clear();
+                        this.$toast({
+                            message:res.msg,
+                            type: res.code === 0 ? 'success' : 'fail'
+                        });
+                        this.postGetOrder();
                     })
                     .catch(err => {
+                        loadingData.clear();
                         console.log(err);
                     });
             }
@@ -141,7 +157,8 @@
         border-radius: 15px;
         font-size: 14px;
     }
-    .van-row{
+
+    .van-row {
         margin-bottom: 10px;
     }
 
