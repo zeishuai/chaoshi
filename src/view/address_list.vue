@@ -22,7 +22,7 @@
                 <van-field v-model="address.phone" type="tel" name="电话" :rules="[{ pattern, message: '手机号格式错误' }]"
                            label="电话" placeholder="电话"/>
                 <van-field
-                    disabled
+                    readonly
                     clickable
                     name="picker"
                     :value="address.school"
@@ -39,7 +39,7 @@
                     />
                 </van-popup>
                 <van-field
-                    disabled
+                    readonly
                     clickable
                     name="picker"
                     :value="address.LH"
@@ -209,10 +209,12 @@
             },
             // 获取学校
             getSchools() {
+                let loading = this.$toast.loading('加载中')
                 this.XXcolumns = []
                 getSchools({})
                     .then(res => {
                         if (res.code == 0) {
+                            loading.clear()
                             for (let i = 0; i < res.data.length; i++) {
                                 this.XXcolumns.push(res.data[i].name);
                             }
@@ -222,15 +224,18 @@
                         }
                     })
                     .catch(err => {
+                        loading.clear
                         console.log(err);
                     });
             },
             // 获取楼号
             getBuildingsBySchool(sid) {
+                let loading = this.$toast.loading('加载中')
                 this.LHcolumns = [];
                 getBuildingsBySchool({sid: sid})
                     .then(res => {
                         if (res.code == 0) {
+                            loading.clear()
                             if (res.data.length == 0) {
                                 this.LHcolumns = [];
                             } else {
@@ -244,6 +249,7 @@
                         }
                     })
                     .catch(err => {
+                        loading.clear()
                         console.log(err);
                     });
             },
