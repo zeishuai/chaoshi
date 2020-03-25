@@ -5,31 +5,20 @@ import App from './App'
 import router from './router'
 import Vant from 'vant'
 import 'vant/lib/index.css'
-// import 'amfe-flexible'
 import Urlencode from 'urlencode'
 import FastClick from 'fastclick'
-import * as fundebug from "fundebug-javascript";
-import fundebugVue from "fundebug-vue";
-// import  VConsole  from  'vconsole'
 import axios from 'axios'
 import qs from 'qs'
 
 Vue.use(Urlencode);
 Vue.use(Vant);
 
-
-// const  vConsole = new VConsole();
-
-fundebug.apikey = "a91d1c7383aa70c26e4f21b1011c566e83475add3e652f562706915fab82c612";
-fundebugVue(fundebug, Vue);
-
 FastClick.attach(document.body);
 
 Vue.config.productionTip = false;
 
-
-Vue.prototype.$axios = axios    //全局注册，使用方法为:this.$axios
-Vue.prototype.qs = qs           //全局注册，使用方法为:this.qs
+Vue.prototype.$axios = axios;    //全局注册，使用方法为:this.$axios
+Vue.prototype.qs = qs;           //全局注册，使用方法为:this.qs
 
 
 router.beforeEach((to, from, next) => {
