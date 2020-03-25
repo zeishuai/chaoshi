@@ -8,7 +8,6 @@
                         <div>{{userInfo.userName}}</div>
                         <div>{{memberText}}</div>
                     </div>
-                    <!--          <div class="personal-text">个人中心</div>-->
                 </div>
             </div>
             <div class="mySnacks">
@@ -82,7 +81,6 @@
                     }
                 }).catch(err => {
                     loading.clear();
-                    console.log(err)
                 })
             }
         }

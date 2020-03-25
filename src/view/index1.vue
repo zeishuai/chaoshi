@@ -22,7 +22,6 @@
                             <div class="goodsTxt" style="display: flex;">
                                 <span
                                     style="line-height: 30px;width: 40%;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgb(255, 0, 0);;font-size: 16px;font-weight: 600">¥{{item.price}}</span>
-                                <!-- async-change @change="(value)=> onChangeSteps(item.id,value)"-->
                                 <van-stepper
                                     v-model="item.vald"
                                     min="0" default-value="0"
@@ -74,7 +73,6 @@
                         this.badge(this.shoppingList)
                     }).catch(err => {
                         loading.clear()
-                        //  console.log(err)
                     });
             },
             onChange(val) {
@@ -83,18 +81,11 @@
                         this.commodityList(item.id);
                     }
                 });
-                // this.cid = index
             },
             // 商品分类
             classifyList() {
                 classify({}).then(res => {
                         if (res.code == 0) {
-                            for (let i = 0; i < res.data.length; i++) {
-                                res.data[i].badge = null
-                                for (let j = 0; j <this.shoppingList.length; j++) {
-                                    console.log(this.shoppingList[j])
-                                }
-                            }
                             this.arrs = res.data;
                         }
                     })
@@ -115,7 +106,6 @@
                         }
                     })
                     .catch(err => {
-                        console.log(err);
                         loading.clear();
                     });
             },
@@ -131,7 +121,6 @@
                     })
                     .catch(err => {
                         addLoading.clear();
-                        console.log(err);
                     });
             },
             // 减少一个到购物车
@@ -146,7 +135,6 @@
                     })
                     .catch(err => {
                         addLoading.clear();
-                        console.log(err);
                     });
             }
         },

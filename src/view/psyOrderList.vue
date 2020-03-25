@@ -131,7 +131,6 @@
                         }
                     })
                     .catch(err => {
-                        console.log(err);
                     });
             },
             // 重新支付
@@ -157,7 +156,6 @@
                         })
                     })
                     .catch(err => {
-                        console.log(err);
                         payLoading.clear();
                     });
             },

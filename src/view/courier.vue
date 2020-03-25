@@ -79,7 +79,6 @@
                     })
                     .catch(err => {
                         this.loadingStatus = false;
-                        console.log(err);
                     });
             },
             // 配送订单
@@ -97,7 +96,6 @@
                     })
                     .catch(err => {
                         loadingStatus.clear();
-                        console.log(err);
                     });
             }
         }

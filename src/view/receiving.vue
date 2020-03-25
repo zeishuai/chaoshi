@@ -32,10 +32,6 @@
                     </div>
                     <div class="bottom">
                         <p class="totalTxt">合计：<span class="all-price">¥{{item.totalPrice}}</span></p>
-<!--                        <div class="payment-btu">-->
-<!--                            <van-button type="danger" size="small" @click="closeOrder(item)">取消订单</van-button>-->
-<!--                            <van-button type="primary" size="small" @click="confirmPay(item)">支付</van-button>-->
-<!--                        </div>-->
                     </div>
                 </li>
             </ul>
@@ -72,7 +68,6 @@
                     }
                 }).catch(err => {
                     getLoading.clear();
-                    console.log(err)
                 })
             },
             // 取消订单
@@ -89,7 +84,6 @@
                     })
                     .catch(err => {
                         getLoading.clear();
-                        console.log(err);
                     });
             },
             confirmPay(data){

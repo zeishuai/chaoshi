@@ -107,7 +107,6 @@
                     })
                     .catch(err => {
                         this.dataLoading = false;
-                        console.log(err);
                     });
             },
             // 取消订单
@@ -121,7 +120,6 @@
                         this.getOrderList();
                     })
                     .catch(err => {
-                        console.log(err);
                     });
             },
             // 订单完成
@@ -135,7 +133,6 @@
                         this.getOrderList();
                     })
                     .catch(err => {
-                        console.log(err);
                     });
             },
             rePayFunc(data) {
@@ -160,7 +157,6 @@
                         })
                     })
                     .catch(err => {
-                        console.log(err);
                         payLoading.clear();
                     });
             }

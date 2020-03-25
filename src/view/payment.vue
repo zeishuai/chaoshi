@@ -74,7 +74,6 @@
                 }).catch(err => {
                     getLoading.clear();
                     this.dataLoading = false;
-                    console.log(err)
                 })
             },
             // 取消订单
@@ -92,7 +91,6 @@
                     })
                     .catch(err => {
                         getLoading.clear();
-                        console.log(err);
                     });
             },
             orderRePay(data) {
@@ -117,7 +115,6 @@
                         })
                     })
                     .catch(err => {
-                        console.log(err);
                         payLoading.clear();
                     });
             }

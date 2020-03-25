@@ -33,7 +33,6 @@
     </div>
      <!--评价弹出层-->
     <van-popup v-model="show" position="top" style='padding:10px;box-sizing: border-box;'>
-      <!-- <p class="ecal-score-title">发表评论</p> -->
       <div class="ecal-score">
         描述相符：
         <van-rate v-model="rateValue"/>
@@ -116,9 +115,6 @@
     methods: {
       showToast() {
         this.show = true
-        // this.$toast({
-        //   message: "取消成功",
-        // })
       },
     }
   };

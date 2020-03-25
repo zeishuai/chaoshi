@@ -9,7 +9,6 @@
         },
         created() {
             let code = window.location.search.split("=")[1].split("&")[0];
-            // this.goosList(code)
             this.onSubmit(code)
         },
         methods: {

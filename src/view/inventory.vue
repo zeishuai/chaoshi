@@ -22,7 +22,6 @@
                             <div class="goodsTxt" style="display: flex;">
                                 <span
                                     style="line-height: 30px;width: 40%;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgb(255, 0, 0);;font-size: 16px;font-weight: 600">¥{{item.price}}</span>
-                                <!-- async-change @change="(value)=> onChangeSteps(item.id,value)"-->
                                 <van-stepper
                                     v-model="item.stock"
                                     min="0"
@@ -99,7 +98,6 @@
                         }
                     })
                     .catch(err => {
-                        console.log(err);
                         loading.clear();
                     });
             },
@@ -118,7 +116,6 @@
                     })
                     .catch(err => {
                         addLoading.clear();
-                        console.log(err);
                     });
             },
             // 更新库存
@@ -136,7 +133,6 @@
                     })
                     .catch(err => {
                         addLoading.clear();
-                        console.log(err);
                     });
             },
             // chang输入更新库存
@@ -154,7 +150,6 @@
                     })
                     .catch(err => {
                         addLoading.clear();
-                        console.log(err);
                     });
             },
         },
