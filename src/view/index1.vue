@@ -1,9 +1,10 @@
 <template>
-    <div class="index" style="background: #FAFAFA;overflow: hidden;padding-bottom: 70px">
+    <div class="index" style="background: #FAFAFA;overflow: hidden;">
         <van-row>
             <van-col span="5.5" style="border-right: 1px solid #f1f1f1;min-height: 500px;">
                 <van-sidebar v-model="activeKey" @change="onChange">
-                    <van-sidebar-item v-for="(item,index) in arrs" :info="null" :title="item.name" :key="item.id"/>
+                    <van-sidebar-item v-for="(item,index) in arrs" :info="item.weibiao > 0 ? item.weibiao : null" :title="item.name"
+                                      :key="item.id"/>
                 </van-sidebar>
             </van-col>
             <van-col span="18" style="background: #fafafa;height: 100%">
@@ -23,8 +24,9 @@
                                 <span
                                     style="line-height: 30px;width: 40%;display: inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgb(255, 0, 0);;font-size: 16px;font-weight: 600">¥{{item.price}}</span>
                                 <van-stepper
-                                    v-model="item.vald"
-                                    min="0" default-value="0"
+                                    v-model="item.countVal"
+                                    min="0"
+                                    :default-value="item.countVal ? item.countVal : 0"
                                     @plus="plus(item)"
                                     @minus="minus(item)"
                                 />
@@ -34,10 +36,49 @@
                 </van-row>
             </van-col>
         </van-row>
-        <van-row style="margin-top: 20px;display: flex;justify-content: flex-end;">
-            <button class="bottombtn2" @click="delGoods" style="margin-left:10px">清空购物车</button>
-            <button class="bottombtn1" @click="buyGoods" style="margin-right: 20px;">￥{{sum}}&nbsp;结算</button>
-        </van-row>
+        <!--        购物车显示-->
+        <van-popup
+            v-model="carShow"
+            position="bottom"
+            round
+            closeable
+            style="min-height:50%;"
+            :overlay="true"
+        >
+            <ul style="padding: 45px 10px 10px 10px;">
+                <li v-for="item in shoppingList" style="display: flex;
+                justify-content: space-between;
+                box-sizing: border-box;
+                margin: auto;
+                margin-bottom: 10px;">
+                    <div class="carTxt">{{item.name}}</div>
+                    <div style="color: #f00;font-weight: 600;font-size: 20px">¥{{item.price}}</div>
+                    <van-stepper
+                        v-model="item.count"
+                        min="0"
+                        :default-value="item.count ? item.count : 0"
+                        @plus="plusCar(item)"
+                        @minus="minusCar(item)"
+                    />
+                </li>
+            </ul>
+        </van-popup>
+        <div style="margin-top: 20px;
+                    display: flex;
+                    justify-content: space-between;
+                    position: fixed;
+                    bottom: 53px;
+                    right: 10px;
+                    width: 100%;
+                    padding: 5px;
+                    box-sizing: border-box;
+                    background: #ffffff">
+            <div class="heji" @click="carShowclick">￥{{sum}}&nbsp;</div>
+            <div>
+                <button class="bottombtn2" @click="delGoods" style="margin-left:10px">清空购物车</button>
+                <button class="bottombtn1" @click="buyGoods">结算</button>
+            </div>
+        </div>
         <!--地址-->
         <div>
             <van-popup
@@ -64,8 +105,8 @@
         <div>
             <van-popup v-model="addShow" position="bottom" round closeable>
                 <van-form>
-                    <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名" />
-                    <van-field v-model="address.phone" name="电话" label="电话" placeholder="电话" />
+                    <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名"/>
+                    <van-field v-model="address.phone" name="电话" label="电话" placeholder="电话"/>
                     <van-field
                         name="picker"
                         clickable
@@ -101,7 +142,7 @@
                             @cancel="LHshowPicker = false"
                         />
                     </van-popup>
-                    <van-field v-model="address.detailAddress" name="详细地址" label="详细地址" placeholder="详细地址" />
+                    <van-field v-model="address.detailAddress" name="详细地址" label="详细地址" placeholder="详细地址"/>
                     <div style="margin: 16px;" v-if="addressSta == 1">
                         <van-button
                             color="#f00"
@@ -110,7 +151,8 @@
                             type="info"
                             native-type="submit"
                             @click="addressSubmit"
-                        >添加</van-button>
+                        >添加
+                        </van-button>
                     </div>
                     <div style="margin: 16px;" v-if="addressSta == 2">
                         <van-button
@@ -120,7 +162,8 @@
                             type="info"
                             native-type="submit"
                             @click="updateAddress"
-                        >修改</van-button>
+                        >修改
+                        </van-button>
                     </div>
                 </van-form>
             </van-popup>
@@ -143,11 +186,14 @@
         shopcarAddOne,
         shopcarSubOne
     } from "@/request/api";
+    import {weiXinConfig, weiXinPayConfig} from "../request/api";
+    import {startPay} from "../function/wechat";
 
     export default {
         name: "index",
         data() {
             return {
+                carShow: false,
                 value: '',
                 isloding: true,
                 activeKey: 0,
@@ -173,7 +219,7 @@
                 addressSta: 1,// 新增1 修改2
                 shops: "", // 购物车id
                 addressid: "", // 支付时的地址id
-                sum:0,
+                sum: 0,
                 pattern: /^1[3456789]\d{9}$/, // 正则验证
                 address: {
                     name: "",
@@ -184,31 +230,47 @@
                     bid: "",
                     detailAddress: ""
                 },
+                shoppingList: [],// 购物车列表数据
             };
         },
         created() {
             this.classifyList();
             this.commodityList(this.cid);
-            this.shoppingCarList()
+            setTimeout(() =>{
+                this.shoppingCarList()
+            },200)
         },
         methods: {
+            carShowclick() {
+                if (this.shoppingList.length == 0) {
+                    this.carShow = false
+                } else {
+                    this.shoppingCarList()
+                    this.carShow = true
+                }
+
+            },
             // 分类选中
             onChange(val) {
                 this.arrs.map((item, index) => {
                     if (index == val) {
                         this.commodityList(item.id);
                     }
+                    this.shoppingCarList()
                 });
             },
             // 商品分类
             classifyList() {
                 classify({}).then(res => {
                     if (res.code == 0) {
+                        for (let i = 0; i < res.data.length; i++) {
+                            res.data[i].weibiao = null
+                        }
+
                         this.arrs = res.data;
                     }
-                })
-                    .catch(err => {
-                    });
+                }).catch(err => {
+                });
             },
             // 商品列表
             commodityList(cid) {
@@ -216,8 +278,8 @@
                 commodityList({cid: cid})
                     .then(res => {
                         if (res.code == 0) {
-                            for (let i = 0; i < this.goodsList.length; i++) {
-                                this.goodsList[i].vald = 0
+                            for (let i = 0; i < res.data.length; i++) {
+                                res.data[i].countVal = 0
                             }
                             this.goodsList = res.data;
                             loading.clear();
@@ -229,10 +291,11 @@
             },
             // 添加一个到购物车
             plus(data) {
-                let addLoading = this.$toast.loading()
+                let addLoading = this.$toast.loading('加载中')
                 shopcarAddOne({cid: data.id})
                     .then(res => {
                         addLoading.clear();
+                        this.shoppingCarList()
                         if (res.code !== 0) {
                             this.$toast.fail(res.msg)
                         }
@@ -247,6 +310,37 @@
                 shopcarSubOne({cid: data.id})
                     .then(res => {
                         addLoading.clear();
+                        this.shoppingCarList()
+                        if (res.code !== 0) {
+                            this.$toast.fail(res.msg)
+                        }
+                    })
+                    .catch(err => {
+                        addLoading.clear();
+                    });
+            },
+            // 添加一个到购物车
+            plusCar(data) {
+                let addLoading = this.$toast.loading('加载中')
+                shopcarAddOne({cid: data.cid})
+                    .then(res => {
+                        addLoading.clear();
+                        this.shoppingCarList()
+                        if (res.code !== 0) {
+                            this.$toast.fail(res.msg)
+                        }
+                    })
+                    .catch(err => {
+                        addLoading.clear();
+                    });
+            },
+            // 减少一个到购物车
+            minusCar(data) {
+                let addLoading = this.$toast.loading()
+                shopcarSubOne({cid: data.cid})
+                    .then(res => {
+                        addLoading.clear();
+                        this.shoppingCarList()
                         if (res.code !== 0) {
                             this.$toast.fail(res.msg)
                         }
@@ -304,14 +398,14 @@
                     bid: this.address.bid,
                     detailAddress: this.address.detailAddress
                 }).then(res => {
-                        updateAddressLoading.clear();
-                        if (res.code == 0) {
-                            this.$toast.success({message: res.msg});
-                            this.addressSta = 1;
-                            this.getUserAddress();
-                            this.addShow = false;
-                        }
-                    })
+                    updateAddressLoading.clear();
+                    if (res.code == 0) {
+                        this.$toast.success({message: res.msg});
+                        this.addressSta = 1;
+                        this.getUserAddress();
+                        this.addShow = false;
+                    }
+                })
                     .catch(err => {
                         updateAddressLoading.clear();
                     });
@@ -497,19 +591,56 @@
             // 购物车列表
             shoppingCarList() {
                 let addLoading = this.$toast.loading("加载中");
+                let _this = this
+                this.shoppingList = []
                 shopcarList({})
                     .then(res => {
                         addLoading.clear();
                         this.shoppingList = res.data;
+                        this.func(res.data) //处理徽标
+                        this.func2(res.data)
                     })
                     .catch(err => {
                         addLoading.clear();
                     });
             },
+            func(data){
+                for (let y in this.arrs){
+                    let temp = 0;
+                    let tempMoney  = 0;
+                    for (let z in data){ //goug
+                        tempMoney = tempMoney + data[z].count * data[z].price
+                        this.sum = tempMoney
+                        if (data[z].classifyid === this.arrs[y].id){
+                            temp += parseInt(data[z].count);
+                        }
+                    }
+                    this.arrs[y].weibiao = temp;
+                }
+            },
+            func2(data){
+                for (let y in this.goodsList){
+                    for (let z in data){ //goug
+                        if (data[z].cid === this.goodsList[y].id){
+                            this.goodsList[y].countVal = data[z].count
+                        }
+                    }
+                }
+            },
+            // 结算数组中相同值
+            getWordCnt(arr) {
+                var obj = {};
+                for (var i = 0, l = arr.length; i < l; i++) {
+                    var item = arr[i];
+                    obj[item] = (obj[item] + 1) || 1;
+                }
+                return obj;
+            },
             // 结算
             buyGoods() {
                 if (this.shoppingList.length == 0) {
                     this.isShow = false;
+                    this.$toast({message: '你没有选择商品～～'})
                 } else {
                     this.isShow = true;
                     let picid = [];
@@ -519,17 +650,6 @@
                     this.getUserAddress()
                     this.shops = picid.join(",");
                 }
-                console.log(this.shops)
-                // let picid = [];
-                // for (let i = 0; i < this.shoppingList.length; i++) {
-                //     if (this.shoppingList[i].isChecked) {
-                //         picid.push(this.shoppingList[i].id);
-                //     }
-                // }
-                // this.shops = picid.join(",");
-                // for (let i = 0; i < this.addressList.length; i++) {
-                //     this.addressid = this.addressList[this.addressliact].id;
-                // }
             },
             // 清空购物车
             delGoods() {
@@ -540,7 +660,9 @@
                             message: res.msg,
                             type: res.code === 0 ? "success" : "fail",
                             onClose: function () {
-                                _this.shoppingCarList();
+                                _this.classifyList();
+                                _this.commodityList(_this.cid)
+                                this.sum = 0
                             }
                         });
                     })
@@ -555,8 +677,34 @@
     };
 </script>
 <style scoped lang="css" rel="stylesheet/css">
-    .bottombtn1 {
+    .heji {
         width: auto;
+        width: 120px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        color: #f00;
+        overflow: hidden; /*超出部分隐藏*/
+        text-overflow: ellipsis; /* 超出部分显示省略号 */
+        white-space: nowrap; /*规定段落中的文本不进行换行 */
+        box-sizing: border-box;
+        margin-left: 10px;
+    }
+    .carTxt{
+        width: 120px;
+        height: 27px;
+        line-height: 27px;
+        color: #444;
+        overflow: hidden; /*超出部分隐藏*/
+        text-overflow: ellipsis; /* 超出部分显示省略号 */
+        white-space: nowrap; /*规定段落中的文本不进行换行 */
+        box-sizing: border-box;
+    }
+
+    .bottombtn1 {
+        width: 100px;
         max-width: 120px;
         height: 35px;
         border: none;
@@ -565,8 +713,9 @@
         border-radius: 25px;
         padding: 0 10px;
         box-sizing: border-box;
-        margin-left: 10px;
+        /*margin-left: 10px;*/
     }
+
     .bottombtn2 {
         height: 35px;
         border: none;
@@ -577,6 +726,7 @@
         font-size: 0.8rem;
         box-sizing: border-box;
     }
+
     li {
         list-style: none;
     }
