@@ -11,14 +11,14 @@ module.exports = {
         assetsPublicPath: '/',
         proxyTable: {
             '/api': {
-                target: 'https://wkscapi.qdytcy.com:8080/api', //源地址
+                target: 'https://testscapi.qdytcy.com:8080/api', //源地址
                 changeOrigin: true, //改变源
                 pathRewrite: {
                     '^/api': '' //路径重写
                 }
             },
-            '/upload': {
-                target: 'https://wkht.qdytcy.com', //源地址
+            '/common': {
+                target: 'https://testscht.qdytcy.com/common', //源地址
                 changeOrigin: true, //改变源
                 pathRewrite: {
                     '^/upload': '' //路径重写
