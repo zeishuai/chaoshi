@@ -1,7 +1,7 @@
 <template>
-    <div class="index" style="background: #FAFAFA;overflow: hidden">
+    <div class="index" style="background: #FAFAFA;overflow: hidden;padding-bottom: 70px">
         <van-row>
-            <van-col span="5.5" style="border-right: 1px solid #f1f1f1;min-height: 700px;">
+            <van-col span="5.5" style="border-right: 1px solid #f1f1f1;min-height: 500px;">
                 <van-sidebar v-model="activeKey" @change="onChange">
                     <van-sidebar-item v-for="(item,index) in arrs" :info="null" :title="item.name" :key="item.id"/>
                 </van-sidebar>
@@ -34,10 +34,115 @@
                 </van-row>
             </van-col>
         </van-row>
+        <van-row style="margin-top: 20px;display: flex;justify-content: flex-end;">
+            <button class="bottombtn2" @click="delGoods" style="margin-left:10px">清空购物车</button>
+            <button class="bottombtn1" @click="buyGoods" style="margin-right: 20px;">￥{{sum}}&nbsp;结算</button>
+        </van-row>
+        <!--地址-->
+        <div>
+            <van-popup
+                v-model="isShow"
+                position="bottom"
+                :style="{ height: '50%' }"
+                round
+                closeable
+                :overlay="true"
+            >
+                <div style="padding-bottom: 10px;box-sizing: border-box">
+                    <van-address-list
+                        v-model="chosenAddressId"
+                        :list="addressList"
+                        default-tag-text="默认"
+                        @add="onAdd"
+                        @edit="updateAddressShow"
+                        @select="addressclick"
+                    />
+                </div>
+            </van-popup>
+        </div>
+        <!--新增地址-->
+        <div>
+            <van-popup v-model="addShow" position="bottom" round closeable>
+                <van-form>
+                    <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名" />
+                    <van-field v-model="address.phone" name="电话" label="电话" placeholder="电话" />
+                    <van-field
+                        name="picker"
+                        clickable
+                        readonly
+                        :value="address.school"
+                        label="学校"
+                        placeholder="点击选择学校"
+                        @click="XXshowPicker = true"
+                    />
+                    <van-popup get-container="body" v-model="XXshowPicker" position="bottom">
+                        <van-picker
+                            show-toolbar
+                            :columns="XXcolumns"
+                            @cancel="XXshowPicker = false"
+                            @confirm="onConfirmXX"
+                        />
+                    </van-popup>
+                    <van-field
+                        readonly
+                        clickable
+                        name="picker"
+                        :value="address.LH"
+                        label="楼号"
+                        :default-index="1"
+                        placeholder="点击选择楼号"
+                        @click="LHshowPicker = true"
+                    />
+                    <van-popup get-container="body" v-model="LHshowPicker" position="bottom">
+                        <van-picker
+                            show-toolbar
+                            :columns="LHcolumns"
+                            @confirm="onConfirmLH"
+                            @cancel="LHshowPicker = false"
+                        />
+                    </van-popup>
+                    <van-field v-model="address.detailAddress" name="详细地址" label="详细地址" placeholder="详细地址" />
+                    <div style="margin: 16px;" v-if="addressSta == 1">
+                        <van-button
+                            color="#f00"
+                            round
+                            block
+                            type="info"
+                            native-type="submit"
+                            @click="addressSubmit"
+                        >添加</van-button>
+                    </div>
+                    <div style="margin: 16px;" v-if="addressSta == 2">
+                        <van-button
+                            color="#f00"
+                            round
+                            block
+                            type="info"
+                            native-type="submit"
+                            @click="updateAddress"
+                        >修改</van-button>
+                    </div>
+                </van-form>
+            </van-popup>
+        </div>
     </div>
 </template>
 <script>
-    import {shopcarList, classify, commodityList, shopcarAddOne, shopcarSubOne} from "@/request/api";
+    // import { classify, commodityList, shopcarAddOne, shopcarSubOne} from "@/request/api";
+    import {
+        shopcarList,
+        delGoods,
+        getUserAddress,
+        getSchools,
+        getBuildingsBySchool,
+        addNewAddress,
+        updateAddress,
+        shopcarpay,
+        classify,
+        commodityList,
+        shopcarAddOne,
+        shopcarSubOne
+    } from "@/request/api";
 
     export default {
         name: "index",
@@ -54,7 +159,31 @@
                 judge: "1",
                 goodsList: [],
                 cid: "1", // 商品分类ID
-                shoppingList:[],//购物车数据匹配分类徽标
+                // 结算参数
+                isShow: false, // 选中地址
+                chosenAddressId: "1",
+                addressList: [],// 地址数据
+                addShow: false, // 新增地址
+                XXshowPicker: false,
+                XXcolumns: [], // 学校地址
+                XXcolumns1: [], // 学校地址
+                LHcolumns: [], // 楼号
+                LHcolumns1: [],
+                LHshowPicker: false,
+                addressSta: 1,// 新增1 修改2
+                shops: "", // 购物车id
+                addressid: "", // 支付时的地址id
+                sum:0,
+                pattern: /^1[3456789]\d{9}$/, // 正则验证
+                address: {
+                    name: "",
+                    phone: "",
+                    school: "",
+                    LH: "",
+                    sid: "",
+                    bid: "",
+                    detailAddress: ""
+                },
             };
         },
         created() {
@@ -63,18 +192,7 @@
             this.shoppingCarList()
         },
         methods: {
-
-            // 购物车列表数据
-            shoppingCarList() {
-                let loading = this.$toast.loading('加载中')
-                shopcarList({}).then(res => {
-                    loading.clear()
-                        this.shoppingList = res.data;
-                        this.badge(this.shoppingList)
-                    }).catch(err => {
-                        loading.clear()
-                    });
-            },
+            // 分类选中
             onChange(val) {
                 this.arrs.map((item, index) => {
                     if (index == val) {
@@ -85,10 +203,10 @@
             // 商品分类
             classifyList() {
                 classify({}).then(res => {
-                        if (res.code == 0) {
-                            this.arrs = res.data;
-                        }
-                    })
+                    if (res.code == 0) {
+                        this.arrs = res.data;
+                    }
+                })
                     .catch(err => {
                     });
             },
@@ -136,6 +254,298 @@
                     .catch(err => {
                         addLoading.clear();
                     });
+            },
+            // 编辑地址
+            updateAddressShow(data) {
+                this.addressSta = 2;
+                this.address.id = data.id;
+                this.address.name = data.name;
+                this.address.phone = data.phone;
+                this.address.sid = data.sid;
+                this.address.bid = data.bid;
+                this.address.detailAddress = data.detailAddress;
+                this.address.school = data.sname;
+                this.address.LH = data.bname;
+                this.getSchools();
+                this.getBuildingsBySchool();
+                this.addShow = true;
+            },
+            updateAddress() {
+                if (this.address.name == "") {
+                    this.$toast({message: "请填写名字"});
+                    return false;
+                }
+                if (this.address.phone == "") {
+                    this.$toast({message: "请填写电话"});
+                    return false;
+                }
+                if (this.pattern.test(this.address.phone) == false) {
+                    this.$toast({message: "电话格式错误"});
+                    return false;
+                }
+                if (this.address.sid == "") {
+                    this.$toast({message: "请选择学校"});
+                    return false;
+                }
+                if (this.address.bid == "") {
+                    this.$toast({message: "请选择楼号"});
+                    return false;
+                }
+                if (this.address.detailAddress == "") {
+                    this.$toast({message: "请填写想写地址"});
+                    return false;
+                }
+                let updateAddressLoading = this.$toast.loading("加载中...");
+                updateAddress({
+                    id: this.address.id,
+                    name: this.address.name,
+                    phone: this.address.phone,
+                    sid: this.address.sid,
+                    bid: this.address.bid,
+                    detailAddress: this.address.detailAddress
+                }).then(res => {
+                        updateAddressLoading.clear();
+                        if (res.code == 0) {
+                            this.$toast.success({message: res.msg});
+                            this.addressSta = 1;
+                            this.getUserAddress();
+                            this.addShow = false;
+                        }
+                    })
+                    .catch(err => {
+                        updateAddressLoading.clear();
+                    });
+            },
+            // 支付
+            shopcarpay() {
+                let configData = {};
+                if (!this.shops) {
+                    return this.$toast({message: "没有选择商品哦~"});
+                }
+                let that = this;
+                let payLoading = this.$toast.loading("正在支付...");
+                weiXinConfig({url: window.location.href})
+                    .then(res => {
+                        configData = res.data;
+                    })
+                    .then(step => {
+                        // 获取支付参数
+                        weiXinPayConfig({shops: this.shops, addressid: this.addressid})
+                            .then(pay => {
+                                payLoading.clear();
+                                pay.data.package = pay.data.packageValue;
+                                let res = startPay(configData, pay.data);
+                                // 支付调试
+                                setTimeout(function () {
+                                    that.checkedAll = false;
+                                    that.sum = 0;
+                                    that.shoppingCarList();
+                                }, 8000);
+                            })
+                            .catch(err => {
+                                this.$toast.fail("网络出错");
+                            });
+                    })
+                    .catch(err => {
+                        payLoading.clear();
+                    });
+            },
+            // 选择地址
+            addressclick(data) {
+                this.addressid = data.id;
+                this.isShow = false;
+                this.shopcarpay();
+            },
+            // 获取学校
+            getSchools() {
+                let addLoading = this.$toast.loading("加载中");
+                this.XXcolumns = [];
+                getSchools({})
+                    .then(res => {
+                        if (res.code == 0) {
+                            for (let i = 0; i < res.data.length; i++) {
+                                this.XXcolumns.push(res.data[i].name);
+                                addLoading.clear();
+                            }
+                            this.XXcolumns1 = res.data;
+                        } else {
+                            this.$toast({message: res.msg});
+                        }
+                    })
+                    .catch(err => {
+                        addLoading.clear();
+                    });
+            },
+            // 获取楼号
+            getBuildingsBySchool(sid) {
+                let addLoading = this.$toast.loading("加载中");
+                this.LHcolumns = [];
+                getBuildingsBySchool({sid: sid})
+                    .then(res => {
+                        if (res.code == 0) {
+                            addLoading.clear();
+                            if (res.data.length == 0) {
+                                this.LHcolumns = [];
+                            } else {
+                                for (let i = 0; i < res.data.length; i++) {
+                                    this.LHcolumns.push(res.data[i].name);
+                                }
+                            }
+                            this.LHcolumns1 = res.data;
+                        } else {
+                            this.$toast({message: res.msg});
+                        }
+                    })
+                    .catch(err => {
+                        addLoading.clear();
+                    });
+            },
+            onAdd() {
+                this.addShow = true;
+                this.addressSta = 1;
+                this.getSchools();
+                this.address = {};
+            },
+            // 学校选中
+            onConfirmXX(value) {
+                let sid = "";
+                this.address.school = value;
+                this.XXshowPicker = false;
+                this.XXcolumns1.map(item => {
+                    if (item.name == value) {
+                        this.address.sid = item.id;
+                        sid = item.id;
+                    }
+                });
+                this.getBuildingsBySchool(sid);
+            },
+            // 楼号选择
+            onConfirmLH(value) {
+                this.address.LH = value;
+                this.LHshowPicker = false;
+                this.LHcolumns1.map(item => {
+                    if (item.name == value) {
+                        this.address.bid = item.id;
+                    }
+                });
+            },
+            // 提交地址
+            addressSubmit() {
+                if (this.address.name == "") {
+                    this.$toast({message: "请填写名字"});
+                    return false;
+                }
+                if (this.address.phone == "") {
+                    this.$toast({message: "请填写电话"});
+                    return false;
+                }
+                if (this.pattern.test(this.address.phone) == false) {
+                    this.$toast({message: "电话格式错误"});
+                    return false;
+                }
+                if (this.address.sid == "") {
+                    this.$toast({message: "请选择学校"});
+                    return false;
+                }
+                if (this.address.bid == "") {
+                    this.$toast({message: "请选择楼号"});
+                    return false;
+                }
+                if (this.address.detailAddress == "") {
+                    this.$toast({message: "请填写想写地址"});
+                    return false;
+                }
+                let addLoading = this.$toast.loading("加载中");
+                addNewAddress({
+                    name: this.address.name,
+                    phone: this.address.phone,
+                    sid: this.address.sid,
+                    bid: this.address.bid,
+                    detailAddress: this.address.detailAddress
+                })
+                    .then(res => {
+                        if (res.code == 0) {
+                            this.$toast.success({message: res.msg});
+                            addLoading.clear();
+                            this.addressSta = 2;
+                            this.getUserAddress();
+                            this.addShow = false;
+                        }
+                    })
+                    .catch(err => {
+                        addLoading.clear();
+                    });
+            },
+            // 获取地址列表
+            getUserAddress() {
+                let addLoading = this.$toast.loading("加载中");
+                getUserAddress({})
+                    .then(res => {
+                        if (res.code == 0) {
+                            addLoading.clear();
+                            for (let i = 0; i < res.data.length; i++) {
+                                res.data[i].tel = res.data[i].phone;
+                                res.data[i].address = `${res.data[i].sname} ${res.data[i].bname} ${res.data[i].detailAddress}`;
+                            }
+                            this.addressList = res.data;
+                        }
+                    })
+                    .catch(err => {
+                        addLoading.clear();
+                    });
+            },
+            // 购物车列表
+            shoppingCarList() {
+                let addLoading = this.$toast.loading("加载中");
+                shopcarList({})
+                    .then(res => {
+                        addLoading.clear();
+                        this.shoppingList = res.data;
+                    })
+                    .catch(err => {
+                        addLoading.clear();
+                    });
+            },
+            // 结算
+            buyGoods() {
+                if (this.shoppingList.length == 0) {
+                    this.isShow = false;
+                } else {
+                    this.isShow = true;
+                    let picid = [];
+                    for (let i = 0; i < this.shoppingList.length; i++) {
+                        picid.push(this.shoppingList[i].id);
+                    }
+                    this.getUserAddress()
+                    this.shops = picid.join(",");
+                }
+                console.log(this.shops)
+                // let picid = [];
+                // for (let i = 0; i < this.shoppingList.length; i++) {
+                //     if (this.shoppingList[i].isChecked) {
+                //         picid.push(this.shoppingList[i].id);
+                //     }
+                // }
+                // this.shops = picid.join(",");
+                // for (let i = 0; i < this.addressList.length; i++) {
+                //     this.addressid = this.addressList[this.addressliact].id;
+                // }
+            },
+            // 清空购物车
+            delGoods() {
+                const _this = this;
+                delGoods({})
+                    .then(res => {
+                        this.$toast({
+                            message: res.msg,
+                            type: res.code === 0 ? "success" : "fail",
+                            onClose: function () {
+                                _this.shoppingCarList();
+                            }
+                        });
+                    })
+                    .catch(err => {
+                    });
             }
         },
 
@@ -145,13 +555,30 @@
     };
 </script>
 <style scoped lang="css" rel="stylesheet/css">
+    .bottombtn1 {
+        width: auto;
+        max-width: 120px;
+        height: 35px;
+        border: none;
+        color: #fff;
+        background-color: rgb(255, 0, 0);
+        border-radius: 25px;
+        padding: 0 10px;
+        box-sizing: border-box;
+        margin-left: 10px;
+    }
+    .bottombtn2 {
+        height: 35px;
+        border: none;
+        color: #444444;
+        background-color: #f2f3f5;
+        border-radius: 25px;
+        padding: 0 10px;
+        font-size: 0.8rem;
+        box-sizing: border-box;
+    }
     li {
         list-style: none;
-    }
-
-    .goodsImg {
-        /*float: left;*/
-        margin-right: 10px;
     }
 
     .goodsTxtBox {
