@@ -340,7 +340,7 @@
                 shopcarSubOne({cid: data.cid})
                     .then(res => {
                         addLoading.clear();
-                        this.shoppingCarList()
+                        this.shoppingCarList();
                         if (res.code !== 0) {
                             this.$toast.fail(res.msg)
                         }
@@ -596,9 +596,12 @@
                 shopcarList({})
                     .then(res => {
                         addLoading.clear();
-                        this.shoppingList = res.data;
-                        this.func(res.data) //处理徽标
-                        this.func2(res.data)
+                        _this.shoppingList = res.data;
+                        _this.func(res.data); //处理徽标
+                        _this.func2(res.data);
+                        if (res.data.length < 1){
+                            _this.sum = 0;
+                        }
                     })
                     .catch(err => {
                         addLoading.clear();
@@ -662,7 +665,7 @@
                             onClose: function () {
                                 _this.classifyList();
                                 _this.commodityList(_this.cid)
-                                this.sum = 0
+                                _this.sum = 0
                             }
                         });
                     })
