@@ -62,9 +62,9 @@ const router = new Router({
             path: '/express',
             name: 'express',
             component: express,
-            meta: {
-                requireLogin: true
-            }
+            // meta: {
+            //     requireLogin: true
+            // }
         },
         {
             path: '/my',

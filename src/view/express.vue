@@ -2,18 +2,17 @@
     <div class="expr">
         <div>
             <van-form>
-                <div @click="postAddresShow">
-                    <van-field v-model="addressName" disabled name="送货地址" label="送货地址" placeholder="请选择送货地址"/>
-                </div>
-                <div @click="quHuoShowClidk">
+                <van-cell-group title="请填写快递相关信息">
+                    <van-field v-model="addressName" disabled @click="postAddresShow" name="送货地址" label="送货地址" placeholder="请选择送货地址"/>
                     <van-field
                         v-model="postStationname"
                         name="取货地址"
                         label="取货地址"
                         placeholder="请选择取货地址"
                         disabled
+                        @click="quHuoShowClidk"
                     />
-                </div>
+
                 <van-field v-model="from.code" name="取件信息" label="取件信息" placeholder="请填写取件信息"/>
                 <van-field name="uploader" label="可选附图">
                     <template #input>
@@ -44,6 +43,7 @@
 
                 <van-field v-model="from.xiaofei" name="小费" label="小费" placeholder="不填表示不给小费"/>
                 <van-field v-model="from.danliang" name="单量" label="单量" placeholder="你需要取多少件？"/>
+                </van-cell-group>
             </van-form>
             <div style="width: 90%;margin: auto;margin-top: 20px">
                 <van-button type="primary" color="#f00" block round size="normal" @click="submit">提交</van-button>
@@ -73,24 +73,26 @@
         </div>
         <!--新增地址-->
         <div>
-            <van-popup v-model="addShow" position="bottom" round closeable @close='close'>
+            <van-popup v-model="addShow" position="bottom" round closeable @close='close' :style="{ height: '60%' }">
                 <van-form>
-                    <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名"/>
-                    <van-field
-                        v-model="address.phone"
-                        name="电话"
-                        label="电话"
-                        placeholder="电话"
-                    />
-                    <van-field
-                        readonly
-                        clickable
-                        name="picker"
-                        :value="address.school"
-                        label="学校"
-                        placeholder="点击选择学校"
-                        @click="XXshowPicker = true"
-                    />
+                    <van-cell-group title="请填写地址信息">
+                        <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名"/>
+                        <van-field
+                            v-model="address.phone"
+                            name="电话"
+                            label="电话"
+                            placeholder="电话"
+                        />
+                        <van-field
+                            readonly
+                            clickable
+                            name="picker"
+                            :value="address.school"
+                            label="学校"
+                            placeholder="点击选择学校"
+                            @click="XXshowPicker = true"
+                        />
+                    </van-cell-group>
                     <van-popup get-container="body" v-model="XXshowPicker" position="bottom">
                         <van-picker
                             show-toolbar
@@ -350,7 +352,7 @@
                     return false;
                 }
                 if (this.address.detailAddress == "") {
-                    this.$toast({message: "请填写想写地址"});
+                    this.$toast({message: "请填写详细地址"});
                     return false;
                 }
                 addNewAddress({
@@ -558,6 +560,8 @@
                 }
                 if (this.from.danliang) {
                     this.from.danliang = parseInt(this.from.danliang);
+                }else{
+                    return this.$toast.fail('请填写单量');
                 }
                 this.from.xiaofei = !this.from.xiaofei ? 0 : this.from.xiaofei;
                 let payLoading = this.$toast.loading("正在支付...");

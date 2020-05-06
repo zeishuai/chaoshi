@@ -3,11 +3,12 @@
         <van-row>
             <van-col span="5.5" style="border-right: 1px solid #f1f1f1;min-height: 500px;">
                 <van-sidebar v-model="activeKey" @change="onChange">
-                    <van-sidebar-item v-for="(item,index) in arrs" :info="item.weibiao > 0 ? item.weibiao : null" :title="item.name"
+                    <van-sidebar-item v-for="(item,index) in arrs" :info="item.weibiao > 0 ? item.weibiao : null"
+                                      :title="item.name"
                                       :key="item.id"/>
                 </van-sidebar>
             </van-col>
-            <van-col span="18" style="background: #fafafa;height: 100%">
+            <van-col span="18" style="background: #fafafa;height: 100%;margin-bottom: 10px;overflow-y: auto">
                 <van-skeleton v-if="goodsList.length < 1" title :row="10"/>
                 <van-row v-if="goodsList.length > 0" v-for="item in goodsList" :key="item.id"
                          style="margin-bottom: 10px;background: #fff;padding-top: 13px">
@@ -36,6 +37,7 @@
                 </van-row>
             </van-col>
         </van-row>
+        <div style="width: 100%;height: 100px;overflow:hidden;"></div>
         <!--        购物车显示-->
         <van-popup
             v-model="carShow"
@@ -67,7 +69,7 @@
                     display: flex;
                     justify-content: space-between;
                     position: fixed;
-                    bottom: 53px;
+                    bottom: 50px;
                     right: 10px;
                     width: 100%;
                     padding: 5px;
@@ -103,9 +105,9 @@
         </div>
         <!--新增地址-->
         <div>
-            <van-popup v-model="addShow" position="bottom" round closeable>
-                <van-form>
-                    <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名"/>
+            <van-popup v-model="addShow" position="bottom" :style="{ height: '60%' }" round closeable>
+                <van-cell-group title="请填写地址信息">
+                    <van-field v-model="address.name" name="姓名" label="姓名" placeholder="姓名" size="large"/>
                     <van-field v-model="address.phone" name="电话" label="电话" placeholder="电话"/>
                     <van-field
                         name="picker"
@@ -116,56 +118,57 @@
                         placeholder="点击选择学校"
                         @click="XXshowPicker = true"
                     />
-                    <van-popup get-container="body" v-model="XXshowPicker" position="bottom">
-                        <van-picker
-                            show-toolbar
-                            :columns="XXcolumns"
-                            @cancel="XXshowPicker = false"
-                            @confirm="onConfirmXX"
-                        />
-                    </van-popup>
-                    <van-field
-                        readonly
-                        clickable
-                        name="picker"
-                        :value="address.LH"
-                        label="楼号"
-                        :default-index="1"
-                        placeholder="点击选择楼号"
-                        @click="LHshowPicker = true"
+                </van-cell-group>
+
+                <van-popup get-container="body" v-model="XXshowPicker" position="bottom">
+                    <van-picker
+                        show-toolbar
+                        :columns="XXcolumns"
+                        @cancel="XXshowPicker = false"
+                        @confirm="onConfirmXX"
                     />
-                    <van-popup get-container="body" v-model="LHshowPicker" position="bottom">
-                        <van-picker
-                            show-toolbar
-                            :columns="LHcolumns"
-                            @confirm="onConfirmLH"
-                            @cancel="LHshowPicker = false"
-                        />
-                    </van-popup>
-                    <van-field v-model="address.detailAddress" name="详细地址" label="详细地址" placeholder="详细地址"/>
-                    <div style="margin: 16px;" v-if="addressSta == 1">
-                        <van-button
-                            color="#f00"
-                            round
-                            block
-                            type="info"
-                            native-type="submit"
-                            @click="addressSubmit"
-                        >添加
-                        </van-button>
-                    </div>
-                    <div style="margin: 16px;" v-if="addressSta == 2">
-                        <van-button
-                            color="#f00"
-                            round
-                            block
-                            type="info"
-                            native-type="submit"
-                            @click="updateAddress"
-                        >修改
-                        </van-button>
-                    </div>
-                </van-form>
+                </van-popup>
+                <van-field
+                    readonly
+                    clickable
+                    name="picker"
+                    :value="address.LH"
+                    label="楼号"
+                    :default-index="1"
+                    placeholder="点击选择楼号"
+                    @click="LHshowPicker = true"
+                />
+                <van-popup get-container="body" v-model="LHshowPicker" position="bottom">
+                    <van-picker
+                        show-toolbar
+                        :columns="LHcolumns"
+                        @confirm="onConfirmLH"
+                        @cancel="LHshowPicker = false"
+                    />
+                </van-popup>
+                <van-field v-model="address.detailAddress" name="详细地址" label="详细地址" placeholder="详细地址"/>
+                <div style="margin: 16px;" v-if="addressSta == 1">
+                    <van-button
+                        color="#f00"
+                        round
+                        block
+                        type="info"
+                        native-type="submit"
+                        @click="addressSubmit"
+                    >添加
+                    </van-button>
+                </div>
+                <div style="margin: 16px;" v-if="addressSta == 2">
+                    <van-button
+                        color="#f00"
+                        round
+                        block
+                        type="info"
+                        native-type="submit"
+                        @click="updateAddress"
+                    >修改
+                    </van-button>
+                </div>
             </van-popup>
         </div>
     </div>
@@ -236,9 +239,9 @@
         created() {
             this.classifyList();
             this.commodityList(this.cid);
-            setTimeout(() =>{
+            setTimeout(() => {
                 this.shoppingCarList()
-            },200)
+            }, 200)
         },
         methods: {
             carShowclick() {
@@ -599,7 +602,7 @@
                         _this.shoppingList = res.data;
                         _this.func(res.data); //处理徽标
                         _this.func2(res.data);
-                        if (res.data.length < 1){
+                        if (res.data.length < 1) {
                             _this.sum = 0;
                         }
                     })
@@ -607,24 +610,24 @@
                         addLoading.clear();
                     });
             },
-            func(data){
-                for (let y in this.arrs){
+            func(data) {
+                for (let y in this.arrs) {
                     let temp = 0;
-                    let tempMoney  = 0;
-                    for (let z in data){ //goug
+                    let tempMoney = 0;
+                    for (let z in data) { //goug
                         tempMoney = tempMoney + data[z].count * data[z].price
                         this.sum = tempMoney
-                        if (data[z].classifyid === this.arrs[y].id){
+                        if (data[z].classifyid === this.arrs[y].id) {
                             temp += parseInt(data[z].count);
                         }
                     }
                     this.arrs[y].weibiao = temp;
                 }
             },
-            func2(data){
-                for (let y in this.goodsList){
-                    for (let z in data){ //goug
-                        if (data[z].cid === this.goodsList[y].id){
+            func2(data) {
+                for (let y in this.goodsList) {
+                    for (let z in data) { //goug
+                        if (data[z].cid === this.goodsList[y].id) {
                             this.goodsList[y].countVal = data[z].count
                         }
                     }
@@ -695,7 +698,8 @@
         box-sizing: border-box;
         margin-left: 10px;
     }
-    .carTxt{
+
+    .carTxt {
         width: 120px;
         height: 27px;
         line-height: 27px;
